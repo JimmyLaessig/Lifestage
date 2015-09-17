@@ -1,0 +1,155 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#D2DBEA"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rect_rounded"
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp" >
+
+        <LinearLayout
+            android:id="@+id/status_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingLeft="15dp"
+            android:paddingTop="10dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="40dp"
+                android:text="@string/status_label"
+                android:textColor="#7F7F7F"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/txtvStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/unknown"
+                android:textColor="#7F7F7F"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnConnect"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/connect_label"
+            android:textColor="#7F7F7F"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/control_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-10dp"
+        android:background="@drawable/rect_rounded2"
+        android:orientation="vertical"
+        android:paddingBottom="10dp" >
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="2dp"
+            android:background="#B3B6BF" />
+
+        <RelativeLayout
+            android:id="@+id/control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp" >
+
+            <Button
+                android:id="@+id/btnLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:paddingBottom="20dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingTop="20dp"
+                android:text="@string/left_arrow"
+                android:textColor="#7F7F7F"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/btnRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:enabled="true"
+                android:paddingBottom="20dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingTop="20dp"
+                android:text="@string/right_arrow"
+                android:textColor="#7F7F7F"
+                android:textSize="15sp" />
+
+        </RelativeLayout>
+        
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnNext"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nextPattern" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout_log"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/rect_rounded"
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
+        android:paddingLeft="25dp"
+        android:paddingRight="10dp"
+        android:paddingTop="20dp" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="40dp"
+            android:text="@string/log_label"
+            android:textColor="#7F7F7F"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/txtvLog"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scrollbars="vertical"
+            android:text="@string/testlog"
+            android:textColor="#7F7F7F"
+            android:textSize="16sp" 
+             android:paddingTop="10dp"
+            android:paddingLeft="30dp"
+            
+        />
+    </LinearLayout>
+
+</LinearLayout>

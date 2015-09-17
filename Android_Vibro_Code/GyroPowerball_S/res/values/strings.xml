@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GyroPowerball_S</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="connect_label">Connect</string>
+    <string name="status_label">Status:</string>
+     <string name="log_label">Log:</string>
+    <string name="disconnect_label">Diconnect</string>
+    <string name="unknown">-</string>
+    <string name="left_arrow">Start</string>
+    <string name="right_arrow">Choose</string>
+    <string name="nextPattern">Next</string>
+	<string name="testlog">13:30:10  start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  
+	    start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  
+	    start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  
+	    start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  
+	    start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  
+	    start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  
+	    start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  
+	    start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  
+	    start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  
+	    start sadasd\r\n13:30:10  start sadasd\r\n13:30:10  start sadasd\r\n</string>
+	<string name="patterns">1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11</string>
+	<string name="pat_lab">Loaded Patterns:</string>
+</resources>
