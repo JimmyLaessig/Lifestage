@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Controller : MonoBehaviour
+public class CameraController : MonoBehaviour
 {
+
+    // The unique id of the user
+    private string userID = "";
+    
     // Offset to the ray position such that the ray does not go through the exact center of the camera
     public Vector3 rayOffset = new Vector3(0, -0.5f, 0);
     public float rayMaxDistance = 100.0f;
@@ -20,6 +24,11 @@ public class Controller : MonoBehaviour
         // Initialize Service Receiver for camera orientation
         // Initialize Service Command for vibra feedback
         // Perform Initial Rotation of the scene so that the scene will face inti the -z direction of the camera       
+        Result r = new Result();
+        r.correct = true;
+        r.userID = 1;
+        r.numElements = 10;
+        r.time = Time.time;
 
     }
 
@@ -33,11 +42,13 @@ public class Controller : MonoBehaviour
             // TODO: 
             // Draw Ray
         }
-    }
+        }
 
 
     void GetInput()
     {
+        if (Input.touches.Length <= 0)
+            return;
 
         GameObject selectedObj = null;
         // Perform a raycast if the finger is currently touching the screen 
@@ -47,6 +58,8 @@ public class Controller : MonoBehaviour
         }
 
         // First Touch ( is the deepest)
+
+
         if (Input.GetTouch(0).phase == TouchPhase.Began)
         {
             startTime = Time.time;
