@@ -7,5 +7,4 @@
 /captures
 
 #Keep APK file
-!app-debug.apk
-!app-release.apk
+!AndroidToUnityInterface.jar
