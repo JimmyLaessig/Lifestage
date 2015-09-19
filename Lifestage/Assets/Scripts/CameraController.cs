@@ -4,6 +4,8 @@ using System.Collections;
 public class CameraController : MonoBehaviour
 {
 
+    public SceneController sceneController;
+
     // The unique id of the user
     private string userID = "";
     
@@ -15,18 +17,18 @@ public class CameraController : MonoBehaviour
     public GameObject scene;
 
     private float startTime;
-    bool touchStarted = false;
+    bool doRaycast = false;
     // Use this for initialization
     void Start()
     {
-        
+
         // TODO:
         // Initialize Service Receiver for camera orientation
         // Initialize Service Command for vibra feedback
         // Perform Initial Rotation of the scene so that the scene will face inti the -z direction of the camera       
         Result r = new Result();
         r.correct = true;
-        r.userID = 1;
+        r.userID = "1";
         r.numElements = 10;
         r.time = Time.time;
 
@@ -35,9 +37,16 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+ 
         // TODO: Get current camera orientation from Service Interface
         GetInput();
-        if (touchStarted)
+        
+        
+            this.transform.Rotate(Vector3.up, Input.GetAxis("Horizontal") * 90 * Time.deltaTime);
+            this.transform.Rotate(Vector3.right, Input.GetAxis("Vertical") * 90 * Time.deltaTime);
+        
+        if (doRaycast)
         {
             // TODO: 
             // Draw Ray
@@ -47,30 +56,43 @@ public class CameraController : MonoBehaviour
 
     void GetInput()
     {
-        if (Input.touches.Length <= 0)
+
+        if (!sceneController.IsStarted | sceneController.IsFinished)
+        {
+           // Debug.Log("no user input");
             return;
+        }
+
+       // if (Input.touches.Length <= 0)
+       //     return;
 
         GameObject selectedObj = null;
+
         // Perform a raycast if the finger is currently touching the screen 
-        if (touchStarted)
+        if (doRaycast)
         {
             selectedObj = PerformRaycast();
+           // Debug.Log("Raycast hit: " + selectedObj);
         }
 
         // First Touch ( is the deepest)
-
-
-        if (Input.GetTouch(0).phase == TouchPhase.Began)
+        if (/*Input.GetTouch(0).phase == TouchPhase.Began) ||*/ Input.GetMouseButtonDown(0))
         {
             startTime = Time.time;
-            touchStarted = true;
+            doRaycast = true;               
         }
 
         // Touch event ended
-        else if (Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetTouch(0).phase == TouchPhase.Canceled)
+        if (/*Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetTouch(0).phase == TouchPhase.Canceled || */ Input.GetMouseButtonUp(0))
         {
             float timePassed = Time.time - startTime;
-            touchStarted = false;
+            doRaycast = false;
+          //  Debug.Log("Touch ended: " + selectedObj);
+            if (selectedObj)
+            {
+                Debug.Log(selectedObj.name + " selected!");
+                sceneController.FinishScene(selectedObj, timePassed, userID);
+            }
 
         }
     }

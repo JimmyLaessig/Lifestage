@@ -29,6 +29,8 @@ public class Result
     // Writes the state of the given Result to the XML File
     public static void WriteOutput(Result r)
     {
+
+        Debug.Log("Writing Result: " + "userID:" + r.userID + ", correct: " + r.correct + ", time: " + r.time + ", numElements: " + r.numElements);
         XmlSerializerNamespaces names = new XmlSerializerNamespaces();
         names.Add("", "");
 
@@ -44,6 +46,7 @@ public class Result
             byte[] newline = Encoding.ASCII.GetBytes("\n");
             stream.Write(newline, 0, newline.Length);
             stream.Flush();
+            
         }
     }
 }
