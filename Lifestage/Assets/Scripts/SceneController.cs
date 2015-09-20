@@ -54,7 +54,7 @@ public class SceneController : MonoBehaviour
 
             if (GUI.Button(new Rect(new Vector2(300, 300), new Vector2(100, 20)), "Start"))
             {
-                ClearScene();
+                ClearScene();               
                 GenerateScene();
                 isStarted = true;
             }
@@ -65,14 +65,15 @@ public class SceneController : MonoBehaviour
             if (GUI.Button(new Rect(new Vector2(300, 330), new Vector2(100, 20)), "Restart"))
             {
                 RestartScene();
+                SelectObject(null);
             }
-            //if (GUI.Button(new Rect(new Vector2(300, 360), new Vector2(100, 20)), "Next Scene"))
-            //{
-            //    ClearScene();
-            //    GenerateScene();
-            //    isStarted = false;
-            //    isFinished = false;
-            //}
+            if (GUI.Button(new Rect(new Vector2(300, 360), new Vector2(100, 20)), "Next Scene"))
+            {
+                ClearScene();
+                GenerateScene();
+                isStarted = true;
+                isFinished = false;
+            }
         }
     }
 
@@ -182,6 +183,8 @@ public class SceneController : MonoBehaviour
 
     public void ClearScene()
     {
+        SelectObject(null);
+
         // Remove all GameObjects from the scene to make room for the new scene
         for (int i = 0; i < gameObjectList.Count; i++)
         {
@@ -189,8 +192,6 @@ public class SceneController : MonoBehaviour
             gameObjectList.RemoveAt(i);
             Destroy(obj);
         }
-        isStarted = false;
-        isFinished = false;
     }
 
 
