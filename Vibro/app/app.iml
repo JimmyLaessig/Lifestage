@@ -23,6 +23,7 @@
         <option name="RES_FOLDER_RELATIVE_PATH" value="/src/main/res" />
         <option name="RES_FOLDERS_RELATIVE_PATH" value="file://$MODULE_DIR$/src/main/res" />
         <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/src/main/assets" />
+        <option name="LIBRARY_PROJECT" value="true" />
       </configuration>
     </facet>
   </component>
@@ -93,6 +94,7 @@
     <orderEntry type="library" exported="" name="commons-digester-1.8" level="project" />
     <orderEntry type="library" exported="" name="commons-beanutils-1.8.3" level="project" />
     <orderEntry type="library" exported="" name="commons-validator-1.4.0" level="project" />
+    <orderEntry type="library" exported="" name="classes" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.0.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.0.1" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.0.1" level="project" />
