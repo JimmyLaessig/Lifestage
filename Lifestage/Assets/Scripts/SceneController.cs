@@ -20,39 +20,28 @@ public class SceneController : MonoBehaviour
     public int numElements = 0;
     // Max number of elements in the scene
     public int maxElements = 20;
+    
+    // A Collection of Primitves to choose from for the scene
+    public PrimitiveType[] primitiveTypes = { PrimitiveType.Cube, PrimitiveType.Sphere, PrimitiveType.Cylinder, PrimitiveType.Capsule };
+    // A Collection of Materials to choose from for the primitives
+    public Material[] materials = { };
 
-    // The GameObejct that describes the spawn area
-    public GameObject spawnArea;
 
     private bool isStarted = false;
     private bool isFinished = false;
 
     // The GameObject to select in the current scene
     private GameObject targetObj;
-
-    // A List to store all gameObjects in the scene
+    // A List to store the generated GameObjects
     private List<GameObject> gameObjectList;
+    
+    private GameObject selectedObj;
+    private Material selectedObjMaterial;
 
-    public PrimitiveType[] primitiveTypes = { PrimitiveType.Cube, PrimitiveType.Sphere, PrimitiveType.Cylinder, PrimitiveType.Capsule };
-    public Material[] materials = { };
+    public Material highlightingMaterial;
 
-
-
-
-    // Use this for initialization
     void Start()
-    {
-        if (!spawnArea)
-        {
-            Debug.Log("Scene must have a defined spawn area");
-            return;
-        }
-        if (!spawnArea.GetComponent<MeshRenderer>())
-        {
-            Debug.Log("Spawn area must have a defined geometry mesh");
-            return;
-        }
-
+    {     
         gameObjectList = new List<GameObject>();
     }
 
@@ -73,31 +62,50 @@ public class SceneController : MonoBehaviour
         // Show GUI if scene is finished
         if (isFinished)
         {
-            if (GUI.Button(new Rect(new Vector2(300, 300), new Vector2(100, 20)), "Reset"))
+            if (GUI.Button(new Rect(new Vector2(300, 330), new Vector2(100, 20)), "Restart"))
             {
-                ResetScene();
+                RestartScene();
             }
-            if (GUI.Button(new Rect(new Vector2(300, 500), new Vector2(100, 20)), "Next Scene"))
-            {
-                ClearScene();
-                GenerateScene();
-                isStarted = true;
-            }
+            //if (GUI.Button(new Rect(new Vector2(300, 360), new Vector2(100, 20)), "Next Scene"))
+            //{
+            //    ClearScene();
+            //    GenerateScene();
+            //    isStarted = false;
+            //    isFinished = false;
+            //}
         }
     }
 
 
-    // Update is called once per frame
-    void Update()
+    // Call this funtion when an object was selected. 
+    // Sets the GameObject to a selected state, highlighting it in the scene.
+    // if the given GameObject is NULL the function reset the previous selected GameObject to its default state
+    public void SelectObject(GameObject obj) 
     {
+        // Restore the previous GameObject.
+       if (selectedObj)
+            selectedObj.GetComponent<Renderer>().material = selectedObjMaterial;
 
+        selectedObj = obj;
+
+        // Set the obj as selected object and save its default material
+        if (obj)
+        {
+            selectedObjMaterial = selectedObj.GetComponent<Renderer>().material;
+            selectedObj.GetComponent<Renderer>().material = highlightingMaterial;
+        }
     }
 
-    //
-    // This method is called when the scene is finished
-    // 
-    public bool FinishScene(GameObject selectedObj, float time, string userID)
+
+    // This method is called when the user wants to finish the scene.
+    // It uses the previously selected gameObject to determine the interactions' success.
+    // Lastly it writes the result to the XML-File.
+    public bool Finish( float time, string userID)
     {
+        Debug.Log("Finish Called!");
+        if (!selectedObj)
+            return false;
+        
         if (!targetObj)
         {
             Debug.Log("Target Object not set! This should not happen!");
@@ -105,9 +113,6 @@ public class SceneController : MonoBehaviour
         }
 
         bool correct = false;
-
-        if (!selectedObj)
-            correct = false;
 
         if (selectedObj == targetObj)
             correct = true;
@@ -120,11 +125,15 @@ public class SceneController : MonoBehaviour
         r.numElements = gameObjectList.Count;
         Result.WriteOutput(r);
 
+
         isFinished = true;
+
         return true;
     }
 
 
+    // Generates a scene containing previously defined number of objects
+    // Note: Call ClearScene before generating a scene to avoid misbehaviour
     public void GenerateScene()
     {
         int count = numElements;
@@ -139,15 +148,15 @@ public class SceneController : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
 
-            Bounds bounds = spawnArea.GetComponent<MeshFilter>().mesh.bounds;
+            Bounds bounds = GetComponent<MeshFilter>().mesh.bounds;
             // Position
             Vector3 position;
             position.x = Random.Range(bounds.min.x, bounds.max.x);
             position.y = Random.Range(bounds.min.x, bounds.max.y);
             position.z = Random.Range(bounds.min.z, bounds.max.z);
 
-            position.Scale(spawnArea.transform.localScale);
-            position += spawnArea.transform.position;
+            position.Scale(transform.localScale);
+            position += transform.position;
 
             // Rotation
             Quaternion rotation = Random.rotation;
@@ -158,7 +167,6 @@ public class SceneController : MonoBehaviour
             // Material
             Material material = materials[Random.Range(0, materials.Length - 1)];
 
-
             // Create GameObject
             GameObject obj = GameObject.CreatePrimitive(type);
             obj.transform.position = position;
@@ -166,42 +174,37 @@ public class SceneController : MonoBehaviour
             obj.GetComponent<Renderer>().material = material;
 
             gameObjectList.Add(obj);
-            targetObj = obj;
+
+            targetObj = obj;    // TODO: Change this: Set TargetObject to actual target specified by SelectMode
         }
     }
 
 
     public void ClearScene()
     {
-        // Remove all gameObjects from the scene to make room for the new scene
+        // Remove all GameObjects from the scene to make room for the new scene
         for (int i = 0; i < gameObjectList.Count; i++)
         {
             GameObject obj = gameObjectList[i];
             gameObjectList.RemoveAt(i);
             Destroy(obj);
         }
-
         isStarted = false;
         isFinished = false;
     }
 
 
-    // Resets the scene to the last state
-    public void ResetScene()
+    // Resets the scene to the generated state
+    public void RestartScene()
     {
         isStarted = true;
         isFinished = false;
     }
 
 
-    public bool IsStarted
+    // Returns true whether the scene is curently running
+    public bool IsRunning
     {
-        get { return isStarted; }
-    }
-
-
-    public bool IsFinished
-    {
-        get { return isFinished; }
+        get { return (isStarted && !isFinished); }
     }
 }

@@ -45,8 +45,7 @@ public class Result
             serializer.Serialize(writer, r, names);
             byte[] newline = Encoding.ASCII.GetBytes("\n");
             stream.Write(newline, 0, newline.Length);
-            stream.Flush();
-            
+            stream.Flush();            
         }
     }
 }
