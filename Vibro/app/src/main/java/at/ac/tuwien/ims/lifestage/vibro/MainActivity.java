@@ -94,11 +94,11 @@ public class MainActivity extends UnityPlayerActivity {
         Event e;
         String command="";
 
-        if(p.active){
+        if(p.active) {
             Log.e("active: ", ""+p.ID);
             command+="_";
             command+=""+p.eventCount+"_";
-            for(int j=0;j<p.eventCount;j++){
+            for(int j=0;j<p.eventCount;j++) {
                 e=p.eventList.get(j);
                 command+=e.acId;
                 command+="_"+e.intensity;
