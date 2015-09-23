@@ -24,10 +24,10 @@ public class TrackCamera : MonoBehaviour
     {
 
 
-        bool bla = true;
-        if (bla = orientationTracker.GetStatic<bool>("buttonPressed"));
+       // bool bla = true;
+       // if (bla = orientationTracker.GetStatic<bool>("buttonPressed"));
 
-        GUI.Label(new Rect(200, 200, 200, 200), "ButtonPressed: " + bla);
+       // GUI.Label(new Rect(200, 200, 200, 200), "ButtonPressed: " + bla);
     }
 
 
