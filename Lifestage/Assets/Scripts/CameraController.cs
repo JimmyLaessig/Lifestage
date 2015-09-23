@@ -1,11 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+/// <summary>
+/// This class handles the control of the camera whithin the scene as well as user input for the selection interaction.
+/// </summary>
+[RequireComponent(typeof(Camera))]
 public class CameraController : MonoBehaviour
 {
 
     public SceneController sceneController;
 
+    private TrackCamera trackCamera;
+
+    private VibrationProvider vibrationProvider;
     // The unique id of the user
     private string userID = "";
 
@@ -21,72 +27,69 @@ public class CameraController : MonoBehaviour
     private bool doRaycast = false;
 
 
-    // Use this for initialization
+    /// <summary>
+    /// Unity Callback
+    /// Start is called once the script is initialized.
+    /// </summary>
     void Start()
     {
+        trackCamera = GetComponentInChildren<TrackCamera>();
+        if (!trackCamera)
+            Debug.Log("CameraController must have a child attached with a TrackCamera-Script!!");
 
-        // TODO:
-        // Initialize Service Receiver for camera orientation
-        // Initialize Service Command for vibra feedback
-        // Perform Initial Rotation of the camera so that the scene will face in the z direction of the camera       
-        Result r = new Result();
-        r.correct = true;
-        r.userID = "1";
-        r.numElements = 10;
-        r.time = Time.time;
 
+        vibrationProvider = GetComponentInChildren<VibrationProvider>();
+        if (!vibrationProvider)
+            Debug.Log("CameraController must have a child attached with a VibrationProvider!!");
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Unity Callback
+    /// Update is called once per frame
+    /// </summary>
     void Update()
     {
-        // TODO: Get current camera orientation from Service Interface
-        this.transform.Rotate(Vector3.up, Input.GetAxis("Horizontal") * 90 * Time.deltaTime);
-        this.transform.Rotate(Vector3.right, Input.GetAxis("Vertical") * 90 * Time.deltaTime);
+        // Get the latest rotation of the camera Tracker
+        if (trackCamera)
+            this.transform.rotation = trackCamera.transform.rotation;
 
         // Process Touch Input
         GetInput();
     }
 
-    // This function processes the input for the interaction
+
+    /// <summary>
+    /// This function processes the input for the interaction
+    /// </summary>
     void GetInput()
     {
-
         // Only Process the Input while the scene is running.
         if (!sceneController.IsRunning)
-            return;
+            return; 
 
-        // No touches mean no Input. 
-        // if (Input.touches.Length <= 0)
-        //     return;      
-
-        // First Touch ( is the deepest).
-        //  if (Input.GetTouch(0).phase == TouchPhase.Began)
+        // First Touch ( is the deepest).        
         if (Input.GetMouseButtonDown(0))
-        {
-            //Debug.Log("Mouse down");
+        {           
             startTime = Time.time;
             doRaycast = true;
         }
 
         // Perform a raycast if the finger is currently touching the screen 
         if (doRaycast)
-        {
-            //Debug.Log("Performing Raycast");
+        {            
             GameObject selectedObj = PerformRaycast();
             sceneController.SelectObject(selectedObj);
             if (selectedObj)
             {
                 float distance = (this.transform.position - selectedObj.transform.position).magnitude;
-                DoVibration(distance);
+                vibrationProvider.CalculateVibrationPattern(distance);
             }
         }
 
         // Touch event ended.
-        // if(Input.GetTouch(0).phase == TouchPhase.Ended || Input.GetTouch(0).phase == TouchPhase.Canceled)
+       
         if (Input.GetMouseButtonUp(0))
         {
-            //Debug.Log("Mouse up");
             float timePassed = Time.time - startTime;
             doRaycast = false;
             sceneController.Finish(timePassed, userID);
@@ -94,14 +97,10 @@ public class CameraController : MonoBehaviour
     }
 
 
-    void DoVibration(float distance)
-    {
-        // TODO: Trigger vibration depending on the distance and a Vibration Pattern     
-    }
-
-
-    // Performs a raycast from in the look direction from the current camera position with the previously defined offset
-    // Returns a GameObject if the ray hits it, otherwhise NULL.
+    /// <summary>
+    /// Performs a raycast from in the look direction from the current camera position with the previously defined offset
+    /// </summary>
+    /// <returns>Returns a GameObject if the ray hits it, otherwhise NULL.</returns>
     private GameObject PerformRaycast()
     {
         // TODO Draw Ray
