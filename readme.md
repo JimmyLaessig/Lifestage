@@ -14,7 +14,8 @@ Beinhaltet den Deviceorientation Service.
 ###VibroButton
 Beinhaltet den Code für SparkCore Button Service
 
-
+###SparkAuth.txt
+Das File mit ID und Sessiontoken des verwendeten SparkCores, muss auf die SDCard des Smartphones platziert werden.
 
 
 

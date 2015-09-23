@@ -2,9 +2,15 @@ package at.ac.tuwien.ims.lifestage.vibro;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 
 import com.unity3d.player.UnityPlayerActivity;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 import at.ac.tuwien.ims.lifestage.vibro.Entity.Event;
 import at.ac.tuwien.ims.lifestage.vibro.Entity.Pattern;
@@ -54,8 +60,7 @@ public class MainActivity extends UnityPlayerActivity {
      * @return true if connecting else false
      */
     public boolean connect() {
-        //todo read id and token from file?
-        connectionManager =new SparkManager("48ff71065067555011472387", "20e1ee31e3f0b0ecace2820c73ab71f5966acbf6");
+        initSpark();
 
         if (!WifiUtil.isOnline(this)) {
             Log.d(getClass().getName(), "no Internet connection.. ");
@@ -75,6 +80,32 @@ public class MainActivity extends UnityPlayerActivity {
             connectionManager.connectToCore(ip);
         }
         return true;
+    }
+
+    private void initSpark() {
+        File sdcard = Environment.getExternalStorageDirectory();
+        File file = new File(sdcard,"SparkAuth.txt");
+        String id="";
+        String token="";
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                if(line.startsWith("id")) {
+                    id=line.substring(line.indexOf('=')+1);
+                }
+                if(line.startsWith("token")) {
+                    token=line.substring(line.indexOf('=')+1);
+                }
+            }
+            br.close();
+        } catch (IOException e) {}
+
+        if(!id.equals("") && !token.equals(""))
+            connectionManager=new SparkManager(id, token);
+        //connectionManager=new SparkManager("48ff71065067555011472387", "20e1ee31e3f0b0ecace2820c73ab71f5966acbf6");
     }
 
     /**
