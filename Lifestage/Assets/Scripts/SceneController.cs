@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 
 
+/// <summary>
+/// SceneController handles the applications major scene logic by providing generation functions
+/// and winning conditions.
+/// it handles UI Input and provides functionality for selecting an object, including highlighting
+/// </summary>
 
-
+[RequireComponent(typeof(MeshFilter))]
 public class SceneController : MonoBehaviour
 {
 
@@ -20,7 +25,7 @@ public class SceneController : MonoBehaviour
     public int numElements = 0;
     // Max number of elements in the scene
     public int maxElements = 20;
-    
+
     // A Collection of Primitves to choose from for the scene
     public PrimitiveType[] primitiveTypes = { PrimitiveType.Cube, PrimitiveType.Sphere, PrimitiveType.Cylinder, PrimitiveType.Capsule };
     // A Collection of Materials to choose from for the primitives
@@ -34,27 +39,82 @@ public class SceneController : MonoBehaviour
     private GameObject targetObj;
     // A List to store the generated GameObjects
     private List<GameObject> gameObjectList;
-    
+
     private GameObject selectedObj;
     private Material selectedObjMaterial;
 
     public Material highlightingMaterial;
 
+
+    /// <summary>
+    /// Unity Callback
+    /// Start is called once the script is initialized.
+    /// </summary>
     void Start()
-    {     
+    {
         gameObjectList = new List<GameObject>();
     }
 
-
+    /// <summary>
+    /// Unity Callback
+    /// OnGUI is called for rendering and handling GUI events.
+    /// </summary>
     void OnGUI()
     {
-        // Show GUI if scene is not yet started
+        if (!IsRunning)
+        {
+            int relativeWidth = Screen.width / 5;
+
+
+            int relativePosX = (Screen.width - relativeWidth) / 2;
+            int relativePosY = (Screen.height) / 2;
+
+            Rect window = new Rect(relativePosX, relativePosY, 0, 0);
+            // Show GUI if scene is not yet started
+            window = GUILayout.Window(0, window, OptionsWindow, "", GUILayout.Width(relativeWidth));
+            GUI.skin.button.fontSize = 30;
+        }
+        else
+        {
+            int relativeWidth = Screen.width / 4;
+            int relativeSizeY = Screen.height / 10;
+
+            Rect window = new Rect(0, 0, 0, 0);
+            // Show GUI if scene is not yet started
+            window = GUILayout.Window(0, window, MakeInfoWindow, "", GUILayout.Width(relativeWidth));
+            GUI.skin.label.fontSize = 15;
+
+        }
+    }
+
+    /// <summary>
+    /// Creates the main options window
+    /// </summary>
+    /// <param name="id"></param>
+    void MakeInfoWindow(int id)
+    {
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("<b>Number of Elements:</b>");
+        GUILayout.Label(gameObjectList.Count.ToString());
+        GUILayout.EndHorizontal();
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("<b>SelectionMode:</b>");
+        GUILayout.Label(SELECTMODE.ToString());
+        GUILayout.EndHorizontal();
+    }
+
+    /// <summary>
+    /// Creates the information overlay displaying the current SelectionMode and number of elements in the scene
+    /// </summary>
+    /// <param name="id"></param>
+    void OptionsWindow(int id)
+    {
         if (!isStarted)
         {
-
-            if (GUI.Button(new Rect(new Vector2(300, 300), new Vector2(100, 20)), "Start"))
+            if (GUILayout.Button("Start"))
             {
-                ClearScene();               
+                ClearScene();
                 GenerateScene();
                 isStarted = true;
             }
@@ -62,12 +122,13 @@ public class SceneController : MonoBehaviour
         // Show GUI if scene is finished
         if (isFinished)
         {
-            if (GUI.Button(new Rect(new Vector2(300, 330), new Vector2(100, 20)), "Restart"))
+            if (GUILayout.Button("Restart"))
             {
                 RestartScene();
                 SelectObject(null);
             }
-            if (GUI.Button(new Rect(new Vector2(300, 360), new Vector2(100, 20)), "Next Scene"))
+            GUILayout.Space(10);
+            if (GUILayout.Button("Next Scene"))
             {
                 ClearScene();
                 GenerateScene();
@@ -77,14 +138,16 @@ public class SceneController : MonoBehaviour
         }
     }
 
-
-    // Call this funtion when an object was selected. 
-    // Sets the GameObject to a selected state, highlighting it in the scene.
-    // if the given GameObject is NULL the function reset the previous selected GameObject to its default state
-    public void SelectObject(GameObject obj) 
+    /// <summary>
+    /// Call this funtion when an object was selected. 
+    /// Sets the GameObject to a selected state, highlighting it in the scene.
+    /// If the given GameObject is NULL the function reset the previous selected GameObject to its default state.
+    /// </summary>
+    /// <param name="obj">The GameObject to be selected</param>
+    public void SelectObject(GameObject obj)
     {
         // Restore the previous GameObject.
-       if (selectedObj)
+        if (selectedObj)
             selectedObj.GetComponent<Renderer>().material = selectedObjMaterial;
 
         selectedObj = obj;
@@ -98,15 +161,24 @@ public class SceneController : MonoBehaviour
     }
 
 
-    // This method is called when the user wants to finish the scene.
-    // It uses the previously selected gameObject to determine the interactions' success.
-    // Lastly it writes the result to the XML-File.
-    public bool Finish( float time, string userID)
+    /// <summary>
+    /// This method is called when the user wants to finish the scene.
+    /// It uses the previously selected gameObject to determine the interactions' success.
+    /// Lastly it writes the result to the XML-File.
+    /// </summary>
+    /// <param name="time">The duration of the interaction</param>
+    /// <param name="userID">The unique id of the user</param>
+    /// <returns>True if all winning conditions are met (An Object was previously selected)</returns>
+    public bool Finish(float time, string userID)
     {
+
+        if (!IsRunning)
+            return false;
+
         Debug.Log("Finish Called!");
         if (!selectedObj)
             return false;
-        
+
         if (!targetObj)
         {
             Debug.Log("Target Object not set! This should not happen!");
@@ -133,8 +205,10 @@ public class SceneController : MonoBehaviour
     }
 
 
-    // Generates a scene containing previously defined number of objects
-    // Note: Call ClearScene before generating a scene to avoid misbehaviour
+    /// <summary>
+    /// Generates a scene containing previously defined number of objects.
+    /// Note: Call ClearScene before generating a scene to avoid misbehaviour.
+    /// </summary>
     public void GenerateScene()
     {
         int count = numElements;
@@ -180,7 +254,9 @@ public class SceneController : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Clear the current scene and destroys all elements within this scene.
+    /// </summary>
     public void ClearScene()
     {
         SelectObject(null);
@@ -195,7 +271,9 @@ public class SceneController : MonoBehaviour
     }
 
 
-    // Resets the scene to the generated state
+    /// <summary>
+    /// Restarts the scene
+    /// </summary>
     public void RestartScene()
     {
         isStarted = true;
@@ -203,7 +281,9 @@ public class SceneController : MonoBehaviour
     }
 
 
-    // Returns true whether the scene is curently running
+    /// <summary>
+    /// Returns true whether the scene is curently running (e.g. selection of an object is possible
+    /// </summary>
     public bool IsRunning
     {
         get { return (isStarted && !isFinished); }
