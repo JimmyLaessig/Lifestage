@@ -1,4 +1,0 @@
-sclibs
-======
-
-Libraries for SparkApp
