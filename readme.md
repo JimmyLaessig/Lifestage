@@ -11,7 +11,7 @@ Das File mit ID und Sessiontoken des verwendeten SparkCores, muss auf die SDCard
 
 
 ##DEPRECATED
-OrientationTracker - *not used* 
-OrientationService - *not used* 
-VibroButton - *not used* 
+OrientationTracker - *not used* <br />
+OrientationService - *not used* <br />
+VibroButton - *not used* <br />
 AndroidToUnityInterface - *not used* 
