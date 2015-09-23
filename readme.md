@@ -1,23 +1,17 @@
 #VIBRO
-###AndroidToUnityInterface
-Beinhaltet die Receiver/Sender-Java-Klassen, die als Schnittstelle zwischen dem Service und dem Unity Projekt dienen sollen.
-
 ###Lifestage
 Das Unity Projekt.
 
 ###Vibro
-Beinhaltet den Service für die Verbindung zwischen Android und dem SparkCore.
-
-###OrientationService
-Beinhaltet den Deviceorientation Service.
-
-###VibroButton
-Beinhaltet den Code für SparkCore Button Service
+Beinhaltet den Service für die Verbindung zwischen Android und dem SparkCore sowie den OrientationService.
 
 ###SparkAuth.txt
 Das File mit ID und Sessiontoken des verwendeten SparkCores, muss auf die SDCard des Smartphones platziert werden.
 
 
 
-##OLD
+##DEPRECTAED
 OrientationTracker - not used
+OrientationService - not used
+VibroButton - not used
+AndroidToUnityInterface - not used
