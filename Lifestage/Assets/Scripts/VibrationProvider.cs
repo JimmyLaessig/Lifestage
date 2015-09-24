@@ -21,17 +21,14 @@ public class VibrationProvider : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-                buttonState = activity.Call<int>("getStatus");
-            
-        
+       //         buttonState = activity.Call<int>("getConnectionState");                   
     }
 
 
 
     public void OnGUI()
     {
-        GUI.Label(new Rect(200, 200, 200, 200), "ButtonState:" + buttonState);
+     //   GUI.Label(new Rect(200, 200, 200, 200), "ButtonState:" + buttonState);
     }
 
 

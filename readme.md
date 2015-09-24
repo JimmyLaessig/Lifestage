@@ -3,11 +3,11 @@
 Das Unity Projekt.
 
 ###Vibro
-Beinhaltet den Service für die Verbindung zwischen Android und dem SparkCore sowie den OrientationService.
+Beinhaltet den Service fÃ¼r die Verbindung zwischen Android und dem SparkCore sowie den OrientationService.
 
 
-##DEPRECTAED
-OrientationTracker - not used
-OrientationService - not used
-VibroButton - not used
-AndroidToUnityInterface - not used
+##DEPRECATED
+OrientationTracker - *not used* <br />
+OrientationService - *not used* <br />
+VibroButton - *not used* <br />
+AndroidToUnityInterface - *not used* 
