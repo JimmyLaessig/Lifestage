@@ -9,12 +9,12 @@ public class CameraController : MonoBehaviour
 
     public SceneController sceneController;
 
-    private TrackCamera trackCamera;
+    private TrackMobileGyroscope gyroTracker;
 
     private VibrationProvider vibrationProvider;
     // The unique id of the user
     private string userID = "";
-
+    public Vector3 offsetToScene = new Vector3(0, 0, -1);
     // Offset to the ray position such that the ray does not go through the exact center of the camera
     public Vector3 rayOffset = new Vector3(0, -0.5f, 0);
 
@@ -33,8 +33,9 @@ public class CameraController : MonoBehaviour
     /// </summary>
     void Start()
     {
-        trackCamera = GetComponentInChildren<TrackCamera>();
-        if (!trackCamera)
+        this.transform.Translate(offsetToScene);
+        gyroTracker = GetComponentInChildren<TrackMobileGyroscope>();
+        if (!gyroTracker)
             Debug.Log("CameraController must have a child attached with a TrackCamera-Script!!");
 
 
@@ -43,6 +44,7 @@ public class CameraController : MonoBehaviour
             Debug.Log("CameraController must have a child attached with a VibrationProvider!!");
     }
 
+
     /// <summary>
     /// Unity Callback
     /// Update is called once per frame
@@ -50,8 +52,8 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         // Get the latest rotation of the camera Tracker
-        if (trackCamera)
-            this.transform.rotation = trackCamera.transform.rotation;
+        if (gyroTracker)
+            this.transform.rotation = gyroTracker.transform.rotation;
 
         // Process Touch Input
         GetInput();

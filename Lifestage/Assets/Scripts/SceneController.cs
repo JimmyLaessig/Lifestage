@@ -65,7 +65,6 @@ public class SceneController : MonoBehaviour
         {
             int relativeWidth = Screen.width / 5;
 
-
             int relativePosX = (Screen.width - relativeWidth) / 2;
             int relativePosY = (Screen.height) / 2;
 
@@ -87,6 +86,7 @@ public class SceneController : MonoBehaviour
         }
     }
 
+
     /// <summary>
     /// Creates the main options window
     /// </summary>
@@ -103,6 +103,7 @@ public class SceneController : MonoBehaviour
         GUILayout.Label(SELECTMODE.ToString());
         GUILayout.EndHorizontal();
     }
+
 
     /// <summary>
     /// Creates the information overlay displaying the current SelectionMode and number of elements in the scene
@@ -137,6 +138,7 @@ public class SceneController : MonoBehaviour
             }
         }
     }
+
 
     /// <summary>
     /// Call this funtion when an object was selected. 
