@@ -112,15 +112,44 @@ public class MainActivity extends UnityPlayerActivity {
      *
      * @return true if pattern was sent else false
      */
-    public boolean send() {
+    public boolean sendPattern(Pattern pattern) {
+        if(connectionManager==null || pattern==null)
+            return false;
+
+        String command="";
+        command+="_";
+        command+=""+pattern.eventList.size()+"_";
+        Event e;
+        for(int j=0; j<pattern.eventList.size(); j++) {
+            e=pattern.eventList.get(j);
+            command+=e.acId;
+            command+="_"+e.intensity;
+            command+="_"+e.targetIntensity;
+            command+="_"+e.duration;
+            command+="_"+e.pauseAfter;
+            command+="_";
+        }
+        command+=pattern.repeat;
+        command+="_";
+        Log.d("sent command: ", command);
+
+        connectionManager.sendCommand_executePattern(command);
+        return true;
+    }
+
+    /**
+     * Sends a test pattern to Spark Core.
+     *
+     * @return true if pattern was sent else false
+     */
+    public boolean sendTestPattern() {
         if(connectionManager ==null)
             return false;
 
-        //todo get pattern data from Unity
         ArrayList<Event> events=new ArrayList<>();
         events.add(new Event(0, 0, 100, 1750, 250));
         events.add(new Event(1, 100, 0, 1750, 250));
-        Pattern p=new Pattern(1, 0, events);
+        Pattern p=new Pattern(0, events);
 
         String command="";
         command+="_";

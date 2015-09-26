@@ -9,12 +9,10 @@ import java.util.ArrayList;
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
 public class Pattern {
-    public int ID;
     public int repeat;
     public ArrayList<Event> eventList;
 
-    public Pattern(int ID, int repeat, ArrayList<Event> eventList){
-        this.ID=ID;
+    public Pattern(int repeat, ArrayList<Event> eventList){
         this.repeat=repeat;
         this.eventList = eventList;
     }

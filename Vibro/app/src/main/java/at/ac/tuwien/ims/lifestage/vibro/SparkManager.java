@@ -297,7 +297,7 @@ public class SparkManager {
             try {
                 output.write(command.getBytes());
                 output.flush();
-                Log.d(TAG, "send: " + command);
+                Log.d(TAG, "sendPattern: " + command);
             } catch (IOException e) {
             }
         }
