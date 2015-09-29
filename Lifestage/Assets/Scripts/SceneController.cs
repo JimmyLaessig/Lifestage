@@ -61,6 +61,7 @@ public class SceneController : MonoBehaviour
     /// </summary>
     void OnGUI()
     {
+
         if (!IsRunning)
         {
             int relativeWidth = Screen.width / 5;
@@ -73,35 +74,15 @@ public class SceneController : MonoBehaviour
             window = GUILayout.Window(0, window, OptionsWindow, "", GUILayout.Width(relativeWidth));
             GUI.skin.button.fontSize = 30;
         }
-        else
-        {
-            int relativeWidth = Screen.width / 4;
-            int relativeSizeY = Screen.height / 10;
 
-            Rect window = new Rect(0, 0, 0, 0);
-            // Show GUI if scene is not yet started
-            window = GUILayout.Window(0, window, MakeInfoWindow, "", GUILayout.Width(relativeWidth));
-            GUI.skin.label.fontSize = 15;
+        int relativeInfoWidth = Screen.width / 4;
+        int relativeInfoHeight = Screen.height / 10;
 
-        }
-    }
+        Rect infoWindow = new Rect(0, 0, 0, 0);
+        // Show GUI if scene is not yet started
+        infoWindow = GUILayout.Window(1, infoWindow, MakeInfoWindow, "", GUILayout.Width(relativeInfoWidth));
+        GUI.skin.label.fontSize = 15;
 
-
-    /// <summary>
-    /// Creates the main options window
-    /// </summary>
-    /// <param name="id"></param>
-    void MakeInfoWindow(int id)
-    {
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("<b>Number of Elements:</b>");
-        GUILayout.Label(gameObjectList.Count.ToString());
-        GUILayout.EndHorizontal();
-
-        GUILayout.BeginHorizontal();
-        GUILayout.Label("<b>SelectionMode:</b>");
-        GUILayout.Label(SELECTMODE.ToString());
-        GUILayout.EndHorizontal();
     }
 
 
@@ -137,6 +118,24 @@ public class SceneController : MonoBehaviour
                 isFinished = false;
             }
         }
+    }
+
+
+
+
+    /// <summary>
+    /// Creates the main options window
+    /// </summary>
+    /// <param name="id"></param>
+    void MakeInfoWindow(int id)
+    {
+        GUILayout.Label("<b>Number of Elements:</b>" + gameObjectList.Count.ToString());
+        GUILayout.Label("<b>SelectionMode:</b>" + SELECTMODE.ToString());
+        GUILayout.Label("Touch Count:" + Input.touchCount);
+        if (selectedObj)
+            GUILayout.Label("Selected Object:" + selectedObj.name);
+        else
+            GUILayout.Label("Selected Object: - ");
     }
 
 
@@ -198,8 +197,7 @@ public class SceneController : MonoBehaviour
         r.correct = correct;
         r.time = time;
         r.numElements = gameObjectList.Count;
-        Result.WriteOutput(r);
-
+        //Result.WriteOutput(r);
 
         isFinished = true;
 
