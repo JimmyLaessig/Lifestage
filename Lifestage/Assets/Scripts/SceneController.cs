@@ -79,11 +79,11 @@ public class SceneController : MonoBehaviour
             GUI.skin.button.fontSize = 30;
         }
 
-        //int relativeInfoWidth = Screen.width / 4;
+        int relativeInfoWidth = Screen.width / 4;
 
-        //Rect infoWindow = new Rect(0, 0, 0, 0);
-        //// Show GUI if scene is not yet started
-        //infoWindow = GUILayout.Window(1, infoWindow, MakeInfoWindow, "", GUILayout.Width(relativeInfoWidth));
+        Rect infoWindow = new Rect(0, 0, 0, 0);
+        // Show GUI if scene is not yet started
+        infoWindow = GUILayout.Window(1, infoWindow, MakeInfoWindow, "", GUILayout.Width(relativeInfoWidth));
         GUI.skin.label.fontSize = 15;
 
     }

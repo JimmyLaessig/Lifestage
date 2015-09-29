@@ -28,9 +28,16 @@ public class MainActivity extends UnityPlayerActivity {
 
     @Override
     protected void onCreate(Bundle bundle) {
+        Log.d(getClass().getName(), "oncreate called");
         super.onCreate(bundle);
         context = this;
         orientationTracker=new OrientationTracker(this);
+    }
+
+    @Override
+    protected void onDestroy () {
+        disconnect();
+        super.onDestroy();
     }
 
     /**
@@ -73,6 +80,7 @@ public class MainActivity extends UnityPlayerActivity {
      *
      */
     public void disconnect() {
+        Log.d(getClass().getName(), "disconnect called");
         if(connectionManager !=null)
             connectionManager.disconnect();
     }
@@ -82,7 +90,9 @@ public class MainActivity extends UnityPlayerActivity {
      *
      */
     public void connect(String id, String token) {
-        if(!id.equals("") && !token.equals("")) {
+        Log.d(getClass().getName(), "connect called");
+
+        if(id.equals("") || token.equals("")) {
             Log.d(getClass().getName(), "invalid id or token");
             return;
         }
@@ -113,6 +123,8 @@ public class MainActivity extends UnityPlayerActivity {
      * @return true if pattern was sent else false
      */
     public boolean sendPattern(Pattern pattern) {
+        Log.d(getClass().getName(), "sendpattern called");
+
         if(connectionManager==null || pattern==null)
             return false;
 
@@ -140,11 +152,11 @@ public class MainActivity extends UnityPlayerActivity {
     /**
      * Sends a test pattern to Spark Core.
      *
-     * @return true if pattern was sent else false
      */
-    public boolean sendTestPattern() {
+    public void sendTestPattern() {
+        Log.d(getClass().getName(), "sent test pattern called");
         if(connectionManager ==null)
-            return false;
+            return;
 
         ArrayList<Event> events=new ArrayList<>();
         events.add(new Event(0, 0, 100, 1750, 250));
@@ -169,6 +181,5 @@ public class MainActivity extends UnityPlayerActivity {
         Log.d("sent command: ", command);
 
         connectionManager.sendCommand_executePattern(command);
-        return true;
     }
 }

@@ -18,7 +18,7 @@ public class PluginManager : MonoBehaviour
     private float distance = -1;
 
     // Intervall in which the vibrations of a certain pattern are triggered in seconds
-    public float vibrationIntervall = 0.5f;
+    public float vibrationIntervall = 5f;
     private float timeStamp = 0;
 
     // Use this for initialization
@@ -27,11 +27,10 @@ public class PluginManager : MonoBehaviour
         using (AndroidJavaClass jc = new AndroidJavaClass(MAIN_ACTIVITY_CLASS_NAME))
         {
             pluginActivity = jc.GetStatic<AndroidJavaObject>("context");
+		}
 
-            //ConnectToSparkCore();
-        }
+		ConnectToSparkCore();
     }
-
 
     void ConnectToSparkCore()
     {
@@ -47,6 +46,18 @@ public class PluginManager : MonoBehaviour
         pluginActivity.Call("disconnect");
     }
 
+	/**
+     * Returns the status between the device and the SparkCore.
+     *
+     * CONNECTED = 1;
+     * CONNECTING = 2;
+     * NOT_CONNECTED = 3;
+     */
+	int GetConnectionStateFromCore()
+	{
+		return pluginActivity.Call<int>("getConnectionState");
+	}
+
 
     // Update is called once per frame
     void Update()
@@ -58,7 +69,6 @@ public class PluginManager : MonoBehaviour
 
     private void UpdateVibration()
     {
-
         timeStamp += Time.deltaTime;
         // Reset the timeStamp to not trigger the event
         if (distance < 0)
@@ -67,10 +77,15 @@ public class PluginManager : MonoBehaviour
         if (timeStamp >= vibrationIntervall)
         {
             timeStamp -= vibrationIntervall;
-            // pluginActivity.Call("sendTestPattern");
+			sendPattern();
             // TODO: Either calculate Pattern on Unity Site ( very extensive) or create Method in Vibro.jar that calculates Pattern based on distance and VibrationIntervall            
         }
     }
+	
+	private void sendPattern()
+	{
+		pluginActivity.Call ("sendTestPattern");
+	}
 
 
     private void UpdateCameraOrientation()
