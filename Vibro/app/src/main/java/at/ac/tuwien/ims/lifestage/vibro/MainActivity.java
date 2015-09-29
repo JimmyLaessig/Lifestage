@@ -50,7 +50,7 @@ public class MainActivity extends UnityPlayerActivity {
      * @return the orientation matrix as float array
      */
     public float[] getOrientationMatrix() {
-        if(connectionManager==null)
+        if(orientationTracker==null)
             return null;
         return orientationTracker.getOrientationMatrix();
     }
