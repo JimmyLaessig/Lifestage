@@ -230,6 +230,7 @@ public class SparkManager {
         private BufferedReader input;
         private OutputStream output;
         boolean closed = false;
+        private String button="";
 
         public CommunicationThread(Socket clientSocket) {
             this.clientSocket = clientSocket;
@@ -256,10 +257,20 @@ public class SparkManager {
                     if (read.startsWith("ACC")) {
                         Log.d(TAG, "received: " + read);
                     }
+                    if(read.startsWith("buttonstate")) {
+                        button=read.substring(read.indexOf('=')+1);
+                    }
                 } catch (Exception e) {
                     closed = true;
                 }
             }
+        }
+
+        public boolean getButtonString() {
+            if(button.equals("on"))
+                return true;
+            else
+                return false;
         }
 
         public void sendCommand_executePattern(String command){
@@ -286,7 +297,7 @@ public class SparkManager {
             try {
                 output.write(command.getBytes());
                 output.flush();
-                Log.d(TAG, "send: " + command);
+                Log.d(TAG, "sendPattern: " + command);
             } catch (IOException e) {
             }
         }
@@ -334,6 +345,10 @@ public class SparkManager {
 
     public void sendCommand_executePattern(String command) {
         commThread.sendCommand_executePattern(command);
+    }
+
+    public boolean getButtonState() {
+        return commThread.getButtonString();
     }
 }
 

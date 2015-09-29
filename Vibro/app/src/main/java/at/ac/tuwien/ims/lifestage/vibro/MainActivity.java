@@ -2,15 +2,10 @@ package at.ac.tuwien.ims.lifestage.vibro;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 
 import com.unity3d.player.UnityPlayerActivity;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import at.ac.tuwien.ims.lifestage.vibro.Entity.Event;
@@ -24,8 +19,10 @@ import at.ac.tuwien.ims.lifestage.vibro.Util.WifiUtil;
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
 public class MainActivity extends UnityPlayerActivity {
-    private final static String filename="SparkAuth.txt";
     public static Context context;
+    public static String id="48ff71065067555011472387";
+    public static String token="20e1ee31e3f0b0ecace2820c73ab71f5966acbf6";
+
     private SparkManager connectionManager;
     private OrientationTracker orientationTracker;
 
@@ -34,37 +31,17 @@ public class MainActivity extends UnityPlayerActivity {
         super.onCreate(bundle);
         context = this;
         orientationTracker=new OrientationTracker(this);
-
-        File file = new File(Environment.getExternalStorageDirectory(), filename);
-        String id="";
-        String token="";
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = br.readLine()) != null) {
-                if(line.startsWith("id"))
-                    id=line.substring(line.indexOf('=')+1);
-                if(line.startsWith("token"))
-                    token=line.substring(line.indexOf('=')+1);
-            }
-            br.close();
-        } catch (IOException e) {}
-
-        if(!id.equals("") && !token.equals(""))
-            connectionManager=new SparkManager(id, token);
-        else
-            Log.d(getClass().getName(), "token and id can not be read from file");
-
-        Log.d(getClass().getName(), "class created");
     }
 
-    /** TODO
+    /**
      * Returns the state of the button that is connected with the spark core.
      *
      * @return true if button is pressed else false
      */
     public boolean getButtonState() {
-        return false;
+        if(connectionManager==null)
+            return false;
+        return connectionManager.getButtonState();
     }
 
     /**
@@ -73,6 +50,8 @@ public class MainActivity extends UnityPlayerActivity {
      * @return the orientation matrix as float array
      */
     public float[] getOrientationMatrix() {
+        if(connectionManager==null)
+            return null;
         return orientationTracker.getOrientationMatrix();
     }
 
@@ -102,7 +81,11 @@ public class MainActivity extends UnityPlayerActivity {
      * Connects the device with the SparkCore over Wifi.
      *
      */
-    public void connect() {
+    public void connect(String id, String token) {
+        if(!id.equals("") && !token.equals("")) {
+            Log.d(getClass().getName(), "invalid id or token");
+            return;
+        }
         if (!WifiUtil.isOnline(this)) {
             Log.d(getClass().getName(), "no Internet connection.. ");
             return;
@@ -112,12 +95,13 @@ public class MainActivity extends UnityPlayerActivity {
             Log.d(getClass().getName(), "invalid IP");
             return;
         }
+        connectionManager=new SparkManager(id, token);
 
-        if (connectionManager.getStatus() == SparkManager.NOT_CONNECTED) {
+        if (connectionManager.getStatus() == SparkManager.CONNECTING) {
+            connectionManager.disconnect();
             connectionManager.connectToCore(ip);
             Log.d(getClass().getName(), "connecting");
-        } else if (connectionManager.getStatus() == SparkManager.CONNECTING) {
-            connectionManager.disconnect();
+        } else {
             connectionManager.connectToCore(ip);
             Log.d(getClass().getName(), "connecting");
         }
@@ -128,15 +112,44 @@ public class MainActivity extends UnityPlayerActivity {
      *
      * @return true if pattern was sent else false
      */
-    public boolean send() {
+    public boolean sendPattern(Pattern pattern) {
+        if(connectionManager==null || pattern==null)
+            return false;
+
+        String command="";
+        command+="_";
+        command+=""+pattern.eventList.size()+"_";
+        Event e;
+        for(int j=0; j<pattern.eventList.size(); j++) {
+            e=pattern.eventList.get(j);
+            command+=e.acId;
+            command+="_"+e.intensity;
+            command+="_"+e.targetIntensity;
+            command+="_"+e.duration;
+            command+="_"+e.pauseAfter;
+            command+="_";
+        }
+        command+=pattern.repeat;
+        command+="_";
+        Log.d("sent command: ", command);
+
+        connectionManager.sendCommand_executePattern(command);
+        return true;
+    }
+
+    /**
+     * Sends a test pattern to Spark Core.
+     *
+     * @return true if pattern was sent else false
+     */
+    public boolean sendTestPattern() {
         if(connectionManager ==null)
             return false;
 
-        //todo get pattern data from Unity
         ArrayList<Event> events=new ArrayList<>();
         events.add(new Event(0, 0, 100, 1750, 250));
         events.add(new Event(1, 100, 0, 1750, 250));
-        Pattern p=new Pattern(1, 0, events);
+        Pattern p=new Pattern(0, events);
 
         String command="";
         command+="_";
