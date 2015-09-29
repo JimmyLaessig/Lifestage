@@ -12,6 +12,8 @@ using System.Collections.Generic;
 public class SceneController : MonoBehaviour
 {
 
+    private Camera camera;
+
     public enum SelectMode
     {
         DEFAULT = 0, SELECT_CLOSEST = 1, SELECT_FAREST = 2 // TODO : Add other selection types
@@ -52,6 +54,8 @@ public class SceneController : MonoBehaviour
     /// </summary>
     void Start()
     {
+        camera = GetComponentInChildren<Camera>();
+
         gameObjectList = new List<GameObject>();
     }
 
@@ -75,12 +79,11 @@ public class SceneController : MonoBehaviour
             GUI.skin.button.fontSize = 30;
         }
 
-        int relativeInfoWidth = Screen.width / 4;
-        int relativeInfoHeight = Screen.height / 10;
+        //int relativeInfoWidth = Screen.width / 4;
 
-        Rect infoWindow = new Rect(0, 0, 0, 0);
-        // Show GUI if scene is not yet started
-        infoWindow = GUILayout.Window(1, infoWindow, MakeInfoWindow, "", GUILayout.Width(relativeInfoWidth));
+        //Rect infoWindow = new Rect(0, 0, 0, 0);
+        //// Show GUI if scene is not yet started
+        //infoWindow = GUILayout.Window(1, infoWindow, MakeInfoWindow, "", GUILayout.Width(relativeInfoWidth));
         GUI.skin.label.fontSize = 15;
 
     }
@@ -121,8 +124,6 @@ public class SceneController : MonoBehaviour
     }
 
 
-
-
     /// <summary>
     /// Creates the main options window
     /// </summary>
@@ -131,11 +132,11 @@ public class SceneController : MonoBehaviour
     {
         GUILayout.Label("<b>Number of Elements:</b>" + gameObjectList.Count.ToString());
         GUILayout.Label("<b>SelectionMode:</b>" + SELECTMODE.ToString());
-        GUILayout.Label("Touch Count:" + Input.touchCount);
         if (selectedObj)
-            GUILayout.Label("Selected Object:" + selectedObj.name);
+            GUILayout.Label("Distance:" + (selectedObj.transform.position - camera.transform.position).magnitude);
         else
-            GUILayout.Label("Selected Object: - ");
+            GUILayout.Label("Distance: - ");
+
     }
 
 
@@ -172,11 +173,9 @@ public class SceneController : MonoBehaviour
     /// <returns>True if all winning conditions are met (An Object was previously selected)</returns>
     public bool Finish(float time, string userID)
     {
-
         if (!IsRunning)
             return false;
 
-        Debug.Log("Finish Called!");
         if (!selectedObj)
             return false;
 

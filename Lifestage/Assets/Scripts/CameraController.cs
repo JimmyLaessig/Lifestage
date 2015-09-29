@@ -9,11 +9,10 @@ public class CameraController : MonoBehaviour
 
     public SceneController sceneController;
 
-    private TrackMobileGyroscope gyroTracker;
+    private PluginManager pluginManager;
 
     private LineRenderer rayRenderer;
 
-    private VibrationProvider vibrationProvider;
 
     // The unique id of the user
     private string userID = "";
@@ -46,16 +45,12 @@ public class CameraController : MonoBehaviour
         if (!useKeyBoard)
         {
             this.transform.Translate(offsetToScene);
-            gyroTracker = GetComponentInChildren<TrackMobileGyroscope>();
-            if (!gyroTracker)
-                Debug.Log("CameraController must have a child attached with a TrackCamera-Script!!");
+            pluginManager = GetComponentInChildren<PluginManager>();
+            if (!pluginManager)
+                Debug.Log("CameraController must have a child attached with a PluginManager-Script!!");
         }
         rayRenderer = GetComponent<LineRenderer>();
         rayRenderer.enabled = false;
-
-        vibrationProvider = GetComponentInChildren<VibrationProvider>();
-        if (!vibrationProvider)
-            Debug.Log("CameraController must have a child attached with a VibrationProvider!!");
     }
 
 
@@ -73,8 +68,8 @@ public class CameraController : MonoBehaviour
         else
         {
             // Get the latest rotation of the camera Tracker
-            if (gyroTracker)
-                this.transform.rotation = gyroTracker.transform.rotation;
+            if (pluginManager)
+                this.transform.rotation = pluginManager.transform.rotation;
         }
 
         // Only Process the Input while the scene is running.
@@ -92,11 +87,11 @@ public class CameraController : MonoBehaviour
         sceneController.SelectObject(selectedObj);
 
         // Perform Vibration Feedback based on the distance to the object
-        if (selectedObj)
-        {
-            float distance = (this.transform.position - selectedObj.transform.position).magnitude;
-            vibrationProvider.CalculateVibrationPattern(distance);
-        }
+        float distance = -1;
+        if (selectedObj)    
+            distance = (this.transform.position - selectedObj.transform.position).magnitude;
+        if (!useKeyBoard) { }
+           pluginManager.SetDistance = distance;
     }
 
 
@@ -131,7 +126,6 @@ public class CameraController : MonoBehaviour
         }
         else
         {
-
             // First Touch ( is the deepest).        
             if (Input.touchCount > 0 && !doRaycast)
             {
