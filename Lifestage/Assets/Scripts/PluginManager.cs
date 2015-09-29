@@ -52,7 +52,7 @@ public class PluginManager : MonoBehaviour
     void Update()
     {
         UpdateCameraOrientation();
-        // UpdateVibration();
+        UpdateVibration();
     }
 
 
@@ -67,7 +67,7 @@ public class PluginManager : MonoBehaviour
         if (timeStamp >= vibrationIntervall)
         {
             timeStamp -= vibrationIntervall;
-            pluginActivity.Call("sendTestPattern");
+            // pluginActivity.Call("sendTestPattern");
             // TODO: Either calculate Pattern on Unity Site ( very extensive) or create Method in Vibro.jar that calculates Pattern based on distance and VibrationIntervall            
         }
     }

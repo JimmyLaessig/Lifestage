@@ -90,7 +90,7 @@ public class CameraController : MonoBehaviour
         float distance = -1;
         if (selectedObj)    
             distance = (this.transform.position - selectedObj.transform.position).magnitude;
-        if (!useKeyBoard) { }
+        if (!useKeyBoard)
            pluginManager.SetDistance = distance;
     }
 
