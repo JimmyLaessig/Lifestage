@@ -118,31 +118,23 @@ public class MainActivity extends UnityPlayerActivity {
     }
 
     /**
-     * Sends pattern to Spark Core.
+     * Sends an event to Spark Core.
      *
-     * @return true if pattern was sent else false
+     * @return true if event was sent else false
      */
-    public boolean sendPattern(Pattern pattern) {
-        Log.d(getClass().getName(), "sendpattern called");
+    public boolean sendEvent(int actuatorID, int intensity, int targetIntensity, int duration, int pauseAfter, int repeat) {
+        Log.d(getClass().getName(), "sendevent called");
 
-        if(connectionManager==null || pattern==null)
+        if(connectionManager==null || intensity<0 || targetIntensity<0 || duration<0 || pauseAfter<0 || repeat <0)
             return false;
 
-        String command="";
-        command+="_";
-        command+=""+pattern.eventList.size()+"_";
-        Event e;
-        for(int j=0; j<pattern.eventList.size(); j++) {
-            e=pattern.eventList.get(j);
-            command+=e.acId;
-            command+="_"+e.intensity;
-            command+="_"+e.targetIntensity;
-            command+="_"+e.duration;
-            command+="_"+e.pauseAfter;
-            command+="_";
-        }
-        command+=pattern.repeat;
-        command+="_";
+        String command="_1";
+        command+="_"+actuatorID;
+        command+="_"+intensity;
+        command+="_"+targetIntensity;
+        command+="_"+duration;
+        command+="_"+pauseAfter;
+        command+="_"+repeat+"_";
         Log.d("sent command: ", command);
 
         connectionManager.sendCommand_executePattern(command);
