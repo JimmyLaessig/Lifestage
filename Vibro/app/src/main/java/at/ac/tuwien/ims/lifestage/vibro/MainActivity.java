@@ -82,7 +82,8 @@ public class MainActivity extends UnityPlayerActivity {
     public void disconnect() {
         Log.d(getClass().getName(), "disconnect called");
         if(connectionManager !=null)
-            connectionManager.disconnect();
+            if(getConnectionState() != 3)
+                connectionManager.disconnect();
     }
 
     /**
@@ -122,20 +123,54 @@ public class MainActivity extends UnityPlayerActivity {
      *
      * @return true if event was sent else false
      */
-    public boolean sendEvent(int actuatorID, int intensity, int targetIntensity, int duration, int pauseAfter, int repeat) {
+    public boolean sendEvent(Event e) {
         Log.d(getClass().getName(), "sendevent called");
 
-        if(connectionManager==null || intensity<0 || targetIntensity<0 || duration<0 || pauseAfter<0 || repeat <0)
+        if(connectionManager==null || e==null)
             return false;
 
-        String command="_1";
-        command+="_"+actuatorID;
-        command+="_"+intensity;
-        command+="_"+targetIntensity;
-        command+="_"+duration;
-        command+="_"+pauseAfter;
-        command+="_"+repeat+"_";
-        Log.d("sent command: ", command);
+        String command="";
+        command+="_1";
+        command+="_"+e.acId;
+        command+="_"+e.intensity;
+        command+="_"+e.targetIntensity;
+        command+="_"+e.duration;
+        command+="_"+e.pauseAfter;
+        command+="_";
+        command+="1_";
+        Log.d("sent event command: ", command);
+
+        connectionManager.sendCommand_executePattern(command);
+        return true;
+    }
+
+    /**
+     * Sends a pattern to Spark Core.
+     *
+     * @return true if pattern was sent else false
+     */
+    public boolean sendPattern(Pattern pattern) {
+        Log.d(getClass().getName(), "sendpattern called");
+
+        if(connectionManager==null || pattern==null)
+            return false;
+
+        String command="";
+        command+="_";
+        command+=""+pattern.eventList.size()+"_";
+        Event e;
+        for(int j=0; j<pattern.eventList.size(); j++) {
+            e=pattern.eventList.get(j);
+            command+=e.acId;
+            command+="_"+e.intensity;
+            command+="_"+e.targetIntensity;
+            command+="_"+e.duration;
+            command+="_"+e.pauseAfter;
+            command+="_";
+        }
+        command+=pattern.repeat;
+        command+="_";
+        Log.d("sent pattern command: ", command);
 
         connectionManager.sendCommand_executePattern(command);
         return true;

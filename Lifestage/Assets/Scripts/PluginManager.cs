@@ -84,7 +84,7 @@ public class PluginManager : MonoBehaviour
 	
 	private void sendPattern()
 	{
-		pluginActivity.Call ("sendTestPattern");
+		pluginActivity.Call("sendTestPattern");
 	}
 
 
