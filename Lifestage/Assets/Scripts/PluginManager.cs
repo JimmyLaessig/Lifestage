@@ -62,7 +62,9 @@ public class PluginManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+#if  !UNITY_EDITOR
         UpdateCameraOrientation();
+#endif
         UpdateVibration();
     }
 
@@ -91,13 +93,13 @@ public class PluginManager : MonoBehaviour
     private void UpdateCameraOrientation()
     {
         // Get the latest rotation matrix from the Receiver
-        float[] rotation = pluginActivity.Call<float[]>("getOrientationMatrix");
-        if (rotation == null)
-            return;
+       // float[] rotation = pluginActivity.Call<float[]>("getOrientationMatrix");
+       // if (rotation == null)
+       //     return;
 
-        // Transform the rotation matrix to a quaternion
-        Vector3 euler = GetRotationFromMatrixArray(rotation).eulerAngles;
-        this.transform.eulerAngles = new Vector3(euler.y, -euler.x, euler.z);
+       // // Transform the rotation matrix to a quaternion
+       // Vector3 euler = GetRotationFromMatrixArray(rotation).eulerAngles;
+       //// this.transform.eulerAngles = new Vector3(euler.y, -euler.x, euler.z);
     }
 
 

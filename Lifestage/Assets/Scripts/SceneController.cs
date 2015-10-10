@@ -14,38 +14,41 @@ public class SceneController : MonoBehaviour
 
     private Camera camera;
 
-    public enum SelectMode
-    {
-        DEFAULT = 0, SELECT_CLOSEST = 1, SELECT_FAREST = 2 // TODO : Add other selection types
-    };
+    private Scenario scenario;
+    private TestCase currentTestCase = null;
+    private int attempts = 0;
 
-    // The Selection Mode of the current scene. If set to Default a mode will be selected randomly
-    public SelectMode SELECTMODE = SelectMode.DEFAULT;
-    // Min number of Elements in the scene
-    public int minElements = 5;
-    // Number of elements in the scene. If set to 0 a random number will be generated within the min/max-Elements bounds
-    public int numElements = 0;
-    // Max number of elements in the scene
-    public int maxElements = 20;
 
     // A Collection of Primitves to choose from for the scene
     public PrimitiveType[] primitiveTypes = { PrimitiveType.Cube, PrimitiveType.Sphere, PrimitiveType.Cylinder, PrimitiveType.Capsule };
     // A Collection of Materials to choose from for the primitives
     public Material[] materials = { };
 
+    private bool inputEnabled = false;
+    private bool loadNextTestCase = false;
+    private bool performReset = false;
 
-    private bool isStarted = false;
-    private bool isFinished = false;
+    private bool allTestCasesFinished = false;
 
     // The GameObject to select in the current scene
-    private GameObject targetObj;
+    private GameObject targetObject;
     // A List to store the generated GameObjects
-    private List<GameObject> gameObjectList;
+    private List<GameObject> gameObjects;
 
     private GameObject selectedObj;
     private Material selectedObjMaterial;
 
     public Material highlightingMaterial;
+
+
+
+    /// <summary>
+    /// Returns true whether or not the scene currently is enabled for input
+    /// </summary>
+    public bool InputEnabled
+    {
+        get { return inputEnabled; }
+    }
 
 
     /// <summary>
@@ -55,9 +58,10 @@ public class SceneController : MonoBehaviour
     void Start()
     {
         camera = GetComponentInChildren<Camera>();
-
-        gameObjectList = new List<GameObject>();
+        gameObjects = new List<GameObject>();
+        scenario = StorageManager.Instance().LoadScenario();
     }
+
 
     /// <summary>
     /// Unity Callback
@@ -65,79 +69,147 @@ public class SceneController : MonoBehaviour
     /// </summary>
     void OnGUI()
     {
-
-        if (!IsRunning)
+        if (!inputEnabled)
         {
-            int relativeWidth = Screen.width / 5;
+            int buttonWidth = 400;
+            int buttonHeight = 100;
 
-            int relativePosX = (Screen.width - relativeWidth) / 2;
-            int relativePosY = (Screen.height) / 2;
-
-            Rect window = new Rect(relativePosX, relativePosY, 0, 0);
-            // Show GUI if scene is not yet started
-            window = GUILayout.Window(0, window, OptionsWindow, "", GUILayout.Width(relativeWidth));
-            GUI.skin.button.fontSize = 30;
-        }
-
-        int relativeInfoWidth = Screen.width / 4;
-
-        Rect infoWindow = new Rect(0, 0, 0, 0);
-        // Show GUI if scene is not yet started
-        infoWindow = GUILayout.Window(1, infoWindow, MakeInfoWindow, "", GUILayout.Width(relativeInfoWidth));
-        GUI.skin.label.fontSize = 15;
-
-    }
-
-
-    /// <summary>
-    /// Creates the information overlay displaying the current SelectionMode and number of elements in the scene
-    /// </summary>
-    /// <param name="id"></param>
-    void OptionsWindow(int id)
-    {
-        if (!isStarted)
-        {
-            if (GUILayout.Button("Start"))
+            // Start Button pressed. Start new Scenario
+            if (GUI.Button(new Rect((Screen.width - buttonWidth) / 2, (Screen.height - buttonHeight) / 2, buttonWidth, buttonHeight), "Start"))
             {
-                ClearScene();
-                GenerateScene();
-                isStarted = true;
+                loadNextTestCase = true;
+                performReset = true;
             }
         }
-        // Show GUI if scene is finished
-        if (isFinished)
-        {
-            if (GUILayout.Button("Restart"))
-            {
-                RestartScene();
-                SelectObject(null);
-            }
-            GUILayout.Space(10);
-            if (GUILayout.Button("Next Scene"))
-            {
-                ClearScene();
-                GenerateScene();
-                isStarted = true;
-                isFinished = false;
-            }
-        }
-    }
-
-
-    /// <summary>
-    /// Creates the main options window
-    /// </summary>
-    /// <param name="id"></param>
-    void MakeInfoWindow(int id)
-    {
-        GUILayout.Label("<b>Number of Elements:</b>" + gameObjectList.Count.ToString());
-        GUILayout.Label("<b>SelectionMode:</b>" + SELECTMODE.ToString());
-        if (selectedObj)
-            GUILayout.Label("Distance:" + (selectedObj.transform.position - camera.transform.position).magnitude);
         else
-            GUILayout.Label("Distance: - ");
+        {
 
+
+            string txt = "";
+            if (currentTestCase != null)
+            {
+                txt = "Select ";
+                if (currentTestCase.targetElementIndex == 0)
+                    txt += "closest Element";
+                else if (currentTestCase.targetElementIndex == 1)
+                    txt += "second  closest Element";
+                else if (currentTestCase.targetElementIndex == 2)
+                    txt += "third closest Element";
+                else
+                    txt += (currentTestCase.targetElementIndex + 1) + "th closest Element";                             
+            }
+            else
+            {
+                txt = "No TestCase available!";
+            }
+            int infoWidth = 400;
+            int infoHeight = 100;
+            GUI.Box(new Rect(0, 0, infoWidth, infoHeight), txt);
+        }
+        //if (loadNextTestCase)
+        //{
+        //    int infoWidth = 400;
+        //    int infoHeight = 100;
+        //    // TODO CHANGE FONT FOR MESSAGE BOX
+        //    GUI.Box(new Rect((Screen.width - infoWidth) / 2, infoHeight, infoWidth, infoHeight), "CORRECT");
+        //}
     }
+
+
+    void Update()
+    {
+
+        if (performReset)
+        {
+            Debug.Log("Performing Reset");
+            Reset();
+            performReset = false;
+        }
+        if (loadNextTestCase)
+        {
+            loadNextTestCase = false;
+            if (!StartNextTestCase())
+            {
+                Debug.Log("Cannot start new TestCase! Need to Reset it");
+                performReset = true;
+                inputEnabled = false;
+            }
+        }       
+    }
+
+
+    /// <summary>
+    /// Starts the next TestCase from the scenario.
+    /// </summary>
+    /// <returns>True if a next TestCase can be started. If no TestCase is available it returns false.</returns>
+    private bool StartNextTestCase()
+    {       
+        ClearTestCase();
+        currentTestCase = scenario.GetNextTestCase();
+
+        if (currentTestCase == null)
+            return false;
+
+        inputEnabled = true;
+        GenerateGameObjects(currentTestCase);
+        return true;
+    }
+
+
+    /// <summary>
+    /// Resets the scene to its initial state.
+    /// </summary>
+    public void Reset()
+    {
+        StorageManager.Instance().ClearTestCaseProgress();
+        ClearTestCase();
+        scenario.Reset();
+        currentTestCase = null;
+        inputEnabled = false;
+    }
+
+
+    /// <summary>
+    /// Clear the scene from the current TestCase and destroy all elements.
+    /// </summary>
+    public void ClearTestCase()
+    {
+        // Delect the currently selected object
+        targetObject = null;
+
+        // Remove all GameObjects from the scene to make room for the new scene
+        foreach (GameObject obj in gameObjects)
+        {
+            Destroy(obj);
+        }
+        gameObjects.Clear();
+    }
+
+
+    /// <summary>
+    /// This method is called when the user wants to finish the scene.
+    /// It uses the previously selected gameObject to determine the interactions' success.
+    /// Lastly it writes the result to the XML-File.
+    /// </summary>
+    /// <param name="time">The duration of the interaction</param>
+    /// <param name="userID">The unique id of the user</param>
+    /// <returns>True if all winning conditions are met (An Object was previously selected)</returns>
+    public bool SolveTestCase(float time, string userID, int attempts)
+    {
+        bool isCorrect = false;
+
+        if (selectedObj && selectedObj == targetObject)
+        {
+            isCorrect = true;           
+            scenario.SolveCurrentTestCase(true, userID, attempts, time);
+            loadNextTestCase = true;
+        }
+
+        Debug.Log("Trying to Solve TestCase: isCorrect = " + isCorrect);
+
+        return isCorrect;
+    }
+
 
 
     /// <summary>
@@ -164,62 +236,13 @@ public class SceneController : MonoBehaviour
 
 
     /// <summary>
-    /// This method is called when the user wants to finish the scene.
-    /// It uses the previously selected gameObject to determine the interactions' success.
-    /// Lastly it writes the result to the XML-File.
-    /// </summary>
-    /// <param name="time">The duration of the interaction</param>
-    /// <param name="userID">The unique id of the user</param>
-    /// <returns>True if all winning conditions are met (An Object was previously selected)</returns>
-    public bool Finish(float time, string userID)
-    {
-        if (!IsRunning)
-            return false;
-
-        if (!selectedObj)
-            return false;
-
-        if (!targetObj)
-        {
-            Debug.Log("Target Object not set! This should not happen!");
-            return false;
-        }
-
-        bool correct = false;
-
-        if (selectedObj == targetObj)
-            correct = true;
-
-        Result r = new Result();
-
-        r.userID = userID;
-        r.correct = correct;
-        r.time = time;
-        r.numElements = gameObjectList.Count;
-        //Result.WriteOutput(r);
-
-        isFinished = true;
-
-        return true;
-    }
-
-
-    /// <summary>
     /// Generates a scene containing previously defined number of objects.
     /// Note: Call ClearScene before generating a scene to avoid misbehaviour.
     /// </summary>
-    public void GenerateScene()
+    public void GenerateGameObjects(TestCase testCase)
     {
-        int count = numElements;
-        if (count <= 0)
-        {
-            count = Random.Range(minElements, maxElements);
-        }
-
-        Debug.Log("Creating " + count + " GameObejcts");
-
         // Spawn elements
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < testCase.numElements; i++)
         {
 
             Bounds bounds = GetComponent<MeshFilter>().mesh.bounds;
@@ -242,49 +265,40 @@ public class SceneController : MonoBehaviour
             Material material = materials[Random.Range(0, materials.Length - 1)];
 
             // Create GameObject
-            GameObject obj = GameObject.CreatePrimitive(type);
-            obj.transform.position = position;
-            obj.transform.rotation = rotation;
-            obj.GetComponent<Renderer>().material = material;
+            GameObject newObject = GameObject.CreatePrimitive(type);
+            newObject.transform.position = position;
+            newObject.transform.rotation = rotation;
+            newObject.GetComponent<Renderer>().material = material;
 
-            gameObjectList.Add(obj);
 
-            targetObj = obj;    // TODO: Change this: Set TargetObject to actual target specified by SelectMode
+            float distance = (newObject.transform.position - camera.transform.position).magnitude;
+            int index = 0;
+
+            // Add the new GameObject to the list sorted by distance ascending
+            while (index < gameObjects.Count)
+            {
+                GameObject obj = gameObjects[index];
+                float objDistance = (obj.transform.position - camera.transform.position).magnitude;
+                if (distance < objDistance)
+                    break;
+
+                index++;
+            }
+
+            gameObjects.Insert(index, newObject);
         }
-    }
 
-    /// <summary>
-    /// Clear the current scene and destroys all elements within this scene.
-    /// </summary>
-    public void ClearScene()
-    {
-        SelectObject(null);
+        // Set the targetObject to the index provided by the TestCase in the list sorted by distance
+        targetObject = gameObjects[testCase.targetElementIndex];
 
-        // Remove all GameObjects from the scene to make room for the new scene
-        for (int i = 0; i < gameObjectList.Count; i++)
-        {
-            GameObject obj = gameObjectList[i];
-            gameObjectList.RemoveAt(i);
-            Destroy(obj);
-        }
-    }
-
-
-    /// <summary>
-    /// Restarts the scene
-    /// </summary>
-    public void RestartScene()
-    {
-        isStarted = true;
-        isFinished = false;
-    }
-
-
-    /// <summary>
-    /// Returns true whether the scene is curently running (e.g. selection of an object is possible
-    /// </summary>
-    public bool IsRunning
-    {
-        get { return (isStarted && !isFinished); }
+        // Debug Ausgabe
+        //Debug.Log("Creating TestCase ID " + testCase.id + ": NumElements = " + testCase.numElements + ", targetElementIndex =" + testCase.targetElementIndex);
+        //Debug.Log("GameObjects sorted by distance: ");
+        //for (int i = 0; i < gameObjectList.Count; i++)
+        //{
+        //    Debug.Log("Index = " + i + ": Distance = " + (gameObjectList[i].transform.position - camera.transform.position).magnitude);
+        //}
+        //float d = (targetObject.transform.position - camera.transform.position).magnitude;
+        //Debug.Log("TargetGameObject: Index = " + testCase.targetElementIndex + ": Distance = " + d);
     }
 }

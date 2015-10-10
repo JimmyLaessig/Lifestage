@@ -10,8 +10,6 @@ public class GyroController : MonoBehaviour
 {
 	#region [Private fields]
 
-    public static string ANDROID_GYROSCOPE_ACTIVITY = "at.ac.tuwien.ims.lifestage.vibro.MainActivity";
-    private AndroidJavaObject pluginActivity;
 	private bool gyroEnabled = true;
 	private const float lowPassFilterFactor = 0.2f;
 
@@ -26,10 +24,7 @@ public class GyroController : MonoBehaviour
 	private Quaternion baseOrientationRotationFix =  Quaternion.identity;
 
 	private Quaternion referanceRotation = Quaternion.identity;
-    private Quaternion gyroRotation = Quaternion.identity;
-
-
-	private bool debug = true;
+	private bool debug = false;
 
 	#endregion
 
@@ -37,25 +32,16 @@ public class GyroController : MonoBehaviour
 
 	protected void Start () 
 	{
-
-        using (AndroidJavaClass jc = new AndroidJavaClass(ANDROID_GYROSCOPE_ACTIVITY))
-        {
-            pluginActivity = jc.GetStatic<AndroidJavaObject>("context");
-        }
-        AttachGyro();
+		AttachGyro();
+        gyroEnabled = true;
 	}
 
 	protected void Update() 
 	{
-        float[] rotation = pluginActivity.Call<float[]>("getOrientationMatrix");
-        gyroRotation = GetRotationFromMatrix(rotation);
-        gyroRotation = new Quaternion(gyroRotation.y, -gyroRotation.x, gyroRotation.z, gyroRotation.w);
- 
-        
-        if (!gyroEnabled)
+		if (!gyroEnabled)
 			return;
 		transform.rotation = Quaternion.Slerp(transform.rotation,
-            cameraBase * (referanceRotation * gyroRotation * GetRotFix()), lowPassFilterFactor);
+			cameraBase * ( ConvertRotation(referanceRotation * Input.gyro.attitude) * GetRotFix()), lowPassFilterFactor);
 	}
 
 	protected void OnGUI()
@@ -67,7 +53,6 @@ public class GyroController : MonoBehaviour
 		GUILayout.Label("Calibration: " + calibration);
 		GUILayout.Label("Camera base: " + cameraBase);
 		GUILayout.Label("input.gyro.attitude: " + Input.gyro.attitude);
-        GUILayout.Label("Rotation Fix: " + GetRotFix());
 		GUILayout.Label("transform.rotation: " + transform.rotation);
 
 		if (GUILayout.Button("On/off gyro: " + Input.gyro.enabled, GUILayout.Height(100)))
@@ -243,27 +228,6 @@ public class GyroController : MonoBehaviour
 	{
 		referanceRotation = Quaternion.Inverse(baseOrientation)*Quaternion.Inverse(calibration);
 	}
-
-
-    /// <summary>
-    /// Extract rotation quaternion from transform matrix.
-    /// </summary>
-    /// <param name="matrix">Transform matrix</param>
-    /// <returns>
-    /// Quaternion representation of rotation transform.
-    /// </returns>
-    private static Quaternion GetRotationFromMatrix(float[] rotationMatrixArray)
-    {
-
-        Matrix4x4 matrix = Matrix4x4.identity;
-
-        matrix.SetRow(0, new Vector4(rotationMatrixArray[0], rotationMatrixArray[1], rotationMatrixArray[2], rotationMatrixArray[3]));
-        matrix.SetRow(1, new Vector4(rotationMatrixArray[4], rotationMatrixArray[5], rotationMatrixArray[6], rotationMatrixArray[7]));
-        matrix.SetRow(2, new Vector4(rotationMatrixArray[8], rotationMatrixArray[9], rotationMatrixArray[10], rotationMatrixArray[11]));
-        matrix.SetRow(3, new Vector4(rotationMatrixArray[12], rotationMatrixArray[13], rotationMatrixArray[14], rotationMatrixArray[15]));
-
-        return Quaternion.LookRotation(matrix.GetColumn(2), matrix.GetColumn(1));
-    }
 
 	#endregion
 }

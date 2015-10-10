@@ -31,10 +31,7 @@ public class CameraController : MonoBehaviour
 
     private GameObject selectedObj;
 
-
-    public bool useKeyBoard = false;
-
-
+    private int attempts = 0;
 
     /// <summary>
     /// Unity Callback
@@ -42,13 +39,14 @@ public class CameraController : MonoBehaviour
     /// </summary>
     void Start()
     {
-        if (!useKeyBoard)
-        {
+#if !UNITY_EDITOR
+        
             this.transform.Translate(offsetToScene);
-            pluginManager = GetComponentInChildren<PluginManager>();
+            pluginManager = GetComponent<PluginManager>();
             if (!pluginManager)
                 Debug.Log("CameraController must have a child attached with a PluginManager-Script!!");
-        }
+        
+#endif
         rayRenderer = GetComponent<LineRenderer>();
         rayRenderer.enabled = false;
     }
@@ -60,20 +58,14 @@ public class CameraController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if (useKeyBoard)
-        {
-            this.transform.Rotate(Vector3.up, Input.GetAxis("Horizontal") * 90 * Time.deltaTime);
-            this.transform.Rotate(Vector3.right, Input.GetAxis("Vertical") * 90 * Time.deltaTime);
-        }
-        else
-        {
-            // Get the latest rotation of the camera Tracker
-            if (pluginManager)
-                this.transform.rotation = pluginManager.transform.rotation;
-        }
+#if UNITY_EDITOR
+        this.transform.Rotate(Vector3.up, Input.GetAxis("Horizontal") * 90 * Time.deltaTime);
+        this.transform.Rotate(Vector3.right, Input.GetAxis("Vertical") * 90 * Time.deltaTime);
+#endif
+
 
         // Only Process the Input while the scene is running.
-        if (!sceneController.IsRunning)
+        if (!sceneController.InputEnabled)
             return;
 
         // Process Touch Input
@@ -88,10 +80,11 @@ public class CameraController : MonoBehaviour
 
         // Perform Vibration Feedback based on the distance to the object
         float distance = -1;
-        if (selectedObj)    
+        if (selectedObj)
             distance = (this.transform.position - selectedObj.transform.position).magnitude;
-        if (!useKeyBoard)
-           pluginManager.SetDistance = distance;
+#if !UNITY_EDITOR
+        pluginManager.SetDistance = distance;
+#endif
     }
 
 
@@ -100,52 +93,40 @@ public class CameraController : MonoBehaviour
     /// </summary>
     private void GetInput()
     {
-        if (useKeyBoard)
+        // First Touch ( is the deepest).     
+#if UNITY_EDITOR
+        if (Input.GetKey(KeyCode.Space) && !doRaycast)
+#else
+        if (Input.touchCount > 0 && !doRaycast)
+#endif
         {
-
-            // First Touch ( is the deepest).        
-            //if (Input.touchCount > 0 && !doRaycast)
-            if (Input.GetKey(KeyCode.Space) && !doRaycast)
-            {
-                Debug.Log("Start selection");
-                startTime = Time.time;
-                doRaycast = true;
-                rayRenderer.enabled = true;
-            }
-
-            // Touch event ended.
-            // if (Input.touchCount <= 0 && doRaycast)
-            if (!Input.GetKey(KeyCode.Space) && doRaycast)
-            {
-                Debug.Log("End selection");
-                float timePassed = Time.time - startTime;
-                doRaycast = false;
-                rayRenderer.enabled = false;
-                sceneController.Finish(timePassed, userID);
-            }
+            Debug.Log("Start selection");
+            startTime = Time.time;
+            doRaycast = true;
+            rayRenderer.enabled = true;
         }
-        else
-        {
-            // First Touch ( is the deepest).        
-            if (Input.touchCount > 0 && !doRaycast)
-            {
-                Debug.Log("Start selection");
-                startTime = Time.time;
-                doRaycast = true;
-                rayRenderer.enabled = true;
-            }
 
-            // Touch event ended.
-            if (Input.touchCount <= 0 && doRaycast)
+        // Touch event ended.
+#if UNITY_EDITOR
+        if (!Input.GetKey(KeyCode.Space) && doRaycast)
+#else
+        if (Input.touchCount <= 0 && doRaycast)
+#endif
+        {
+            Debug.Log("End selection");
+            attempts++;
+            float timePassed = Time.time - startTime;
+            doRaycast = false;
+            rayRenderer.enabled = false;
+            // Solve the TestCase if an object was selected
+            if (selectedObj)
             {
-                Debug.Log("End selection");
-                float timePassed = Time.time - startTime;
-                doRaycast = false;
-                rayRenderer.enabled = false;
-                sceneController.Finish(timePassed, userID);
+                if(sceneController.SolveTestCase(timePassed, userID, attempts))
+                    attempts = 0;
             }
         }
     }
+
 
     /// <summary>
     /// Performs a raycast from in the look direction from the current camera position with the previously defined offset
@@ -166,5 +147,16 @@ public class CameraController : MonoBehaviour
             return hit.collider.gameObject;
         }
         return null;
+    }
+
+    void OnGUI()
+    {
+        // Cancel Button pressed
+        if (!sceneController.InputEnabled)
+            return;
+        if (GUI.Button(new Rect(Screen.width - 40, 0, 40, 40), "x"))
+        {
+            sceneController.SolveTestCase(0.0f, "", 0);    // TODO Set real values           
+        }
     }
 }
