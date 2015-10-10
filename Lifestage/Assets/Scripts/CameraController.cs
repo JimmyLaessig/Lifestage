@@ -156,7 +156,7 @@ public class CameraController : MonoBehaviour
             return;
         if (GUI.Button(new Rect(Screen.width - 40, 0, 40, 40), "x"))
         {
-            sceneController.SolveTestCase(0.0f, "", 0);    // TODO Set real values           
+            sceneController.CancelTestCase("",attempts);   // TODO Set real values           
         }
     }
 }

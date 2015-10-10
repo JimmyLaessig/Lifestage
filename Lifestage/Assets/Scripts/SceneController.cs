@@ -186,6 +186,13 @@ public class SceneController : MonoBehaviour
     }
 
 
+    public void CancelTestCase(string userID, int attempts)
+    {
+        Debug.Log("Canceling TestCase after " + attempts  + " attempts");
+        scenario.SolveCurrentTestCase(false, userID, attempts, 0);
+        loadNextTestCase = true;
+    }
+
     /// <summary>
     /// This method is called when the user wants to finish the scene.
     /// It uses the previously selected gameObject to determine the interactions' success.
@@ -198,7 +205,7 @@ public class SceneController : MonoBehaviour
     {
         bool isCorrect = false;
 
-        if (selectedObj && selectedObj == targetObject)
+        if (selectedObj == targetObject)
         {
             isCorrect = true;           
             scenario.SolveCurrentTestCase(true, userID, attempts, time);
