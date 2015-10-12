@@ -2,6 +2,7 @@ package at.ac.tuwien.ims.lifestage.vibro;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 
 import com.unity3d.player.UnityPlayerActivity;
@@ -25,6 +26,7 @@ public class MainActivity extends UnityPlayerActivity {
 
     private SparkManager connectionManager;
     private OrientationTracker orientationTracker;
+    private Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -32,6 +34,7 @@ public class MainActivity extends UnityPlayerActivity {
         super.onCreate(bundle);
         context = this;
         orientationTracker=new OrientationTracker(this);
+        vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     @Override
@@ -208,5 +211,45 @@ public class MainActivity extends UnityPlayerActivity {
         Log.d("sent command: ", command);
 
         connectionManager.sendCommand_executePattern(command);
+    }
+
+    /**
+     * Checks if device has a vibrator.
+     *
+     * @return true if device has vibrator
+     */
+    public boolean hasVibrator() {
+        Log.d(getClass().getName(), "hasvibrator called");
+        return vibrator.hasVibrator();
+    }
+
+    /**
+     * Vibrates device for given amount of ms.
+     *
+     * @param milliseconds time in ms to vibrate
+     */
+    public void vibrate(long milliseconds) {
+        Log.d(getClass().getName(), "vibrate called");
+        vibrator.vibrate(milliseconds);
+    }
+
+    /**
+     * Vibrates the device with a given pattern for a give amount of times.
+     *
+     * @param pattern pattern that used for vibration
+     * @param repeat times that the pattern will be repeated (0=repeat indefinitely, -1=no repeat)
+     */
+    public void vibrate(long[] pattern, int repeat) {
+        Log.d(getClass().getName(), "vibrate called");
+        vibrator.vibrate(pattern, repeat);
+    }
+
+    /**
+     * Cancels current vibration.
+     *
+     */
+    public void cancelVibration() {
+        Log.d(getClass().getName(), "cancel vibration called");
+        vibrator.cancel();
     }
 }
