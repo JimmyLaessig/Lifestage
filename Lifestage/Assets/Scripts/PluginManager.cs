@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -8,19 +9,21 @@ using System.Collections.Generic;
 public class PluginManager : MonoBehaviour
 {
 	public static string MAIN_ACTIVITY_CLASS_NAME = "at.ac.tuwien.ims.lifestage.vibro.MainActivity";
+#if !UNITY_EDITOR
+	private static string SPARKAUTH_FILE_PATH = "/sdcard/spark_auth.txt";
+#else
+	private static string SPARKAUTH_FILE_PATH = "spark_auth.txt";
+#endif
 	
-	private AndroidJavaObject pluginActivity;
-	
-	private bool initRotation = true;
-	
-	private Vector3 initRotationEuler;
-	
+	private AndroidJavaObject pluginActivity;	
+	private bool initRotation = true;	
+	private Vector3 initRotationEuler;	
 	private float distance = -1;
 	
 	// Intervall in which the vibrations of a certain pattern are triggered in seconds
 	public float vibrationIntervall = 5f;
 	private float timeStamp = 0;
-	
+
 	private List<long[]> intensityPattern = new List<long[]>();
 	private float intensityVibrateTimeLeft = 0.0f;
 	
@@ -31,30 +34,35 @@ public class PluginManager : MonoBehaviour
 		{
 			pluginActivity = jc.GetStatic<AndroidJavaObject>("context");
 		}
-		ConnectToSparkCore();
 		for (int i = 1; i <= 10; ++i) {
 			intensityPattern.Add(new long[2]{10 - i, i * 5});
 		}
+		ConnectToSparkCore();
 	}
 	
 	// Update is called once per frame
 	void Update()
-	{
-		if (intensityVibrateTimeLeft < 0.0f) {
-			cancelVibrationOnPhone();
-		}		
-		if (intensityVibrateTimeLeft > 0.0f) {
-			intensityVibrateTimeLeft -= Time.deltaTime;
-		}
-		
+	{		
 		#if  !UNITY_EDITOR
 		UpdateCameraOrientation();
 		#endif
 		
 		UpdateVibration();
 	}
-	
+
+
 	void ConnectToSparkCore() {
+		String text=System.IO.File.ReadAllText(SPARKAUTH_FILE_PATH);
+		if(text != null && text != string.Empty) {
+			string[] lines = text.Split(new string[]{Environment.NewLine}, StringSplitOptions.None);
+			if(lines[0].Contains("spark_auth")) {
+				string[] line = lines[1].Split(' ');
+				if(line.Length==2) {
+					pluginActivity.Call("connect", line);
+					return;
+				}
+			}
+		}
 		string[] param = new string[2];
 		param[0] = pluginActivity.GetStatic<string>("id");
 		param[1] = pluginActivity.GetStatic<string>("token");
@@ -78,6 +86,14 @@ public class PluginManager : MonoBehaviour
 	}    
 	
 	private void UpdateVibration() {
+		//intensity vibration on phone
+		if (intensityVibrateTimeLeft < 0.0f) {
+			cancelVibrationOnPhone();
+		}		
+		if (intensityVibrateTimeLeft > 0.0f) {
+			intensityVibrateTimeLeft -= Time.deltaTime;
+		}
+
 		timeStamp += Time.deltaTime;
 		// Reset the timeStamp to not trigger the event
 		if (distance < 0)
@@ -92,8 +108,9 @@ public class PluginManager : MonoBehaviour
 	}
 	
 	private void sendVibrationToCore() {
-		if (GetConnectionStateFromCore() == 1)
+		if (GetConnectionStateFromCore () == 1) {
 			pluginActivity.Call("sendTestPattern");
+		}
 	}
 	
 	private bool hasVibrator() {
@@ -155,8 +172,7 @@ public class PluginManager : MonoBehaviour
 		// Transform the rotation matrix to a quaternion
 		Vector3 euler = GetRotationFromMatrixArray(rotation).eulerAngles;
 		this.transform.eulerAngles = new Vector3(euler.y, -euler.x, euler.z);
-	}
-	
+	}	
 	
 	/// <summary>
 	/// Sets the distance that is used to calculate the vibration pattern.

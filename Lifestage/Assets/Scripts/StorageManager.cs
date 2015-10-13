@@ -13,7 +13,7 @@ public class StorageManager : MonoBehaviour
     private static StorageManager instance;
 #if !UNITY_EDITOR
     private static string SCENARIO_FILE_PATH = "/sdcard/lifestage_testcases.xml";
-    private static string OUTPUT_FILE_PATH = "/sdcard/lifestege_output.xml";
+	private static string OUTPUT_FILE_PATH = "/sdcard/lifestege_output.xml";
 #else
     private static string SCENARIO_FILE_PATH = "lifestage_testcases.xml";
     private static string OUTPUT_FILE_PATH = "lifestege_output.xml";
