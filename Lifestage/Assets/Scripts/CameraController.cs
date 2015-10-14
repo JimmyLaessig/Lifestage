@@ -15,7 +15,7 @@ public class CameraController : MonoBehaviour
 
 
     // The unique id of the user
-    private string userID = "";
+    private string userID = "todo";
     public Vector3 offsetToScene = new Vector3(0, 0, -1);
     // Offset to the ray position such that the ray does not go through the exact center of the camera
     public float rayOffset = -0.5f;

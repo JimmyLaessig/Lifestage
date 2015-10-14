@@ -95,7 +95,10 @@ public class Scenario
     /// <param name="tries">The number of tries</param>
     public void SolveCurrentTestCase(bool correct, string user, int attempts, float time)
     {
-        currentTestCase.correct = correct;
+		currentTestCase.userID = user;
+		currentTestCase.attempts = attempts;
+		currentTestCase.time = time;
+		currentTestCase.isCorrect=correct;
         solvedTestCases.Add(currentTestCase);
         currentTestCase = null;
     }

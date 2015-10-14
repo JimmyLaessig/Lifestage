@@ -59,7 +59,7 @@ public class SceneController : MonoBehaviour
     {
         camera = GetComponentInChildren<Camera>();
         gameObjects = new List<GameObject>();
-        scenario = StorageManager.Instance().LoadScenario();
+		scenario = StorageManager.Instance().LoadScenario();
     }
 
 
@@ -143,7 +143,7 @@ public class SceneController : MonoBehaviour
     /// </summary>
     /// <returns>True if a next TestCase can be started. If no TestCase is available it returns false.</returns>
     private bool StartNextTestCase()
-    {       
+	{       
         ClearTestCase();
         currentTestCase = scenario.GetNextTestCase();
 
@@ -160,8 +160,9 @@ public class SceneController : MonoBehaviour
     /// Resets the scene to its initial state.
     /// </summary>
     public void Reset()
-    {
-        StorageManager.Instance().ClearTestCaseProgress();
+	{		
+		StorageManager.Instance().WriteTestCaseResult(scenario);
+		StorageManager.Instance().ClearTestCaseProgress();
         ClearTestCase();
         scenario.Reset();
         currentTestCase = null;
@@ -209,10 +210,11 @@ public class SceneController : MonoBehaviour
         {
             isCorrect = true;           
             scenario.SolveCurrentTestCase(true, userID, attempts, time);
-            loadNextTestCase = true;
-        }
+			loadNextTestCase = true;
 
-        Debug.Log("Trying to Solve TestCase: isCorrect = " + isCorrect);
+		}
+
+		Debug.Log("Trying to Solve TestCase: isCorrect = " + isCorrect);
 
         return isCorrect;
     }

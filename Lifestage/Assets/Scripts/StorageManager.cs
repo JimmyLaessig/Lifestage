@@ -16,7 +16,7 @@ public class StorageManager : MonoBehaviour
 	private static string OUTPUT_FILE_PATH = "/sdcard/lifestege_output.xml";
 #else
     private static string SCENARIO_FILE_PATH = "lifestage_testcases.xml";
-    private static string OUTPUT_FILE_PATH = "lifestege_output.xml";
+	private static string OUTPUT_FILE_PATH = "lifestage_output.xml";
 #endif
     private static string SOLVED_TESTCASES_KEY = "solvedCasesKey";
 
@@ -68,7 +68,7 @@ public class StorageManager : MonoBehaviour
             for (int i = 0; i < list.Count; i++)
             {
                 TestCase t = new TestCase();
-                // TODO: Read all necessary stuff from the .xml file
+				// TODO: Read all necessary stuff from the .xml file
                 t.numElements = Convert.ToInt32(list[i].Attributes["numElements"].Value);
                 t.targetElementIndex = Convert.ToInt32(list[i].Attributes["targetElement"].Value) - 1;
                 scenario.AddTestCase(t);
@@ -135,8 +135,63 @@ public class StorageManager : MonoBehaviour
     /// <summary>
     /// This method writes the results of a TestCase to the corresponding XML-File.
     /// </summary>
-    public void WriteTestCaseResult()
-    {
+	public void WriteTestCaseResult(Scenario scenario) {
+		if (scenario.GetSolvedTestCases.Count == 0)
+			return;
 
+		XmlDocument xmlDoc = new XmlDocument();
+        if (File.Exists (OUTPUT_FILE_PATH)) {            
+			xmlDoc.Load (OUTPUT_FILE_PATH);
+			XmlElement elmRoot = xmlDoc.DocumentElement;
+			
+			int user_id = 0;
+			if(elmRoot.LastChild != null) {
+				int id = Int32.Parse(elmRoot.LastChild.Attributes["userID"].Value);
+				user_id=id+1;
+			}
+			XmlElement elm = xmlDoc.CreateElement("Result");
+
+			XmlAttribute userId = xmlDoc.CreateAttribute("userID"); 
+			userId.Value = user_id+"";
+			elm.Attributes.Append(userId);
+
+			foreach(TestCase testcase in scenario.GetSolvedTestCases) {
+				XmlElement elmNew = xmlDoc.CreateElement("TestCase");
+
+				XmlAttribute testcaseID = xmlDoc.CreateAttribute("testcaseID");
+				testcaseID.Value = testcase.id + "";
+				elmNew.Attributes.Append(testcaseID);
+				XmlAttribute noElem = xmlDoc.CreateAttribute("numElements");
+				noElem.Value = testcase.numElements + "";
+				elmNew.Attributes.Append(noElem);
+				XmlAttribute rightObject = xmlDoc.CreateAttribute("targetElementIndex");
+				rightObject.Value = testcase.targetElementIndex + "";
+				elmNew.Attributes.Append(rightObject);
+				XmlAttribute pickSuccessful = xmlDoc.CreateAttribute("correct");
+				pickSuccessful.Value = testcase.isCorrect + "";
+				elmNew.Attributes.Append(pickSuccessful);
+				XmlAttribute timePassed = xmlDoc.CreateAttribute("time");
+				timePassed.Value = testcase.time + "";
+				elmNew.Attributes.Append(timePassed);
+				XmlAttribute attemptS = xmlDoc.CreateAttribute("attempts");
+				attemptS.Value = testcase.attempts + "";
+				elmNew.Attributes.Append(attemptS);
+
+				elm.AppendChild(elmNew);
+			}
+
+			elmRoot.AppendChild(elm);
+            xmlDoc.Save(OUTPUT_FILE_PATH);
+        }
     }
+
+	public void ResetTestCaseResult() {
+		XmlDocument xmlDoc = new XmlDocument();
+		if (File.Exists (OUTPUT_FILE_PATH)) {   
+			xmlDoc.Load(OUTPUT_FILE_PATH);
+			XmlElement elmRoot = xmlDoc.DocumentElement;
+			elmRoot.RemoveAll();
+			xmlDoc.Save(OUTPUT_FILE_PATH);
+		}
+	}
 }
