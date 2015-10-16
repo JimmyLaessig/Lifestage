@@ -10,15 +10,12 @@ using System.Collections.Generic;
 
 [RequireComponent(typeof(MeshFilter))]
 public class SceneController : MonoBehaviour
-{   
+{
 
-    private Camera camera;
+    private new Camera camera;
 
     private Scenario scenario;
     private TestCase currentTestCase = null;
-    private int attempts = 0;
-
-    
 
     // A Collection of Primitves to choose from for the scene
     public PrimitiveType[] primitiveTypes = { PrimitiveType.Cube, PrimitiveType.Sphere, PrimitiveType.Cylinder, PrimitiveType.Capsule };
@@ -29,7 +26,6 @@ public class SceneController : MonoBehaviour
     private bool loadNextTestCase = false;
     private bool performReset = false;
 
-    private bool allTestCasesFinished = false;
 
     // The GameObject to select in the current scene
     private GameObject targetObject;
@@ -58,71 +54,53 @@ public class SceneController : MonoBehaviour
     /// </summary>
     void Start()
     {
-        
-
         camera = GetComponentInChildren<Camera>();
         gameObjects = new List<GameObject>();
-       
+
         scenario = StorageManager.Instance.LoadScenario();
     }
 
 
-    /// <summary>
-    /// Unity Callback
-    /// OnGUI is called for rendering and handling GUI events.
-    /// </summary>
-    void OnGUI()
+    public void StartButtonClicked()
+    {
+        loadNextTestCase = true;
+        performReset = true;
+        PluginManager.Instance.InitBaseRotation();
+       
+    }
+
+
+    void SetMessageText()
     {
         if (!inputEnabled)
-        {
-            int buttonWidth = 400;
-            int buttonHeight = 100;
+            return;
 
-            // Start Button pressed. Start new Scenario
-            if (GUI.Button(new Rect((Screen.width - buttonWidth) / 2, (Screen.height - buttonHeight) / 2, buttonWidth, buttonHeight), "Start"))
-            {
-                loadNextTestCase = true;
-                performReset = true;
-                PluginManager.Instance.InitBaseRotation();
-            }
+        string txt = "";
+        if (currentTestCase != null)
+        {
+            txt = "Select ";
+            if (currentTestCase.targetElementIndex == 0)
+                txt += "closest Element";
+            else if (currentTestCase.targetElementIndex == 1)
+                txt += "second closest Element";
+            else if (currentTestCase.targetElementIndex == 2)
+                txt += "third closest Element";
+            else if (currentTestCase.targetElementIndex == currentTestCase.numElements - 1)
+                txt += " farthermost Element";
+            else
+                txt += (currentTestCase.targetElementIndex + 1) + "th closest Element";
         }
         else
         {
-
-            
-            string txt = "";
-            if (currentTestCase != null)
-            {
-                txt = "Select ";
-                if (currentTestCase.targetElementIndex == 0)
-                    txt += "closest Element";
-                else if (currentTestCase.targetElementIndex == 1)
-                    txt += "second  closest Element";
-                else if (currentTestCase.targetElementIndex == 2)
-                    txt += "third closest Element";
-                else
-                    txt += (currentTestCase.targetElementIndex + 1) + "th closest Element";                             
-            }
-            else
-            {
-                txt = "No TestCase available!";
-            }
-         //   GUILayout.Box(txt);
-           
+            txt = "No TestCase available!";
         }
-        //if (loadNextTestCase)
-        //{
-        //    int infoWidth = 400;
-        //    int infoHeight = 100;
-        //    // TODO CHANGE FONT FOR MESSAGE BOX
-        //    GUI.Box(new Rect((Screen.width - infoWidth) / 2, infoHeight, infoWidth, infoHeight), "CORRECT");
-        //}
+        UIController.Instance.SetMessageField(txt, Color.black);
     }
 
 
     void Update()
     {
-
+       
         if (performReset)
         {
             Debug.Log("Performing Reset");
@@ -138,7 +116,13 @@ public class SceneController : MonoBehaviour
                 performReset = true;
                 inputEnabled = false;
             }
-        }       
+            else {
+                SetMessageText();
+            }
+        }
+
+        UIController.Instance.ShowStartButton(!inputEnabled);
+        UIController.Instance.ShowCancelButton(inputEnabled);
     }
 
 
@@ -147,7 +131,7 @@ public class SceneController : MonoBehaviour
     /// </summary>
     /// <returns>True if a next TestCase can be started. If no TestCase is available it returns false.</returns>
     private bool StartNextTestCase()
-    {       
+    {
         ClearTestCase();
         currentTestCase = scenario.GetNextTestCase();
 
@@ -165,7 +149,9 @@ public class SceneController : MonoBehaviour
     /// </summary>
     public void Reset()
     {
+        StorageManager.Instance.WriteTestCaseResult(scenario);
         StorageManager.Instance.ClearTestCaseProgress();
+
         ClearTestCase();
         scenario.Reset();
         currentTestCase = null;
@@ -192,8 +178,9 @@ public class SceneController : MonoBehaviour
 
     public void CancelTestCase(string userID, int attempts)
     {
-        Debug.Log("Canceling TestCase after " + attempts  + " attempts");
+        Debug.Log("Canceling TestCase after " + attempts + " attempts");
         scenario.SolveCurrentTestCase(false, userID, attempts, 0);
+        UIController.Instance.ShowCorrectMarker(false);
         loadNextTestCase = true;
     }
 
@@ -211,13 +198,14 @@ public class SceneController : MonoBehaviour
 
         if (selectedObj == targetObject)
         {
-            isCorrect = true;           
+            isCorrect = true;
             scenario.SolveCurrentTestCase(true, userID, attempts, time);
             loadNextTestCase = true;
+
         }
 
         Debug.Log("Trying to Solve TestCase: isCorrect = " + isCorrect);
-
+        UIController.Instance.ShowCorrectMarker(isCorrect);
         return isCorrect;
     }
 
@@ -302,14 +290,5 @@ public class SceneController : MonoBehaviour
         // Set the targetObject to the index provided by the TestCase in the list sorted by distance
         targetObject = gameObjects[testCase.targetElementIndex];
 
-        // Debug Ausgabe
-        //Debug.Log("Creating TestCase ID " + testCase.id + ": NumElements = " + testCase.numElements + ", targetElementIndex =" + testCase.targetElementIndex);
-        //Debug.Log("GameObjects sorted by distance: ");
-        //for (int i = 0; i < gameObjectList.Count; i++)
-        //{
-        //    Debug.Log("Index = " + i + ": Distance = " + (gameObjectList[i].transform.position - camera.transform.position).magnitude);
-        //}
-        //float d = (targetObject.transform.position - camera.transform.position).magnitude;
-        //Debug.Log("TargetGameObject: Index = " + testCase.targetElementIndex + ": Distance = " + d);
     }
 }

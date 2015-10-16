@@ -14,7 +14,8 @@ public class CameraController : MonoBehaviour
     private LineRenderer rayRenderer;
 
     // The unique id of the user
-    private string userID = "";
+
+    private string userID = "todo";
 
     // Offset to the ray position such that the ray does not go through the exact center of the camera
     public float rayOffset = -0.5f;
@@ -38,9 +39,8 @@ public class CameraController : MonoBehaviour
     /// </summary>
     void Start()
     {
-#if !UNITY_EDITOR
         pluginManager = GetComponent<PluginManager>();          
-#endif
+
         rayRenderer = GetComponent<LineRenderer>();
         rayRenderer.enabled = false;
     }
@@ -53,8 +53,8 @@ public class CameraController : MonoBehaviour
     void Update()
     {
 #if UNITY_EDITOR
-        this.transform.Rotate(Vector3.up, Input.GetAxis("Horizontal") * 90 * Time.deltaTime);
-        this.transform.Rotate(Vector3.right, Input.GetAxis("Vertical") * 90 * Time.deltaTime);
+        this.transform.Rotate(Vector3.right, -Input.GetAxis("Vertical") * 90 * Time.deltaTime, Space.World);
+        this.transform.Rotate(Vector3.up, Input.GetAxis("Horizontal") * 90 * Time.deltaTime, Space.World);
 #endif
 
         // Only Process the Input while the scene is running.
@@ -76,9 +76,16 @@ public class CameraController : MonoBehaviour
         if (selectedObj)
             distance = (this.transform.position - selectedObj.transform.position).magnitude;
 
-#if !UNITY_EDITOR
         pluginManager.SetDistance = distance;
-#endif
+
+    }
+
+    /// <summary>
+    /// Callbackfunction for when the Cancel Button is being pressed
+    /// </summary>
+    public void OnCancelButtonClicked()
+    {
+        sceneController.CancelTestCase("", attempts);
     }
 
 
@@ -141,16 +148,5 @@ public class CameraController : MonoBehaviour
             return hit.collider.gameObject;
         }
         return null;
-    }
-
-    void OnGUI()
-    {
-        // Cancel Button pressed
-        if (!sceneController.InputEnabled)
-            return;
-        if (GUI.Button(new Rect(Screen.width - 40, 0, 40, 40), "x"))
-        {
-            sceneController.CancelTestCase("", attempts);   // TODO Set real values           
-        }
     }
 }
