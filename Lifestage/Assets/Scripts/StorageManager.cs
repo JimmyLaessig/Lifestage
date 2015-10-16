@@ -26,16 +26,17 @@ public class StorageManager : MonoBehaviour
     /// Returns an instance of the StorageManager
     /// </summary>
     /// <returns></returns>
-    public static StorageManager Instance()
+    public static StorageManager Instance
     {
-        return StorageManager.instance;
+        get { return StorageManager.instance; }
     }
 
 
 
     void Awake()
     {
-        StorageManager.instance = this;
+        if (!StorageManager.instance)
+            StorageManager.instance = this;
     }
 
 

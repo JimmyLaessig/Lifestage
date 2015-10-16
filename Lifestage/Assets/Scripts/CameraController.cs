@@ -13,10 +13,9 @@ public class CameraController : MonoBehaviour
 
     private LineRenderer rayRenderer;
 
-
     // The unique id of the user
     private string userID = "";
-    public Vector3 offsetToScene = new Vector3(0, 0, -1);
+
     // Offset to the ray position such that the ray does not go through the exact center of the camera
     public float rayOffset = -0.5f;
 
@@ -40,12 +39,7 @@ public class CameraController : MonoBehaviour
     void Start()
     {
 #if !UNITY_EDITOR
-        
-            this.transform.Translate(offsetToScene);
-            pluginManager = GetComponent<PluginManager>();
-            if (!pluginManager)
-                Debug.Log("CameraController must have a child attached with a PluginManager-Script!!");
-        
+        pluginManager = GetComponent<PluginManager>();          
 #endif
         rayRenderer = GetComponent<LineRenderer>();
         rayRenderer.enabled = false;
@@ -62,7 +56,6 @@ public class CameraController : MonoBehaviour
         this.transform.Rotate(Vector3.up, Input.GetAxis("Horizontal") * 90 * Time.deltaTime);
         this.transform.Rotate(Vector3.right, Input.GetAxis("Vertical") * 90 * Time.deltaTime);
 #endif
-
 
         // Only Process the Input while the scene is running.
         if (!sceneController.InputEnabled)
@@ -82,6 +75,7 @@ public class CameraController : MonoBehaviour
         float distance = -1;
         if (selectedObj)
             distance = (this.transform.position - selectedObj.transform.position).magnitude;
+
 #if !UNITY_EDITOR
         pluginManager.SetDistance = distance;
 #endif
@@ -121,7 +115,7 @@ public class CameraController : MonoBehaviour
             // Solve the TestCase if an object was selected
             if (selectedObj)
             {
-                if(sceneController.SolveTestCase(timePassed, userID, attempts))
+                if (sceneController.SolveTestCase(timePassed, userID, attempts))
                     attempts = 0;
             }
         }
@@ -156,7 +150,7 @@ public class CameraController : MonoBehaviour
             return;
         if (GUI.Button(new Rect(Screen.width - 40, 0, 40, 40), "x"))
         {
-            sceneController.CancelTestCase("",attempts);   // TODO Set real values           
+            sceneController.CancelTestCase("", attempts);   // TODO Set real values           
         }
     }
 }

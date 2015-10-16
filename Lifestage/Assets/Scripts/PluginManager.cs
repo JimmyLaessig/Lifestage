@@ -6,30 +6,50 @@ using System.Collections;
 /// </summary>
 public class PluginManager : MonoBehaviour
 {
+    private static PluginManager instance;
 
     public static string MAIN_ACTIVITY_CLASS_NAME = "at.ac.tuwien.ims.lifestage.vibro.MainActivity";
 
     private AndroidJavaObject pluginActivity;
 
     private bool initRotation = true;
-
-    private Vector3 initRotationEuler;
+    private float intRotationY;
 
     private float distance = -1;
+
+    private Quaternion gyroRotation;
 
     // Intervall in which the vibrations of a certain pattern are triggered in seconds
     public float vibrationIntervall = 5f;
     private float timeStamp = 0;
 
+    void Awake()
+    {
+        if (!PluginManager.instance)
+            PluginManager.instance = this;
+    }
+
+
+    public static PluginManager Instance
+    {
+        get { return instance; }
+    }
+
+
     // Use this for initialization
     void Start()
     {
+        initRotation = true;
+        intRotationY = 0;
+        Input.gyro.enabled = true;
+
         using (AndroidJavaClass jc = new AndroidJavaClass(MAIN_ACTIVITY_CLASS_NAME))
         {
             pluginActivity = jc.GetStatic<AndroidJavaObject>("context");
-		}
+        }
 
-		ConnectToSparkCore();
+        ConnectToSparkCore();
+
     }
 
     void ConnectToSparkCore()
@@ -46,17 +66,17 @@ public class PluginManager : MonoBehaviour
         pluginActivity.Call("disconnect");
     }
 
-	/**
+    /**
      * Returns the status between the device and the SparkCore.
      *
      * CONNECTED = 1;
      * CONNECTING = 2;
      * NOT_CONNECTED = 3;
      */
-	int GetConnectionStateFromCore()
-	{
-		return pluginActivity.Call<int>("getConnectionState");
-	}
+    int GetConnectionStateFromCore()
+    {
+        return pluginActivity.Call<int>("getConnectionState");
+    }
 
 
     // Update is called once per frame
@@ -68,6 +88,10 @@ public class PluginManager : MonoBehaviour
         UpdateVibration();
     }
 
+    public void InitBaseRotation()
+    {
+        this.intRotationY = -transform.rotation.eulerAngles.y;
+    }
 
     private void UpdateVibration()
     {
@@ -79,27 +103,49 @@ public class PluginManager : MonoBehaviour
         if (timeStamp >= vibrationIntervall)
         {
             timeStamp -= vibrationIntervall;
-			sendPattern();
+            sendPattern();
             // TODO: Either calculate Pattern on Unity Site ( very extensive) or create Method in Vibro.jar that calculates Pattern based on distance and VibrationIntervall            
         }
     }
-	
-	private void sendPattern()
-	{
-		pluginActivity.Call("sendTestPattern");
-	}
+
+
+    void OnGUI()
+    {
+        GUILayout.Label("RotationFix: " + intRotationY);
+        GUILayout.Label("Rotation: " + this.transform.rotation.eulerAngles);
+    }
+
+    private void sendPattern()
+    {
+        pluginActivity.Call("sendTestPattern");
+    }
 
 
     private void UpdateCameraOrientation()
     {
-        // Get the latest rotation matrix from the Receiver
-       // float[] rotation = pluginActivity.Call<float[]>("getOrientationMatrix");
-       // if (rotation == null)
-       //     return;
 
-       // // Transform the rotation matrix to a quaternion
-       // Vector3 euler = GetRotationFromMatrixArray(rotation).eulerAngles;
-       //// this.transform.eulerAngles = new Vector3(euler.y, -euler.x, euler.z);
+        // Get the latest rotation matrix from the Receiver
+        //float[] rotation = pluginActivity.Call<float[]>("getOrientationMatrix");
+        //if (rotation == null)
+        //    return;
+
+        //// Transform the rotation matrix to a quaternion
+        //Vector3 euler = GetRotationFromMatrixArray(rotation).eulerAngles;
+
+        //// gyroRotation.eulerAngles = new Vector3(euler.y, -euler.x, euler.z); 
+
+        gyroRotation = Quaternion.Slerp(gyroRotation,
+           ConvertRotation(Quaternion.Inverse(Quaternion.Euler(90, 0, 0)) * Input.gyro.attitude), 0.98f);
+        
+        transform.rotation = gyroRotation;
+       
+        transform.Rotate(transform.up, intRotationY);
+    }
+
+
+    private static Quaternion ConvertRotation(Quaternion q)
+    {
+        return new Quaternion(q.x, q.y, -q.z, -q.w);
     }
 
 

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 [RequireComponent(typeof(MeshFilter))]
 public class SceneController : MonoBehaviour
-{
+{   
 
     private Camera camera;
 
@@ -18,6 +18,7 @@ public class SceneController : MonoBehaviour
     private TestCase currentTestCase = null;
     private int attempts = 0;
 
+    
 
     // A Collection of Primitves to choose from for the scene
     public PrimitiveType[] primitiveTypes = { PrimitiveType.Cube, PrimitiveType.Sphere, PrimitiveType.Cylinder, PrimitiveType.Capsule };
@@ -57,9 +58,12 @@ public class SceneController : MonoBehaviour
     /// </summary>
     void Start()
     {
+        
+
         camera = GetComponentInChildren<Camera>();
         gameObjects = new List<GameObject>();
-        scenario = StorageManager.Instance().LoadScenario();
+       
+        scenario = StorageManager.Instance.LoadScenario();
     }
 
 
@@ -79,12 +83,13 @@ public class SceneController : MonoBehaviour
             {
                 loadNextTestCase = true;
                 performReset = true;
+                PluginManager.Instance.InitBaseRotation();
             }
         }
         else
         {
 
-
+            
             string txt = "";
             if (currentTestCase != null)
             {
@@ -102,9 +107,8 @@ public class SceneController : MonoBehaviour
             {
                 txt = "No TestCase available!";
             }
-            int infoWidth = 400;
-            int infoHeight = 100;
-            GUI.Box(new Rect(0, 0, infoWidth, infoHeight), txt);
+         //   GUILayout.Box(txt);
+           
         }
         //if (loadNextTestCase)
         //{
@@ -161,7 +165,7 @@ public class SceneController : MonoBehaviour
     /// </summary>
     public void Reset()
     {
-        StorageManager.Instance().ClearTestCaseProgress();
+        StorageManager.Instance.ClearTestCaseProgress();
         ClearTestCase();
         scenario.Reset();
         currentTestCase = null;
