@@ -72,8 +72,8 @@ public class SceneController : MonoBehaviour
 
     void SetMessageText()
     {
-        if (!inputEnabled)
-            return;
+       // if (!inputEnabled)
+       //     return;
 
         string txt = "";
         if (currentTestCase != null)
@@ -92,8 +92,9 @@ public class SceneController : MonoBehaviour
         }
         else
         {
-            txt = "No TestCase available!";
+            txt = "Press Start to load TestCases!";
         }
+        
         UIController.Instance.SetMessageField(txt, Color.black);
     }
 
@@ -116,11 +117,8 @@ public class SceneController : MonoBehaviour
                 performReset = true;
                 inputEnabled = false;
             }
-            else {
-                SetMessageText();
-            }
         }
-
+        SetMessageText();
         UIController.Instance.ShowStartButton(!inputEnabled);
         UIController.Instance.ShowCancelButton(inputEnabled);
     }

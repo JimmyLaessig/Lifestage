@@ -20,7 +20,6 @@ public class StorageManager : MonoBehaviour
 #endif
     private static string SOLVED_TESTCASES_KEY = "solvedCasesKey";
 
-    private Exception ex = null;
 
     /// <summary>
     /// Returns an instance of the StorageManager
@@ -32,22 +31,10 @@ public class StorageManager : MonoBehaviour
     }
 
 
-
     void Awake()
     {
         if (!StorageManager.instance)
             StorageManager.instance = this;
-    }
-
-
-    void OnGUI()
-    {
-        if (ex != null)
-        {
-            GUI.contentColor = Color.red;
-            Rect box = new Rect(200, 200, 200, 200);
-            GUI.Label(box, SCENARIO_FILE_PATH + " not found or is invalid! Please make sure that the corresponding file exists and is well formed!");
-        }
     }
 
 
@@ -74,10 +61,14 @@ public class StorageManager : MonoBehaviour
                 t.targetElementIndex = Convert.ToInt32(list[i].Attributes["targetElement"].Value) - 1;
                 scenario.AddTestCase(t);
             }
+            if (list.Count == 0)
+            {
+                UIController.Instance.ReportError(SCENARIO_FILE_PATH + ": No TestCases found!");
+            }
         }
         catch (Exception ex)
         {
-            UIController.Instance.SetMessageField(SCENARIO_FILE_PATH + " not found or is invalid! Please make sure that the corresponding file exists and is well formed!", Color.red);
+            UIController.Instance.ReportError(SCENARIO_FILE_PATH + " not found or is invalid! Please make sure that the corresponding file exists and is well formed!");
         }
 
         return scenario;
