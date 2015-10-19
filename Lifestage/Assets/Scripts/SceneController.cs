@@ -11,7 +11,6 @@ using System.Collections.Generic;
 [RequireComponent(typeof(MeshFilter))]
 public class SceneController : MonoBehaviour
 {
-
     private new Camera camera;
 
     private Scenario scenario;
@@ -58,6 +57,11 @@ public class SceneController : MonoBehaviour
         gameObjects = new List<GameObject>();
 
         scenario = StorageManager.Instance.LoadScenario();
+
+		Bounds bounds = GetComponent<MeshFilter>().mesh.bounds;
+		Vector3 position=new Vector3(bounds.max.x, bounds.max.y, bounds.max.z);
+		position.Scale(transform.localScale);
+		PluginManager.Instance.SetMaxDistance=Vector3.Magnitude(position-camera.transform.position);
     }
 
 

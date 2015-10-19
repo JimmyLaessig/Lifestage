@@ -42,7 +42,7 @@ public class CameraController : MonoBehaviour
         pluginManager = GetComponent<PluginManager>();          
 
         rayRenderer = GetComponent<LineRenderer>();
-        rayRenderer.enabled = false;
+		rayRenderer.enabled = false;
     }
 
 

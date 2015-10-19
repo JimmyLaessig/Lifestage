@@ -299,6 +299,7 @@ public class SparkManager {
                 output.flush();
                 Log.d(TAG, "sendPattern: " + command);
             } catch (IOException e) {
+                Log.e(TAG, "sendPattern exception: " + e.getMessage());
             }
         }
 

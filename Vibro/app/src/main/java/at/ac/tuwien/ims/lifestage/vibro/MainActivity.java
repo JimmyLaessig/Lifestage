@@ -1,5 +1,6 @@
 package at.ac.tuwien.ims.lifestage.vibro;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -8,6 +9,7 @@ import android.util.Log;
 import com.unity3d.player.UnityPlayerActivity;
 
 import java.util.ArrayList;
+import java.util.TimerTask;
 
 import at.ac.tuwien.ims.lifestage.vibro.Entity.Event;
 import at.ac.tuwien.ims.lifestage.vibro.Entity.Pattern;
@@ -73,6 +75,7 @@ public class MainActivity extends UnityPlayerActivity {
      * NOT_CONNECTED = 3;
      */
     public int getConnectionState() {
+        Log.d(getClass().getName(), "getConnectionState called");
         if(connectionManager ==null)
             return 3;
         return connectionManager.getStatus();
@@ -122,6 +125,58 @@ public class MainActivity extends UnityPlayerActivity {
     }
 
     /**
+     * Sends a command to Spark Core.
+     *
+     * @param command command string to send
+     * @return true if command was sent else false
+     */
+    public boolean sendCommand(String command) {
+        if(connectionManager==null || command.isEmpty()) {
+            Log.e(getClass().getName(), "sendevent failed");
+            return false;
+        }
+        if(getConnectionState() != 1) {
+            Log.e(getClass().getName(), "sendevent failed, not connected");
+            return false;
+        }
+
+        Log.d(getClass().getName(), "sent command: " + command);
+        connectionManager.sendCommand_executePattern(command);
+        return true;
+    }
+
+    /**
+     * Sends an event to Spark Core.
+     *
+     * @return true if event was sent else false
+     */
+    public boolean sendEvent(int acId, int intensity, int targetIntensity, int duration, int pauseAfter) {
+        Log.d(getClass().getName(), "sendevent called with parameters: " +acId+", "+intensity+", "+targetIntensity+", "+duration+", "+ pauseAfter);
+        if(connectionManager==null || acId<0 || intensity<0 || targetIntensity<0 || duration<0 || pauseAfter<0) {
+            Log.e(getClass().getName(), "sendevent failed");
+            return false;
+        }
+        if(getConnectionState()!=1) {
+            Log.e(getClass().getName(), "sendevent failed, not connected");
+            return false;
+        }
+
+        String command="";
+        command+="_1";
+        command+="_"+acId;
+        command+="_"+intensity;
+        command+="_"+targetIntensity;
+        command+="_"+duration;
+        command+="_"+pauseAfter;
+        command+="_";
+        command+="1_";
+
+        Log.d(getClass().getName(), "sent event command: " + command);
+        connectionManager.sendCommand_executePattern(command);
+        return true;
+    }
+
+    /**
      * Sends an event to Spark Core.
      *
      * @return true if event was sent else false
@@ -132,6 +187,11 @@ public class MainActivity extends UnityPlayerActivity {
         if(connectionManager==null || e==null)
             return false;
 
+        if(getConnectionState()!=1) {
+            Log.e(getClass().getName(), "sendevent failed, not connected");
+            return false;
+        }
+
         String command="";
         command+="_1";
         command+="_"+e.acId;
@@ -141,7 +201,7 @@ public class MainActivity extends UnityPlayerActivity {
         command+="_"+e.pauseAfter;
         command+="_";
         command+="1_";
-        Log.d("sent event command: ", command);
+        Log.d(getClass().getName(), "sent event command: " + command);
 
         connectionManager.sendCommand_executePattern(command);
         return true;
@@ -158,6 +218,11 @@ public class MainActivity extends UnityPlayerActivity {
         if(connectionManager==null || pattern==null)
             return false;
 
+        if(getConnectionState()!=1) {
+            Log.e(getClass().getName(), "sendpattern failed, not connected");
+            return false;
+        }
+
         String command="";
         command+="_";
         command+=""+pattern.eventList.size()+"_";
@@ -173,7 +238,7 @@ public class MainActivity extends UnityPlayerActivity {
         }
         command+=pattern.repeat;
         command+="_";
-        Log.d("sent pattern command: ", command);
+        Log.d(getClass().getName(), "sent pattern command: " + command);
 
         connectionManager.sendCommand_executePattern(command);
         return true;
@@ -184,7 +249,7 @@ public class MainActivity extends UnityPlayerActivity {
      *
      */
     public void sendTestPattern() {
-        Log.d(getClass().getName(), "sent test pattern called");
+        Log.d(getClass().getName(), "send test pattern called");
         if(connectionManager ==null)
             return;
 
@@ -249,7 +314,6 @@ public class MainActivity extends UnityPlayerActivity {
      *
      */
     public void cancelVibration() {
-        Log.d(getClass().getName(), "cancel vibration called");
         vibrator.cancel();
     }
 }

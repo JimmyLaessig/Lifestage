@@ -8,22 +8,19 @@ using System.Collections.Generic;
 /// </summary>
 public class PluginManager : MonoBehaviour
 {
-
     private static PluginManager instance;
     public static PluginManager Instance
     {
         get { return instance; }
     }
 
-
     public static string MAIN_ACTIVITY_CLASS_NAME = "at.ac.tuwien.ims.lifestage.vibro.MainActivity";
 
-#if !UNITY_EDITOR
+	#if !UNITY_EDITOR
 	private static string SPARKAUTH_FILE_PATH = "/sdcard/spark_auth.txt";
-#else
+	#else
     private static string SPARKAUTH_FILE_PATH = "spark_auth.txt";
-#endif
-
+	#endif
 
     private AndroidJavaObject pluginActivity;
 
@@ -32,11 +29,13 @@ public class PluginManager : MonoBehaviour
 
 
     // Distance for Vibration Feedback
-    private float distance = -1;
+	private float distance = -1, maxDistance=20;
 
     // Intervall in which the vibrations of a certain pattern are triggered in seconds
-    public float vibrationIntervall = 5f;
-    private float timeStamp = 0;
+	private float vibrationIntervall = 0.15f;
+	private int duration=100;
+	private float timeStamp = 0;
+	private bool phoneVibration=false;
 
     private List<long[]> intensityPattern = new List<long[]>();
     private float intensityVibrateTimeLeft = 0.0f;
@@ -48,7 +47,6 @@ public class PluginManager : MonoBehaviour
         if (!PluginManager.instance)
             PluginManager.instance = this;
     }
-
 
     // Use this for initialization
     void Start()
@@ -65,17 +63,14 @@ public class PluginManager : MonoBehaviour
         ConnectToSparkCore();
     }
 
-
     // Update is called once per frame
     void Update()
     {
-#if  !UNITY_EDITOR
+		#if !UNITY_EDITOR
 		UpdateCameraRotation();
-#endif
+		#endif
         UpdateVibration();
     }
-
-
 
     #endregion
 
@@ -90,6 +85,10 @@ public class PluginManager : MonoBehaviour
         set { distance = value; }
     }
 
+	public float SetMaxDistance
+	{
+		set { maxDistance = value; }
+	}
 
     /// <summary>
     /// Returns the button state of the button attached tothe sparkcore
@@ -99,7 +98,6 @@ public class PluginManager : MonoBehaviour
     {
         return pluginActivity.Call<bool>("getButtonState");
     }
-
 
     /// <summary>
     /// Sets the current y rotation as base rotation
@@ -139,7 +137,6 @@ public class PluginManager : MonoBehaviour
         pluginActivity.Call("connect", param);
     }
 
-
     /// <summary>
     /// Disconnects the phone from the SparkCore.
     /// </summary>
@@ -147,7 +144,6 @@ public class PluginManager : MonoBehaviour
     {
         pluginActivity.Call("disconnect");
     }
-
 
     /// <summary>
     /// Returns the status between the device and the SparkCore.
@@ -159,7 +155,6 @@ public class PluginManager : MonoBehaviour
     {
         return pluginActivity.Call<int>("getConnectionState");
     }
-
 
     /// <summary>
     /// Updates this transforms rotation to the data received from the gyroscope
@@ -181,10 +176,8 @@ public class PluginManager : MonoBehaviour
 
         transform.rotation = gyroRotation;
         
-        transform.Rotate(Vector3.up, initRotationY, Space.World);
-        
+        transform.Rotate(Vector3.up, initRotationY, Space.World);        
     }
-
 
     /// <summary>
     /// Updates the vibration module
@@ -192,40 +185,89 @@ public class PluginManager : MonoBehaviour
     private void UpdateVibration()
     {
         //intensity vibration on phone
-        if (intensityVibrateTimeLeft < 0.0f)
-        {
+		if (phoneVibration && intensityVibrateTimeLeft < 0.0f)
+		{
+			Debug.Log("Cancel vibration");
             CancelVibrationOnPhone();
+			phoneVibration=false;
         }
-        if (intensityVibrateTimeLeft > 0.0f)
+		if (intensityVibrateTimeLeft > 0.0f)
         {
-            intensityVibrateTimeLeft -= Time.deltaTime;
+			intensityVibrateTimeLeft -= Time.deltaTime;
         }
 
         timeStamp += Time.deltaTime;
-        // Reset the timeStamp to not trigger the event
-        if (distance < 0)
-            timeStamp = 0;
 
-        if (timeStamp >= vibrationIntervall)
-        {
-            timeStamp -= vibrationIntervall;
-            SendVibrationToCore();
-            // TODO: Either calculate Pattern on Unity Site ( very extensive) or create Method in Vibro.jar that calculates Pattern based on distance and VibrationIntervall            
+        if (distance>=0 && timeStamp >= vibrationIntervall) {
+			Debug.Log("Vibrating now: " + timeStamp);
+			timeStamp=0;
+			int intensity=0;
+			float part=maxDistance/20f;
+			if(distance<=maxDistance/2f) {
+				if(distance<=part)
+					intensity=9;
+				else if(distance>part && distance<=part*2)
+					intensity=8;
+				else if(distance>part*2 && distance<=part*3)
+					intensity=7;
+				else if(distance>part*3 && distance<=part*4)
+					intensity=6;
+				else if(distance>part*4 && distance<=part*5)
+					intensity=5;
+				else if(distance>part*5 && distance<=part*6)
+					intensity=4;
+				else if(distance>part*6 && distance<=part*7)
+					intensity=3;
+				else if(distance>part*7 && distance<=part*8)
+					intensity=2;
+				else if(distance>part*8 && distance<=part*9)
+					intensity=1;
+				else if(distance>part*9 && distance<=part*10)
+					intensity=0;
+				VibratePhone(intensity, duration);
+			} else {
+				if(distance<=part*11)
+					intensity=100;
+				else if(distance>part*11 && distance<=part*12)
+					intensity=90;
+				else if(distance>part*12 && distance<=part*13)
+					intensity=80;
+				else if(distance>part*13 && distance<=part*14)
+					intensity=70;
+				else if(distance>part*14 && distance<=part*15)
+					intensity=60;
+				else if(distance>part*15 && distance<=part*16)
+					intensity=50;
+				else if(distance>part*16 && distance<=part*17)
+					intensity=40;
+				else if(distance>part*17 && distance<=part*18)
+					intensity=30;
+				else if(distance>part*18 && distance<=part*19)
+					intensity=20;
+				else if(distance>part*19 && distance<=part*20)
+					intensity=10;
+				SendVibrationToCore(0, 0, intensity, duration, 5);
+			}
         }
     }
-
 
     /// <summary>
     /// Sends a vibrationPattern to the SparkCore
+	/// <param name="actuatorId">id of the actuator to use</param>
+	/// <param name="intensity">intesity of vibration</param>
+	/// <param name="endingIntensity">ending intesity</param>
+	/// <param name="duration">duration of vibration</param>
+	/// <param name="pauseAfter">pause after vibbration</param>
     /// </summary>
-    private void SendVibrationToCore()
+	private void SendVibrationToCore(int actuatorId, int intensity, int endingIntensity, int duration, int pauseAfter)
     {
-        if (GetConnectionStateFromCore() == 1)
-        {
-            pluginActivity.Call("sendTestPattern");
-        }
+        if (GetConnectionStateFromCore () == 1) {
+			bool a=pluginActivity.Call<bool>("sendEvent", actuatorId, intensity, endingIntensity, duration, pauseAfter);
+			if(!a) {
+				Debug.Log("Error while vibrating actuators.");
+			}
+		}
     }
-
 
     /// <summary>
     /// Check whether or not the phone has a VibrationModule attached.
@@ -271,19 +313,19 @@ public class PluginManager : MonoBehaviour
     /// </summary>
     /// <param name="milliseconds">time in ms to vibrate</param>
     /// <param name="intensity">intensity of the vibration (0..9)</param>
-    private void VibratePhone(long milliseconds, int intensity)
+	private void VibratePhone(int intensity, long milliseconds)
     {
         if (HasVibrator())
         {
             if (intensity >= 0 && intensity < 10)
-            {
+			{
+				phoneVibration=true;
                 VibratePhone(intensityPattern[intensity], 0);
                 intensityVibrateTimeLeft = milliseconds / 1000.0f;
                 return;
             }
         }
     }
-
 
     /// <summary>
     /// Cancels the current vibration
