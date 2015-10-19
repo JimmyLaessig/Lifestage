@@ -69,8 +69,7 @@ public class SceneController : MonoBehaviour
     {
         loadNextTestCase = true;
         performReset = true;
-        PluginManager.Instance.InitBaseRotation();
-       
+        PluginManager.Instance.InitBaseRotation();      
     }
 
 

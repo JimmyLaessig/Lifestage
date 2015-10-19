@@ -105,7 +105,7 @@ public class PluginManager : MonoBehaviour
     /// </summary>
     public void InitBaseRotation()
     {
-        this.initRotationY = -transform.rotation.eulerAngles.y;
+        this.initRotationY = -gyroRotation.eulerAngles.y;
     }
 
     #endregion[Public Methods]
