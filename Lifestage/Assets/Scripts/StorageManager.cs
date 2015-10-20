@@ -56,9 +56,10 @@ public class StorageManager : MonoBehaviour
             for (int i = 0; i < list.Count; i++)
             {
                 TestCase t = new TestCase();
-				// TODO: Read all necessary stuff from the .xml file
                 t.numElements = Convert.ToInt32(list[i].Attributes["numElements"].Value);
-                t.targetElementIndex = Convert.ToInt32(list[i].Attributes["targetElement"].Value) - 1;
+				t.targetElementIndex = Convert.ToInt32(list[i].Attributes["targetElement"].Value) - 1;
+				t.vibroMode = PluginManager.Instance.getEnum(list[i].Attributes["vibroMode"].Value);
+				t.repetitions = Convert.ToInt32(list[i].Attributes["repetitions"].Value);
                 scenario.AddTestCase(t);
             }
             if (list.Count == 0)
@@ -124,6 +125,25 @@ public class StorageManager : MonoBehaviour
         return solved;
     }
 
+	/// <summary>
+	/// This method gets the next userID from the xml file or -1 if xml file does not exist.
+	/// </summary>
+	public int getNextIDfromXML() {
+		XmlDocument xmlDoc = new XmlDocument();
+		if (File.Exists (OUTPUT_FILE_PATH)) {            
+			xmlDoc.Load (OUTPUT_FILE_PATH);
+			XmlElement elmRoot = xmlDoc.DocumentElement;
+			
+			int user_id = 0;
+			if (elmRoot.LastChild != null) {
+				int id = Int32.Parse(elmRoot.LastChild.Attributes ["userID"].Value);
+				user_id = id + 1;
+			}
+			return user_id;
+		}
+		return -1;
+	}
+
     /// <summary>
     /// This method writes the results of a TestCase to the corresponding XML-File.
     /// </summary>
@@ -136,11 +156,7 @@ public class StorageManager : MonoBehaviour
 			xmlDoc.Load (OUTPUT_FILE_PATH);
 			XmlElement elmRoot = xmlDoc.DocumentElement;
 			
-			int user_id = 0;
-			if(elmRoot.LastChild != null) {
-				int id = Int32.Parse(elmRoot.LastChild.Attributes["userID"].Value);
-				user_id=id+1;
-			}
+			int user_id = getNextIDfromXML();
 			XmlElement elm = xmlDoc.CreateElement("Result");
 
 			XmlAttribute userId = xmlDoc.CreateAttribute("userID"); 
@@ -176,14 +192,4 @@ public class StorageManager : MonoBehaviour
             xmlDoc.Save(OUTPUT_FILE_PATH);
         }
     }
-
-	public void ResetTestCaseResult() {
-		XmlDocument xmlDoc = new XmlDocument();
-		if (File.Exists (OUTPUT_FILE_PATH)) {   
-			xmlDoc.Load(OUTPUT_FILE_PATH);
-			XmlElement elmRoot = xmlDoc.DocumentElement;
-			elmRoot.RemoveAll();
-			xmlDoc.Save(OUTPUT_FILE_PATH);
-		}
-	}
 }

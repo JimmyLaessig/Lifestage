@@ -141,6 +141,7 @@ public class SceneController : MonoBehaviour
 
         inputEnabled = true;
         GenerateGameObjects(currentTestCase);
+		PluginManager.Instance.SetVibroMode(currentTestCase.vibroMode);
         return true;
     }
 

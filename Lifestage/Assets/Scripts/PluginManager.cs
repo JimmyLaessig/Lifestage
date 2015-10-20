@@ -3,6 +3,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+public enum VibroMode {
+	Both=0,
+	SmartphoneOnly=1,
+	VibroOnly=2
+}
+
 /// <summary>
 /// This script is used to track the cameras' orientation using the OrientationTracker service and provides an interface to the VibroModule
 /// </summary>
@@ -40,6 +46,8 @@ public class PluginManager : MonoBehaviour
     private List<long[]> intensityPattern = new List<long[]>();
     private float intensityVibrateTimeLeft = 0.0f;
 
+	private VibroMode vibroMode=VibroMode.Both;
+
     #region [Unity Callback Methods]
 
     void Awake()
@@ -76,18 +84,31 @@ public class PluginManager : MonoBehaviour
 
     #region[Public Methods]
 
+	public VibroMode getEnum(String s) {
+		switch(s) {
+			case "SmartphoneOnly":
+				return VibroMode.SmartphoneOnly;
+			case "VibroOnly":
+				return VibroMode.VibroOnly;
+			default:
+				return VibroMode.Both;
+		}
+	}
+
     /// <summary>
     /// Sets the distance that is used to calculate the vibration pattern.
     /// Setting its value to a negative value will disable the vibration
     /// </summary>
-    public float SetDistance
-    {
+    public float SetDistance {
         set { distance = value; }
     }
 
-	public float SetMaxDistance
-	{
+	public float SetMaxDistance {
 		set { maxDistance = value; }
+	}
+
+	public void SetVibroMode(VibroMode v) {
+		vibroMode = v;
 	}
 
     /// <summary>
@@ -199,54 +220,59 @@ public class PluginManager : MonoBehaviour
         timeStamp += Time.deltaTime;
 
         if (distance>=0 && timeStamp >= vibrationIntervall) {
-			Debug.Log("Vibrating now: " + timeStamp);
 			timeStamp=0;
-			int intensity=0;
-			float part=maxDistance/20f;
-			if(distance<=maxDistance/2f) {
-				if(distance<=part)
-					intensity=9;
-				else if(distance>part && distance<=part*2)
-					intensity=8;
-				else if(distance>part*2 && distance<=part*3)
-					intensity=7;
-				else if(distance>part*3 && distance<=part*4)
-					intensity=6;
-				else if(distance>part*4 && distance<=part*5)
-					intensity=5;
-				else if(distance>part*5 && distance<=part*6)
-					intensity=4;
-				else if(distance>part*6 && distance<=part*7)
-					intensity=3;
-				else if(distance>part*7 && distance<=part*8)
-					intensity=2;
-				else if(distance>part*8 && distance<=part*9)
-					intensity=1;
-				else if(distance>part*9 && distance<=part*10)
-					intensity=0;
-				VibratePhone(intensity, duration);
-			} else {
-				if(distance<=part*11)
-					intensity=100;
-				else if(distance>part*11 && distance<=part*12)
-					intensity=90;
-				else if(distance>part*12 && distance<=part*13)
-					intensity=80;
-				else if(distance>part*13 && distance<=part*14)
-					intensity=70;
-				else if(distance>part*14 && distance<=part*15)
-					intensity=60;
-				else if(distance>part*15 && distance<=part*16)
-					intensity=50;
-				else if(distance>part*16 && distance<=part*17)
-					intensity=40;
-				else if(distance>part*17 && distance<=part*18)
-					intensity=30;
-				else if(distance>part*18 && distance<=part*19)
-					intensity=20;
-				else if(distance>part*19 && distance<=part*20)
-					intensity=10;
-				SendVibrationToCore(0, 0, intensity, duration, 5);
+			if (vibroMode==VibroMode.Both) {
+				int intensity=0;
+				float part=maxDistance/20f;
+				if(distance<=maxDistance/2f) {
+					if(distance<=part)
+						intensity=9;
+					else if(distance>part && distance<=part*2)
+						intensity=8;
+					else if(distance>part*2 && distance<=part*3)
+						intensity=7;
+					else if(distance>part*3 && distance<=part*4)
+						intensity=6;
+					else if(distance>part*4 && distance<=part*5)
+						intensity=5;
+					else if(distance>part*5 && distance<=part*6)
+						intensity=4;
+					else if(distance>part*6 && distance<=part*7)
+						intensity=3;
+					else if(distance>part*7 && distance<=part*8)
+						intensity=2;
+					else if(distance>part*8 && distance<=part*9)
+						intensity=1;
+					else if(distance>part*9 && distance<=part*10)
+						intensity=0;
+					VibratePhone(intensity, duration);
+				} else {
+					if(distance<=part*11)
+						intensity=100;
+					else if(distance>part*11 && distance<=part*12)
+						intensity=90;
+					else if(distance>part*12 && distance<=part*13)
+						intensity=80;
+					else if(distance>part*13 && distance<=part*14)
+						intensity=70;
+					else if(distance>part*14 && distance<=part*15)
+						intensity=60;
+					else if(distance>part*15 && distance<=part*16)
+						intensity=50;
+					else if(distance>part*16 && distance<=part*17)
+						intensity=40;
+					else if(distance>part*17 && distance<=part*18)
+						intensity=30;
+					else if(distance>part*18 && distance<=part*19)
+						intensity=20;
+					else if(distance>part*19 && distance<=part*20)
+						intensity=10;
+					SendVibrationToCore(1, 0, intensity, duration, 5);
+				}
+			} else if (vibroMode==VibroMode.SmartphoneOnly) {
+				//TODO
+			} else if (vibroMode==VibroMode.VibroOnly) {
+				//TODO
 			}
         }
     }
