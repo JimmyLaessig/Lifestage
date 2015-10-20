@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 
@@ -103,8 +103,7 @@ public class SceneController : MonoBehaviour
 
 
     void Update()
-    {
-       
+    {       
         if (performReset)
         {
             Debug.Log("Performing Reset");
@@ -132,15 +131,15 @@ public class SceneController : MonoBehaviour
     /// </summary>
     /// <returns>True if a next TestCase can be started. If no TestCase is available it returns false.</returns>
     private bool StartNextTestCase()
-    {
-        ClearTestCase();
-        currentTestCase = scenario.GetNextTestCase();
+	{
+		ClearTestCase();
+		currentTestCase = scenario.GetNextTestCase();
 
         if (currentTestCase == null)
             return false;
 
         inputEnabled = true;
-        GenerateGameObjects(currentTestCase);
+		GenerateGameObjects(currentTestCase);
 		PluginManager.Instance.SetVibroMode(currentTestCase.vibroMode);
         return true;
     }
@@ -151,7 +150,6 @@ public class SceneController : MonoBehaviour
     /// </summary>
     public void Reset()
     {
-        StorageManager.Instance.WriteTestCaseResult(scenario);
         StorageManager.Instance.ClearTestCaseProgress();
 
         ClearTestCase();
@@ -179,9 +177,9 @@ public class SceneController : MonoBehaviour
 
 
     public void CancelTestCase(string userID, int attempts)
-    {
+	{
         Debug.Log("Canceling TestCase after " + attempts + " attempts");
-        scenario.SolveCurrentTestCase(false, userID, attempts, 0);
+		scenario.SolveCurrentTestCase(false, userID, attempts, 0);
         UIController.Instance.ShowCorrectMarker(false);
         loadNextTestCase = true;
     }

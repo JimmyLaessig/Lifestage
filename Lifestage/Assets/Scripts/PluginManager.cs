@@ -265,23 +265,51 @@ public class PluginManager : MonoBehaviour
 						intensity=30;
 					else if(distance>part*18 && distance<=part*19)
 						intensity=20;
-					else if(distance>part*19 && distance<=part*20)
+					else if(distance>part*19)
 						intensity=10;
-					SendVibrationToCore(1, 0, intensity, duration, 5);
+					SendVibrationToCore(0, intensity, 0, duration, 5);
+					SendVibrationToCore(1, intensity, 0, duration, 5);
 				}
-			} else if (vibroMode==VibroMode.SmartphoneOnly) {
-				//TODO
-			} else if (vibroMode==VibroMode.VibroOnly) {
-				//TODO
+			} else {
+				int intensity=0;
+				float part=maxDistance/10f;
+				if(distance<=part)
+					intensity=9;
+				else if(distance>part && distance<=part*2)
+					intensity=8;
+				else if(distance>part*2 && distance<=part*3)
+					intensity=7;
+				else if(distance>part*3 && distance<=part*4)
+					intensity=6;
+				else if(distance>part*4 && distance<=part*5)
+					intensity=5;
+				else if(distance>part*5 && distance<=part*6)
+					intensity=4;
+				else if(distance>part*6 && distance<=part*7)
+					intensity=3;
+				else if(distance>part*7 && distance<=part*8)
+					intensity=2;
+				else if(distance>part*8 && distance<=part*9)
+					intensity=1;
+				else if(distance>part*9)
+					intensity=0;
+
+				if(vibroMode==VibroMode.SmartphoneOnly) {
+					VibratePhone(intensity, duration);
+				} else if(vibroMode==VibroMode.VibroOnly) {
+					intensity=(intensity*10)+10;
+					SendVibrationToCore(0, intensity, 0, duration, 5);
+					SendVibrationToCore(1, intensity, 0, duration, 5);
+				}
 			}
         }
     }
 
     /// <summary>
     /// Sends a vibrationPattern to the SparkCore
-	/// <param name="actuatorId">id of the actuator to use</param>
+	/// <param name="actuatorId">id of the actuator to use (if vibros shows north, 0 is left, 1 is right)</param>
 	/// <param name="intensity">intesity of vibration</param>
-	/// <param name="endingIntensity">ending intesity</param>
+	/// <param name="endingIntensity">ending intesity (interpolaton), set 0 for normal vibration</param>
 	/// <param name="duration">duration of vibration</param>
 	/// <param name="pauseAfter">pause after vibbration</param>
     /// </summary>

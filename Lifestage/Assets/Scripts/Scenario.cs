@@ -47,7 +47,7 @@ public class Scenario
             currentTestCase = null;
         }
         else
-        {
+		{
             Debug.Log("Returning new TestCase");
             int index = UnityEngine.Random.Range(0, openTestCases.Count);
             currentTestCase = openTestCases[index];
@@ -99,8 +99,9 @@ public class Scenario
 		currentTestCase.attempts = attempts;
 		currentTestCase.time = time;
 		currentTestCase.isCorrect=correct;
-        solvedTestCases.Add(currentTestCase);
-        currentTestCase = null;
+		solvedTestCases.Add(currentTestCase);
+		StorageManager.Instance.WriteTestCaseResult(currentTestCase);
+		currentTestCase = null;
     }
 
     /// <summary>
