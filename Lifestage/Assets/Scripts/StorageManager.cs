@@ -9,11 +9,10 @@ using System.Text;
 
 public class StorageManager : MonoBehaviour
 {
-
     private static StorageManager instance;
 #if !UNITY_EDITOR
     private static string SCENARIO_FILE_PATH = "/sdcard/lifestage_testcases.xml";
-	private static string OUTPUT_FILE_PATH = "/sdcard/lifestege_output.xml";
+	private static string OUTPUT_FILE_PATH = "/sdcard/lifestage_output.xml";
 #else
     private static string SCENARIO_FILE_PATH = "lifestage_testcases.xml";
 	private static string OUTPUT_FILE_PATH = "lifestage_output.xml";
@@ -201,14 +200,14 @@ public class StorageManager : MonoBehaviour
 				elm.AppendChild(elmNew);
 				xmlDoc.DocumentElement.AppendChild(elm);
 			} else {
-				XmlNode elm = xmlDoc.DocumentElement.LastChild;
-
-				/*XmlNodeList list = xmlDoc.DocumentElement.LastChild.ChildNodes;
-				bool exists=false;
+				XmlNodeList list = xmlDoc.DocumentElement.LastChild.ChildNodes;
 				for (int i = 0; i < list.Count; i++) {
-					if(Convert.ToInt32(list[i].Attributes["testcaseID"].Value)==testcase.id)
-						exists=true;
-				}*/
+					if(Convert.ToInt32(list[i].Attributes["testcaseID"].Value)==testcase.id) {
+						xmlDoc.DocumentElement.LastChild.RemoveChild(list[i]);
+					}
+				}
+				
+				XmlNode elm = xmlDoc.DocumentElement.LastChild;
 				
 				XmlElement elmNew = xmlDoc.CreateElement("TestCase");
 				XmlAttribute testcaseID = xmlDoc.CreateAttribute("testcaseID");
