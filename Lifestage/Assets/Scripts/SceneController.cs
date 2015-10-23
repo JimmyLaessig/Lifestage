@@ -8,7 +8,7 @@ using System.Collections.Generic;
 /// it handles UI Input and provides functionality for selecting an object, including highlighting
 /// </summary>
 
-[RequireComponent(typeof(MeshFilter))]
+
 public class SceneController : MonoBehaviour
 {
     private new Camera camera;
@@ -35,6 +35,7 @@ public class SceneController : MonoBehaviour
     private Material selectedObjMaterial;
 
     public Material highlightingMaterial;
+    private GameObject boundingVolume;
 
 
 
@@ -54,14 +55,14 @@ public class SceneController : MonoBehaviour
     void Start()
     {
         camera = GetComponentInChildren<Camera>();
+
         gameObjects = new List<GameObject>();
 
         scenario = StorageManager.Instance.LoadScenario();
 
-		Bounds bounds = GetComponent<MeshFilter>().mesh.bounds;
-		Vector3 position=new Vector3(bounds.max.x, bounds.max.y, bounds.max.z);
-		position.Scale(transform.localScale);
-		PluginManager.Instance.SetMaxDistance=Vector3.Magnitude(position-camera.transform.position);
+        boundingVolume = GameObject.Find("BoundingVolume");
+
+        PluginManager.Instance.SetMaxDistance = MaxDistance;
     }
 
 
@@ -69,14 +70,14 @@ public class SceneController : MonoBehaviour
     {
         loadNextTestCase = true;
         performReset = true;
-        PluginManager.Instance.InitBaseRotation();      
+        PluginManager.Instance.InitBaseRotation();
     }
 
 
     void SetMessageText()
     {
-       // if (!inputEnabled)
-       //     return;
+        // if (!inputEnabled)
+        //     return;
 
         string txt = "";
         if (currentTestCase != null)
@@ -97,14 +98,14 @@ public class SceneController : MonoBehaviour
         {
             txt = "Press Start to load TestCases!";
         }
-        
+
         UIController.Instance.SetMessageField(txt, Color.black);
     }
 
 
     void Update()
     {
-       
+
         if (performReset)
         {
             Debug.Log("Performing Reset");
@@ -241,55 +242,81 @@ public class SceneController : MonoBehaviour
     /// </summary>
     public void GenerateGameObjects(TestCase testCase)
     {
+
+        Quaternion rotation = Random.rotation;
+
+        Bounds bounds = boundingVolume.GetComponent<MeshFilter>().mesh.bounds;
+        // Calculate the maximum distance
+        float maxZ = MaxDistance;
+        // calculate the absolute max Height
+        float maxY = bounds.max.y * this.transform.localScale.y;
+        float maxX = bounds.max.x * this.transform.localScale.x;
+
         // Spawn elements
-        for (int i = 0; i < testCase.numElements; i++)
+        for (int i = 0; i < 1000; i++)
         {
+            // Calculate distance of object
+            float currentDistance = (i + 1) * maxZ / testCase.numElements;
+            currentDistance = maxZ;
+            // Calculate maximum height based on current distance
+            float currentMaxHeight = Mathf.Min(currentDistance, maxY);
 
-            Bounds bounds = GetComponent<MeshFilter>().mesh.bounds;
-            // Position
-            Vector3 position;
-            position.x = Random.Range(bounds.min.x, bounds.max.x);
-            position.y = Random.Range(bounds.min.x, bounds.max.y);
-            position.z = Random.Range(bounds.min.z, bounds.max.z);
+            // Calculate random height of the object
+            float y = Random.Range(-currentMaxHeight, currentMaxHeight);
 
-            position.Scale(transform.localScale);
-            position += transform.position;
+            // Calculate random width of the object
 
-            // Rotation
-            Quaternion rotation = Random.rotation;
+            // Calculate current maxWidth based on the radius of a circle
+            float currentMaxWidth = Mathf.Min(Mathf.Sqrt(currentDistance * currentDistance - y * y), maxX);
 
-            // Primitve Type
-            PrimitiveType type = primitiveTypes[Random.Range(0, primitiveTypes.Length - 1)];
+            float x = Random.Range(-currentMaxWidth, currentMaxWidth);
 
-            // Material
-            Material material = materials[Random.Range(0, materials.Length - 1)];
-
-            // Create GameObject
-            GameObject newObject = GameObject.CreatePrimitive(type);
-            newObject.transform.position = position;
-            newObject.transform.rotation = rotation;
-            newObject.GetComponent<Renderer>().material = material;
+            float z = Mathf.Sqrt(currentDistance * currentDistance - y * y - x * x);
+            // float x = Mathf.Sqrt()
+            // Calculate random 
 
 
-            float distance = (newObject.transform.position - camera.transform.position).magnitude;
-            int index = 0;
+            // Calculate Random coordinateson 
+            //  Vector2 xz = Random.insideUnitCircle.normalized * radius;
 
-            // Add the new GameObject to the list sorted by distance ascending
-            while (index < gameObjects.Count)
-            {
-                GameObject obj = gameObjects[index];
-                float objDistance = (obj.transform.position - camera.transform.position).magnitude;
-                if (distance < objDistance)
-                    break;
-
-                index++;
-            }
-
-            gameObjects.Insert(index, newObject);
+            Vector3 position = new Vector3(x, y, Mathf.Abs(z));
+            GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            obj.transform.rotation = rotation;
+            obj.transform.position = position;
+            gameObjects.Insert(i, obj);
         }
-
-        // Set the targetObject to the index provided by the TestCase in the list sorted by distance
         targetObject = gameObjects[testCase.targetElementIndex];
+    }
 
+    /// <summary>
+    /// Returns the maximum width of the bounding volume
+    /// </summary>
+    public float MaxWidth
+    {
+        get
+        {
+            Bounds bounds = boundingVolume.GetComponent<MeshFilter>().mesh.bounds;
+            float width = (bounds.max.x - bounds.min.y) * this.transform.localScale.x;
+            return width;
+        }
+    }
+
+    /// <summary>
+    /// returns the maximum distance of an object, relatively to this GameObject position
+    /// </summary>
+    public float MaxDistance
+    {
+        get
+        {
+            Bounds bounds = boundingVolume.GetComponent<MeshFilter>().mesh.bounds;
+            float distance = bounds.max.z * this.transform.localScale.z + boundingVolume.transform.position.z - this.transform.position.z;
+
+            Debug.Log("Distance: " + distance);
+            Debug.Log("Scene Area: " + this.transform.position);
+            Debug.Log("Bounding Volume: " + boundingVolume.transform.position);
+            Debug.Log("Bounds.size: " + bounds);
+
+            return distance;
+        }
     }
 }
