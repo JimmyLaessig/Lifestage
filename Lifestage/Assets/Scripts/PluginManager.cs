@@ -111,8 +111,8 @@ public class PluginManager : MonoBehaviour
 	}
 
 	public void SetVibroMode(VibroMode v) {
-		//vibroMode = v; TODO change
-		vibroMode = VibroMode.VibroOnly;
+		vibroMode = v;
+		//vibroMode = VibroMode.VibroOnly;
 	}
 
     /// <summary>
@@ -142,24 +142,24 @@ public class PluginManager : MonoBehaviour
     /// </summary>
     private void ConnectToSparkCore()
     {
-        String text = System.IO.File.ReadAllText(SPARKAUTH_FILE_PATH);
-        if (text != null && text != string.Empty)
-        {
-            string[] lines = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
-            if (lines[0].Contains("spark_auth"))
-            {
-                string[] line = lines[1].Split(' ');
-                if (line.Length == 2)
-                {
-                    pluginActivity.Call("connect", line);
-                    return;
-                }
-            }
-        }
-        string[] param = new string[2];
-        param[0] = pluginActivity.GetStatic<string>("id");
-        param[1] = pluginActivity.GetStatic<string>("token");
-        pluginActivity.Call("connect", param);
+		try {
+	        String text = System.IO.File.ReadAllText(SPARKAUTH_FILE_PATH);
+	        if (text != null && text != string.Empty) {
+	            string[] lines = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+	            if (lines[0].Contains("spark_auth")) {
+	                string[] line = lines[1].Split(' ');
+	                if (line.Length == 2) {
+	                    pluginActivity.Call("connect", line);
+	                }
+	            }
+	        }
+		} catch (Exception ex) {
+			Debug.Log("Something went wrong with the spark authentication file... falling back to static id and token.");
+			string[] param = new string[2];
+			param [0] = pluginActivity.GetStatic<string> ("id");
+			param [1] = pluginActivity.GetStatic<string> ("token");
+			pluginActivity.Call("connect", param);
+		}
     }
 
     /// <summary>
@@ -302,8 +302,8 @@ public class PluginManager : MonoBehaviour
 					VibratePhone(intensity, duration);
 				} else if(vibroMode==VibroMode.VibroOnly) {
 					intensity=(intensity*10)+10;
-					SendVibrationToCore(0, intensity, 0, duration, 50);
-					SendVibrationToCore(1, intensity, 0, duration, 50);
+					SendVibrationToCore(0, intensity, intensity, duration, 50);
+					SendVibrationToCore(1, intensity, intensity, duration, 50);
 				}
 			}
         }

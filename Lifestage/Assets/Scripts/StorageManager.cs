@@ -50,7 +50,6 @@ public class StorageManager : MonoBehaviour
             doc.Load(SCENARIO_FILE_PATH);
             XmlElement root = doc.DocumentElement;
             XmlNodeList list = root.GetElementsByTagName("TestCase");
-
             for (int i = 0; i < list.Count; i++)
             {
                 TestCase t = new TestCase();
@@ -66,7 +65,8 @@ public class StorageManager : MonoBehaviour
             }
         }
         catch (Exception ex)
-        {
+		{
+			Debug.Log("Xml Loading: " + ex.ToString());
             UIController.Instance.ReportError(SCENARIO_FILE_PATH + " not found or is invalid! Please make sure that the corresponding file exists and is well formed!");
         }
 
@@ -126,12 +126,16 @@ public class StorageManager : MonoBehaviour
 	/// <summary>
 	/// This method gets number of all available testcases.
 	/// </summary>
-	public int getNumberOfTestCases() {
+	private int getNumberOfTestCases() {
 		XmlDocument doc = new XmlDocument();
 		doc.Load(SCENARIO_FILE_PATH);
 		XmlElement root = doc.DocumentElement;
 		XmlNodeList list = root.GetElementsByTagName("TestCase");
-		return list.Count;
+		int count = 0;
+		for (int i = 0; i < list.Count; i++) {
+			count+=Convert.ToInt32(list[i].Attributes["repetitions"].Value);
+		}
+		return count;
 	}
 
 	/// <summary>
@@ -195,43 +199,49 @@ public class StorageManager : MonoBehaviour
 				XmlAttribute attemptS = xmlDoc.CreateAttribute("attempts");
 				attemptS.Value = testcase.attempts + "";
 				elmNew.Attributes.Append(attemptS);
-				XmlAttribute repetitions = xmlDoc.CreateAttribute("repetitions");
-				repetitions.Value = testcase.repetitions + "";//TODO save all when implemented
+				XmlAttribute repetitions = xmlDoc.CreateAttribute("repetition");
+				repetitions.Value = ""+1;
 				elmNew.Attributes.Append(repetitions);
 
 				elm.AppendChild(elmNew);
 				xmlDoc.DocumentElement.AppendChild(elm);
 			} else {
 				XmlNodeList list = xmlDoc.DocumentElement.LastChild.ChildNodes;
+				int count=0;
 				for (int i = 0; i < list.Count; i++) {
 					if(Convert.ToInt32(list[i].Attributes["testcaseID"].Value)==testcase.id) {
-						xmlDoc.DocumentElement.LastChild.RemoveChild(list[i]);
+						count++;
 					}
 				}
-				
-				XmlNode elm = xmlDoc.DocumentElement.LastChild;
-				
-				XmlElement elmNew = xmlDoc.CreateElement("TestCase");
-				XmlAttribute testcaseID = xmlDoc.CreateAttribute("testcaseID");
-				testcaseID.Value = testcase.id + "";
-				elmNew.Attributes.Append(testcaseID);
-				XmlAttribute noElem = xmlDoc.CreateAttribute("numElements");
-				noElem.Value = testcase.numElements + "";
-				elmNew.Attributes.Append(noElem);
-				XmlAttribute rightObject = xmlDoc.CreateAttribute("targetElementIndex");
-				rightObject.Value = testcase.targetElementIndex + "";
-				elmNew.Attributes.Append(rightObject);
-				XmlAttribute pickSuccessful = xmlDoc.CreateAttribute("correct");
-				pickSuccessful.Value = testcase.isCorrect + "";
-				elmNew.Attributes.Append(pickSuccessful);
-				XmlAttribute timePassed = xmlDoc.CreateAttribute("time");
-				timePassed.Value = testcase.time + "";
-				elmNew.Attributes.Append(timePassed);
-				XmlAttribute attemptS = xmlDoc.CreateAttribute("attempts");
-				attemptS.Value = testcase.attempts + "";
-				elmNew.Attributes.Append(attemptS);
-				
-				elm.AppendChild(elmNew);
+				if(count<testcase.repetitions) {				
+					XmlNode elm = xmlDoc.DocumentElement.LastChild;
+					
+					XmlElement elmNew = xmlDoc.CreateElement("TestCase");
+					XmlAttribute testcaseID = xmlDoc.CreateAttribute("testcaseID");
+					testcaseID.Value = testcase.id + "";
+					elmNew.Attributes.Append(testcaseID);
+					XmlAttribute noElem = xmlDoc.CreateAttribute("numElements");
+					noElem.Value = testcase.numElements + "";
+					elmNew.Attributes.Append(noElem);
+					XmlAttribute rightObject = xmlDoc.CreateAttribute("targetElementIndex");
+					rightObject.Value = testcase.targetElementIndex + "";
+					elmNew.Attributes.Append(rightObject);
+					XmlAttribute pickSuccessful = xmlDoc.CreateAttribute("correct");
+					pickSuccessful.Value = testcase.isCorrect + "";
+					elmNew.Attributes.Append(pickSuccessful);
+					XmlAttribute timePassed = xmlDoc.CreateAttribute("time");
+					timePassed.Value = testcase.time + "";
+					elmNew.Attributes.Append(timePassed);
+					XmlAttribute attemptS = xmlDoc.CreateAttribute("attempts");
+					attemptS.Value = testcase.attempts + "";
+					elmNew.Attributes.Append(attemptS);
+					XmlAttribute repetitions = xmlDoc.CreateAttribute("repetition");
+					count++;
+					repetitions.Value = count+"";
+					elmNew.Attributes.Append(repetitions);
+					
+					elm.AppendChild(elmNew);
+				}
 			}
 			xmlDoc.Save(OUTPUT_FILE_PATH);
 			Debug.Log("Writing in output XML file.");
