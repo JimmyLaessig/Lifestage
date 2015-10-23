@@ -19,7 +19,6 @@ public class StorageManager : MonoBehaviour
 #endif
     private static string SOLVED_TESTCASES_KEY = "solvedCasesKey";
 
-
     /// <summary>
     /// Returns an instance of the StorageManager
     /// </summary>
@@ -196,6 +195,9 @@ public class StorageManager : MonoBehaviour
 				XmlAttribute attemptS = xmlDoc.CreateAttribute("attempts");
 				attemptS.Value = testcase.attempts + "";
 				elmNew.Attributes.Append(attemptS);
+				XmlAttribute repetitions = xmlDoc.CreateAttribute("repetitions");
+				repetitions.Value = testcase.repetitions + "";//TODO save all when implemented
+				elmNew.Attributes.Append(repetitions);
 
 				elm.AppendChild(elmNew);
 				xmlDoc.DocumentElement.AppendChild(elm);

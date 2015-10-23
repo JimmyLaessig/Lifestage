@@ -6,7 +6,8 @@ using System.Collections.Generic;
 public enum VibroMode {
 	Both=0,
 	SmartphoneOnly=1,
-	VibroOnly=2
+	VibroOnly=2,
+	None=3
 }
 
 /// <summary>
@@ -38,8 +39,8 @@ public class PluginManager : MonoBehaviour
 	private float distance = -1, maxDistance=20;
 
     // Intervall in which the vibrations of a certain pattern are triggered in seconds
-	private float vibrationIntervall = 0.15f;
-	private int duration=100;
+	private float vibrationIntervall = 0.7f;
+	private int duration=500;
 	private float timeStamp = 0;
 	private bool phoneVibration=false;
 
@@ -90,6 +91,8 @@ public class PluginManager : MonoBehaviour
 				return VibroMode.SmartphoneOnly;
 			case "VibroOnly":
 				return VibroMode.VibroOnly;
+			case "None":
+				return VibroMode.None;
 			default:
 				return VibroMode.Both;
 		}
@@ -108,7 +111,8 @@ public class PluginManager : MonoBehaviour
 	}
 
 	public void SetVibroMode(VibroMode v) {
-		vibroMode = v;
+		//vibroMode = v; TODO change
+		vibroMode = VibroMode.VibroOnly;
 	}
 
     /// <summary>
@@ -298,8 +302,8 @@ public class PluginManager : MonoBehaviour
 					VibratePhone(intensity, duration);
 				} else if(vibroMode==VibroMode.VibroOnly) {
 					intensity=(intensity*10)+10;
-					SendVibrationToCore(0, intensity, 0, duration, 5);
-					SendVibrationToCore(1, intensity, 0, duration, 5);
+					SendVibrationToCore(0, intensity, 0, duration, 50);
+					SendVibrationToCore(1, intensity, 0, duration, 50);
 				}
 			}
         }
