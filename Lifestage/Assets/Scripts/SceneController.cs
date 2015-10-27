@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 
@@ -65,7 +65,9 @@ public class SceneController : MonoBehaviour
         PluginManager.Instance.SetMaxDistance = MaxDistance;
     }
 
-
+    /// <summary>
+    /// Unity Callback for Button click
+    /// </summary>
     public void StartButtonClicked()
     {
         loadNextTestCase = true;
@@ -104,8 +106,7 @@ public class SceneController : MonoBehaviour
 
 
     void Update()
-    {
-
+    {       
         if (performReset)
         {
             Debug.Log("Performing Reset");
@@ -133,15 +134,16 @@ public class SceneController : MonoBehaviour
     /// </summary>
     /// <returns>True if a next TestCase can be started. If no TestCase is available it returns false.</returns>
     private bool StartNextTestCase()
-    {
-        ClearTestCase();
-        currentTestCase = scenario.GetNextTestCase();
+	{
+		ClearTestCase();
+		currentTestCase = scenario.GetNextTestCase();
 
         if (currentTestCase == null)
             return false;
 
         inputEnabled = true;
-        GenerateGameObjects(currentTestCase);
+		GenerateGameObjects(currentTestCase);
+		PluginManager.Instance.SetVibroMode(currentTestCase.vibroMode);
         return true;
     }
 
@@ -151,7 +153,6 @@ public class SceneController : MonoBehaviour
     /// </summary>
     public void Reset()
     {
-        StorageManager.Instance.WriteTestCaseResult(scenario);
         StorageManager.Instance.ClearTestCaseProgress();
 
         ClearTestCase();
@@ -179,9 +180,9 @@ public class SceneController : MonoBehaviour
 
 
     public void CancelTestCase(string userID, int attempts)
-    {
+	{
         Debug.Log("Canceling TestCase after " + attempts + " attempts");
-        scenario.SolveCurrentTestCase(false, userID, attempts, 0);
+		scenario.SolveCurrentTestCase(false, userID, attempts, 0);
         UIController.Instance.ShowCorrectMarker(false);
         loadNextTestCase = true;
     }
@@ -253,11 +254,11 @@ public class SceneController : MonoBehaviour
         float maxX = bounds.max.x * this.transform.localScale.x;
 
         // Spawn elements
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < testCase.numElements; i++)
         {
             // Calculate distance of object
-            float currentDistance = (i + 1) * maxZ / testCase.numElements;
-            currentDistance = maxZ;
+            float currentDistance = maxZ * (i + 1)  / testCase.numElements;
+
             // Calculate maximum height based on current distance
             float currentMaxHeight = Mathf.Min(currentDistance, maxY);
 
