@@ -123,6 +123,7 @@ public class StorageManager : MonoBehaviour
         return solved;
     }
 
+
 	/// <summary>
 	/// This method gets number of all available testcases.
 	/// </summary>
@@ -133,6 +134,7 @@ public class StorageManager : MonoBehaviour
 		XmlNodeList list = root.GetElementsByTagName("TestCase");
 		return list.Count*getNumberOfRepetitions();
 	}
+
 
 	/// <summary>
 	/// This method gets the number of repetitions.
@@ -162,6 +164,7 @@ public class StorageManager : MonoBehaviour
 		}
 		return -1;
 	}
+
 
     /// <summary>
     /// This method writes the results of a TestCase to the corresponding XML-File.
