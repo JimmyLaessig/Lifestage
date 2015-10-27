@@ -53,7 +53,7 @@ public class CameraController : MonoBehaviour
     void Update()
     {
 #if UNITY_EDITOR
-        this.transform.Rotate(Vector3.right, -Input.GetAxis("Vertical") * 90 * Time.deltaTime, Space.World);
+        this.transform.Rotate(Vector3.right, -Input.GetAxis("Vertical") * 90 * Time.deltaTime);
         this.transform.Rotate(Vector3.up, Input.GetAxis("Horizontal") * 90 * Time.deltaTime, Space.World);
 #endif
 
@@ -101,7 +101,6 @@ public class CameraController : MonoBehaviour
         if (Input.touchCount > 0 && !doRaycast)
 #endif
         {
-            Debug.Log("Start selection");
             startTime = Time.time;
             doRaycast = true;
             rayRenderer.enabled = true;
@@ -114,7 +113,6 @@ public class CameraController : MonoBehaviour
         if (Input.touchCount <= 0 && doRaycast)
 #endif
         {
-            Debug.Log("End selection");
             attempts++;
             float timePassed = Time.time - startTime;
             doRaycast = false;

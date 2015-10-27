@@ -48,6 +48,7 @@ public class StorageManager : MonoBehaviour
         {
             XmlDocument doc = new XmlDocument();
             doc.Load(SCENARIO_FILE_PATH);
+
             XmlElement root = doc.DocumentElement;
             XmlNodeList list = root.GetElementsByTagName("TestCase");
             for (int i = 0; i < list.Count; i++)

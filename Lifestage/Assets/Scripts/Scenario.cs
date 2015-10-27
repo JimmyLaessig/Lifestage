@@ -12,6 +12,18 @@ public class Scenario
     private List<TestCase> openTestCases;
     private TestCase currentTestCase;
     private List<TestCase> solvedTestCases;
+    private int numTestCases = 0;
+
+    public int NumTestCases
+    {
+        get { return numTestCases; }
+    }
+
+    public int NumTestCasesLeft
+    {
+        get { return openTestCases.Count; }
+    }
+
 
     /// <summary>
     /// Creates an empty scenario
@@ -82,6 +94,7 @@ public class Scenario
             openTestCases.Add(t);            
         }
         solvedTestCases.Clear();
+        numTestCases = openTestCases.Count;
         Debug.Log("After Reset: NumTestCases: " + openTestCases.Count);
     }
 
@@ -103,6 +116,7 @@ public class Scenario
 		StorageManager.Instance.WriteTestCaseResult(currentTestCase);
 		currentTestCase = null;
     }
+
 
     /// <summary>
     /// Returns a List of solved TestCases

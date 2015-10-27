@@ -7,8 +7,6 @@ using System.Collections.Generic;
 /// and winning conditions.
 /// it handles UI Input and provides functionality for selecting an object, including highlighting
 /// </summary>
-
-
 public class SceneController : MonoBehaviour
 {
     private new Camera camera;
@@ -16,15 +14,17 @@ public class SceneController : MonoBehaviour
     private Scenario scenario;
     private TestCase currentTestCase = null;
 
-    // A Collection of Primitves to choose from for the scene
-    public PrimitiveType[] primitiveTypes = { PrimitiveType.Cube, PrimitiveType.Sphere, PrimitiveType.Cylinder, PrimitiveType.Capsule };
+    private string userID = "01";
+   
     // A Collection of Materials to choose from for the primitives
-    public Material[] materials = { };
+    public Material material;
 
     private bool inputEnabled = false;
-    private bool loadNextTestCase = false;
+
     private bool performReset = false;
 
+    private bool finished = true;
+    private bool testcaseFinished = true;
 
     // The GameObject to select in the current scene
     private GameObject targetObject;
@@ -37,7 +37,10 @@ public class SceneController : MonoBehaviour
     public Material highlightingMaterial;
     private GameObject boundingVolume;
 
+    public int numRepetitions = 5;
+    private int currentRepetition = 0;
 
+    private bool isStarted = false;
 
     /// <summary>
     /// Returns true whether or not the scene currently is enabled for input
@@ -63,69 +66,90 @@ public class SceneController : MonoBehaviour
         boundingVolume = GameObject.Find("BoundingVolume");
 
         PluginManager.Instance.SetMaxDistance = MaxDistance;
+
     }
+
 
     /// <summary>
     /// Unity Callback for Button click
+    /// Starts a new circle of repetitions.
     /// </summary>
     public void StartButtonClicked()
     {
-        loadNextTestCase = true;
-        performReset = true;
+        isStarted = true;
+        Reset();
+     
+        testcaseFinished = false;
+        finished = false;
+
+        ClearTestCase();
+        StartNextTestCase();
+        GenerateGameObjects(currentTestCase);
+
         PluginManager.Instance.InitBaseRotation();
+        PluginManager.Instance.SetVibroMode(currentTestCase.vibroMode);
+        inputEnabled = true;
+
+        // TODO HERE READ NEW USER ID
     }
 
 
-    void SetMessageText()
+    /// <summary>
+    /// Unity Callback for Button click
+    /// Starts a new testcase.
+    /// </summary>
+    public void NextButtonClicked()
     {
-        // if (!inputEnabled)
-        //     return;
-
-        string txt = "";
-        if (currentTestCase != null)
-        {
-            txt = "Select ";
-            if (currentTestCase.targetElementIndex == 0)
-                txt += "closest Element";
-            else if (currentTestCase.targetElementIndex == 1)
-                txt += "second closest Element";
-            else if (currentTestCase.targetElementIndex == 2)
-                txt += "third closest Element";
-            else if (currentTestCase.targetElementIndex == currentTestCase.numElements - 1)
-                txt += " farthermost Element";
-            else
-                txt += (currentTestCase.targetElementIndex + 1) + "th closest Element";
-        }
-        else
-        {
-            txt = "Press Start to load TestCases!";
-        }
-
-        UIController.Instance.SetMessageField(txt, Color.black);
+        
+        testcaseFinished = false;
+        
+        ClearTestCase();
+        currentTestCase = scenario.GetNextTestCase();
+        GenerateGameObjects(currentTestCase);
+       
+        PluginManager.Instance.InitBaseRotation();
+        PluginManager.Instance.SetVibroMode(currentTestCase.vibroMode);
+       
+        inputEnabled = true;
     }
 
 
     void Update()
-    {       
-        if (performReset)
+    {
+
+        if (testcaseFinished && finished)
         {
-            Debug.Log("Performing Reset");
-            Reset();
-            performReset = false;
-        }
-        if (loadNextTestCase)
-        {
-            loadNextTestCase = false;
-            if (!StartNextTestCase())
+            UIController.Instance.HideAll();
+            UIController.Instance.ShowStartButton(true);
+            if(isStarted)
+            UIController.Instance.ShowMessageText(true, "All Testcases finished! Start new Repetition!", Color.black);
+            else
+                UIController.Instance.ShowMessageText(true, "Start new Repetition!", Color.black);
+
+            UIController.Instance.ShowInfoText(false, userID, scenario.NumTestCasesLeft, scenario.NumTestCases, currentRepetition);
+            if (currentRepetition == numRepetitions - 1)
             {
-                Debug.Log("Cannot start new TestCase! Need to Reset it");
-                performReset = true;
-                inputEnabled = false;
+                UIController.Instance.ShowMessageText(true, "All Testcases and Repetitions finished! Thank you for participating in LifeStage!", Color.black);
             }
+            
+            inputEnabled = false;
+
         }
-        SetMessageText();
-        UIController.Instance.ShowStartButton(!inputEnabled);
-        UIController.Instance.ShowCancelButton(inputEnabled);
+        else if (testcaseFinished && !finished)
+        {
+            UIController.Instance.HideAll();
+            UIController.Instance.ShowNextButton(true);
+            UIController.Instance.ShowInfoText(true, userID, scenario.NumTestCasesLeft, scenario.NumTestCases, currentRepetition);
+            inputEnabled = false;
+        }
+        else if (!testcaseFinished && !finished)
+        {
+            UIController.Instance.HideAll();
+            UIController.Instance.ShowSelectText(true, currentTestCase.targetElementIndex, currentTestCase.numElements);
+            UIController.Instance.ShowInfoText(true, userID, scenario.NumTestCasesLeft, scenario.NumTestCases, currentRepetition);
+            UIController.Instance.ShowCancelButton(true);
+            inputEnabled = true;
+        }
     }
 
 
@@ -134,16 +158,16 @@ public class SceneController : MonoBehaviour
     /// </summary>
     /// <returns>True if a next TestCase can be started. If no TestCase is available it returns false.</returns>
     private bool StartNextTestCase()
-	{
-		ClearTestCase();
-		currentTestCase = scenario.GetNextTestCase();
+    {
+        ClearTestCase();
+        currentTestCase = scenario.GetNextTestCase();
 
         if (currentTestCase == null)
             return false;
 
         inputEnabled = true;
-		GenerateGameObjects(currentTestCase);
-		PluginManager.Instance.SetVibroMode(currentTestCase.vibroMode);
+        GenerateGameObjects(currentTestCase);
+       
         return true;
     }
 
@@ -179,18 +203,30 @@ public class SceneController : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Cancels the current testcase
+    /// </summary>
+    /// <param name="userID">The ID of the user</param>
+    /// <param name="attempts">Number of attempts</param>
     public void CancelTestCase(string userID, int attempts)
-	{
+    {
         Debug.Log("Canceling TestCase after " + attempts + " attempts");
-		scenario.SolveCurrentTestCase(false, userID, attempts, 0);
+        scenario.SolveCurrentTestCase(false, userID, attempts, 0);
         UIController.Instance.ShowCorrectMarker(false);
-        loadNextTestCase = true;
+        testcaseFinished = true;
+        
+        if (scenario.NumTestCasesLeft == 0)
+        {
+            currentRepetition++;
+            finished = true;
+        }
+        Debug.Log("Solving Testcase: Testcases left: + " + scenario.NumTestCasesLeft);
     }
 
+
     /// <summary>
-    /// This method is called when the user wants to finish the scene.
+    /// This method is called when the user wants to finish the test.
     /// It uses the previously selected gameObject to determine the interactions' success.
-    /// Lastly it writes the result to the XML-File.
     /// </summary>
     /// <param name="time">The duration of the interaction</param>
     /// <param name="userID">The unique id of the user</param>
@@ -203,15 +239,20 @@ public class SceneController : MonoBehaviour
         {
             isCorrect = true;
             scenario.SolveCurrentTestCase(true, userID, attempts, time);
-            loadNextTestCase = true;
+            testcaseFinished = true;
 
+            if (scenario.NumTestCasesLeft == 0)
+            {
+                currentRepetition++;
+                finished = true;
+            }
+            Debug.Log("Solving Testcase: Testcases left: + " + scenario.NumTestCasesLeft);
         }
-
+       
         Debug.Log("Trying to Solve TestCase: isCorrect = " + isCorrect);
         UIController.Instance.ShowCorrectMarker(isCorrect);
         return isCorrect;
     }
-
 
 
     /// <summary>
@@ -257,7 +298,7 @@ public class SceneController : MonoBehaviour
         for (int i = 0; i < testCase.numElements; i++)
         {
             // Calculate distance of object
-            float currentDistance = maxZ * (i + 1)  / testCase.numElements;
+            float currentDistance = maxZ * (i + 1) / testCase.numElements;
 
             // Calculate maximum height based on current distance
             float currentMaxHeight = Mathf.Min(currentDistance, maxY);
@@ -282,12 +323,14 @@ public class SceneController : MonoBehaviour
 
             Vector3 position = new Vector3(x, y, Mathf.Abs(z));
             GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            obj.GetComponent<Renderer>().material = material;
             obj.transform.rotation = rotation;
             obj.transform.position = position;
             gameObjects.Insert(i, obj);
         }
         targetObject = gameObjects[testCase.targetElementIndex];
     }
+
 
     /// <summary>
     /// Returns the maximum width of the bounding volume
@@ -302,6 +345,7 @@ public class SceneController : MonoBehaviour
         }
     }
 
+
     /// <summary>
     /// returns the maximum distance of an object, relatively to this GameObject position
     /// </summary>
@@ -311,12 +355,6 @@ public class SceneController : MonoBehaviour
         {
             Bounds bounds = boundingVolume.GetComponent<MeshFilter>().mesh.bounds;
             float distance = bounds.max.z * this.transform.localScale.z + boundingVolume.transform.position.z - this.transform.position.z;
-
-            Debug.Log("Distance: " + distance);
-            Debug.Log("Scene Area: " + this.transform.position);
-            Debug.Log("Bounding Volume: " + boundingVolume.transform.position);
-            Debug.Log("Bounds.size: " + bounds);
-
             return distance;
         }
     }

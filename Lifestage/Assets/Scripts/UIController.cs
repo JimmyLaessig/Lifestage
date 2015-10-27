@@ -8,20 +8,36 @@ using UnityEngine.UI;
 public class UIController : MonoBehaviour
 {
 
+    private static string finishedMessage = "All tests finished! Thank you for participating in LifeStage!";
+
     private Button startButton;
+    private Button nextButton;
     private Button cancelButton;
-    private Text messageField;
+
+    private Text selectText;
+    private Text messageText;
+    private GameObject messageObject;
+
+    private Text userIDText;
+    private Text testcaseText;
+    private Text repetitionText;
+
     private Image correctImage;
     private Image incorrectImage;
+
     private static UIController instance;
 
     private bool InputEnabled;
     private bool errorMsg;
 
-
     // Show marker for two seconds
-    private float showMarkerDuration = 2.0f;
+    private float showMarkerDuration = 1.5f;
     private float startTime = 0;
+
+
+    /// <summary>
+    /// Returns an instance of the UIController
+    /// </summary>
     public static UIController Instance
     {
         get { return instance; }
@@ -32,44 +48,61 @@ public class UIController : MonoBehaviour
     {
         if (!instance)
             instance = this;
+
         InputEnabled = true;
 
-
         startButton = GameObject.Find("StartButton").GetComponent<Button>();
+        nextButton = GameObject.Find("NextButton").GetComponent<Button>();
         cancelButton = GameObject.Find("CancelButton").GetComponent<Button>();
-        messageField = GameObject.Find("MessageText").GetComponent<Text>();
 
+        messageObject = GameObject.Find("MessageField");
+        messageText = GameObject.Find("MessageText").GetComponent<Text>();
+
+        selectText = GameObject.Find("SelectText").GetComponent<Text>();
+
+        userIDText = GameObject.Find("UserIDText").GetComponent<Text>();
+        testcaseText = GameObject.Find("TestcaseText").GetComponent<Text>();
+        repetitionText = GameObject.Find("RepetitionText").GetComponent<Text>();
+        
         correctImage = GameObject.Find("CorrectMarker").GetComponent<Image>();
-
         incorrectImage = GameObject.Find("IncorrectMarker").GetComponent<Image>();
 
         correctImage.enabled = false;
         incorrectImage.enabled = false;
+
+        HideAll();
     }
 
 
     /// <summary>
     /// Displays an error message and disables all other text elements
     /// </summary>
-    /// <param name="msg"></param>
+    /// <param name="msg">The error message.</param>
     public void ReportError(string msg)
     {
-        SetMessageField(msg, Color.red);
+        ShowMessageText(true, msg, Color.red);
 
         startButton.enabled = false;
+        nextButton.enabled = false;
         cancelButton.enabled = false;
         InputEnabled = false;
     }
 
 
-    public void ShowCancelButton(bool enabled)
+    /// <summary>
+    /// Shows/hides the Next Button on/from the screen.
+    /// </summary>
+    public void ShowNextButton(bool enabled)
     {
         if (!InputEnabled)
             return;
-        cancelButton.gameObject.SetActive(enabled);
+        nextButton.gameObject.SetActive(enabled);
     }
 
 
+    /// <summary>
+    /// Shows/hides the Start Button on/from the screen.
+    /// </summary>
     public void ShowStartButton(bool enabled)
     {
         if (!InputEnabled)
@@ -78,16 +111,87 @@ public class UIController : MonoBehaviour
     }
 
 
-    public void SetMessageField(string text, Color color)
+    /// <summary>
+    /// Shows/hides the Cancel Button on/from the screen.
+    /// </summary>
+    public void ShowCancelButton(bool enabled)
     {
         if (!InputEnabled)
             return;
-
-        messageField.text = text;
-        messageField.color = color;
-
+        cancelButton.gameObject.SetActive(enabled);
     }
 
+
+    /// <summary>
+    /// Shows/hides the Info Text on/from the screen.
+    /// </summary>
+    /// <param name="enabled">shows/hides the text</param>
+    /// <param name="userID">The users ID</param>
+    /// <param name="numTestCasesLeft">the index of the current test case</param>
+    /// <param name="numTestCases">The number of testcases</param>
+    /// <param name="repetition">the current repetition</param>
+    public void ShowInfoText(bool enabled, string userID, int numTestCasesLeft, int numTestCases, int repetition)
+    {
+        userIDText.text = "UserID: <b>" + userID + "</b>";
+        testcaseText.text = (enabled) ? "Testcase: <b>" + (numTestCases - numTestCasesLeft) + " / " + numTestCases + "</b>" : "-";
+        repetitionText.text = "Repetition: <b>" + (repetition + 1) + "</b>" ;
+    }
+
+
+    /// <summary>
+    /// Shows/hides the Message Text on/from the screen.
+    /// </summary>
+    /// <param name="enabled">shows/hides the field</param>
+    /// <param name="txt">The text to be displayed</param>
+    /// <param name="color">The colorof the text</param>
+    public void ShowMessageText(bool enabled, string txt, Color color)
+    {       
+        messageObject.SetActive(enabled);
+        messageText.text = txt;
+        messageText.color = color;
+    }
+
+
+    /// <summary>
+    /// Shows/hides the finished message.
+    /// </summary>
+    /// <param name="enabled"></param>
+    public void ShowFinishedMessage(bool enabled)
+    {
+        ShowMessageText(enabled, finishedMessage, Color.black);
+    }
+
+
+    /// <summary>
+    /// Shows/hides the Selet Text on/from the screen.
+    /// </summary>
+    /// <param name="enabled">Shows/hides the text</param>
+    /// <param name="selectIndex">The index of the element to select</param>
+    /// <param name="numElements">The number of elements</param>
+    public void ShowSelectText(bool enabled, int selectIndex, int numElements)
+    {
+        string txt = "";
+
+        if (selectIndex == 0)
+            txt = "Select closest Element";
+        else if (selectIndex == 1)
+            txt = "Select second closest Element";
+        else if (selectIndex == 2)
+            txt = "Select third closest Element";
+        else if (selectIndex == numElements - 1)
+            txt = "Select furthermost Element";
+        else if (selectIndex == (int)(numElements / 2))
+            txt = "Select Element in the Middle";
+
+        selectText.enabled = enabled;
+        selectText.text = txt;
+    }
+
+
+    /// <summary>
+    /// Shows a marker on the screen.
+    /// </summary>
+    /// <param name="correct">Shows a green check on if true, otherwhise a red x</param>
     public void ShowCorrectMarker(bool correct)
     {
         if (!InputEnabled)
@@ -107,16 +211,30 @@ public class UIController : MonoBehaviour
     }
 
 
-    // Update is called once per frame
+    /// <summary>
+    /// Update is called once per frame.
+    /// </summary>
     void Update()
     {
-        // Hide Marker once time is up or the user touches the screen
 
+        // Hide Marker once time is up or the user touches the screen
         if (Time.time - startTime >= showMarkerDuration || Input.touchCount > 0)
         {
             correctImage.enabled = false;
             incorrectImage.enabled = false;
             startTime = 0;
         }
+    }
+
+    public void HideAll()
+    { 
+
+        startButton.gameObject.SetActive(false);
+        nextButton.gameObject.SetActive(false);
+        cancelButton.gameObject.SetActive(false);
+
+        ShowMessageText(false, "", Color.black);
+        ShowSelectText(false, 0, 0);
+        ShowInfoText(false, "-", 0, 0, 0);    
     }
 }

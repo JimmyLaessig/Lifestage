@@ -78,7 +78,7 @@ public class PluginManager : MonoBehaviour
 		#if !UNITY_EDITOR
 		UpdateCameraRotation();
 		#endif
-        UpdateVibration();
+       // UpdateVibration();
     }
 
     #endregion
