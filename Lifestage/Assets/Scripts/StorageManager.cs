@@ -124,6 +124,7 @@ public class StorageManager : MonoBehaviour
         return solved;
     }
 
+
 	/// <summary>
 	/// This method gets number of all available testcases.
 	/// </summary>
@@ -138,6 +139,7 @@ public class StorageManager : MonoBehaviour
 		}
 		return count;
 	}
+
 
 	/// <summary>
 	/// This method gets the last userID from the xml file or -1 if xml file does not exist.
@@ -157,6 +159,7 @@ public class StorageManager : MonoBehaviour
 		}
 		return -1;
 	}
+
 
     /// <summary>
     /// This method writes the results of a TestCase to the corresponding XML-File.

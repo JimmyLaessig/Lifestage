@@ -78,7 +78,7 @@ public class PluginManager : MonoBehaviour
 		#if !UNITY_EDITOR
 		UpdateCameraRotation();
 		#endif
-       // UpdateVibration();
+        UpdateVibration();
     }
 
     #endregion
@@ -178,6 +178,8 @@ public class PluginManager : MonoBehaviour
     /// </summary>
     private int GetConnectionStateFromCore()
     {
+        if (pluginActivity == null)
+            return 3;
         return pluginActivity.Call<int>("getConnectionState");
     }
 
@@ -333,6 +335,8 @@ public class PluginManager : MonoBehaviour
     /// <returns></returns>
     private bool HasVibrator()
     {
+        if (pluginActivity == null)
+            return false;
         return pluginActivity.Call<bool>("hasVibrator");
     }
 
