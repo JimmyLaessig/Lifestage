@@ -77,6 +77,13 @@ public class SceneController : MonoBehaviour
     public void StartButtonClicked()
     {
         Debug.Log("START BUTTON CLICKED: Repetition: " + currentRepetition);
+        
+        // This block is called on start and when all testcases in all reputations are finished
+        if (currentRepetition == numRepetitions - 1 || isStarted == false)
+        {
+            // TODO: Load new userID here
+            Debug.Log("Starting new stuff");
+        }
         isStarted = true;
         Reset();
      
@@ -120,6 +127,7 @@ public class SceneController : MonoBehaviour
 
         if (testcaseFinished && finished)
         {
+            
             UIController.Instance.HideAll();
             UIController.Instance.ShowStartButton(true);
             if(isStarted)
