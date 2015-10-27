@@ -76,6 +76,7 @@ public class SceneController : MonoBehaviour
     /// </summary>
     public void StartButtonClicked()
     {
+        Debug.Log("START BUTTON CLICKED: Repetition: " + currentRepetition);
         isStarted = true;
         Reset();
      
@@ -89,7 +90,7 @@ public class SceneController : MonoBehaviour
         PluginManager.Instance.InitBaseRotation();
         PluginManager.Instance.SetVibroMode(currentTestCase.vibroMode);
         inputEnabled = true;
-
+        
         // TODO HERE READ NEW USER ID
     }
 
@@ -122,7 +123,7 @@ public class SceneController : MonoBehaviour
             UIController.Instance.HideAll();
             UIController.Instance.ShowStartButton(true);
             if(isStarted)
-            UIController.Instance.ShowMessageText(true, "All Testcases finished! Start new Repetition!", Color.black);
+                UIController.Instance.ShowMessageText(true, "All Testcases finished! Starting new Repetition!", Color.black);
             else
                 UIController.Instance.ShowMessageText(true, "Start new Repetition!", Color.black);
 
@@ -173,12 +174,13 @@ public class SceneController : MonoBehaviour
 
 
     /// <summary>
-    /// Resets the scene to its initial state.
+    /// Resets the scenario to its initial state.
     /// </summary>
     public void Reset()
     {
         StorageManager.Instance.ClearTestCaseProgress();
-
+        if(currentRepetition == numRepetitions -1)
+             currentRepetition = 0;
         ClearTestCase();
         scenario.Reset();
         currentTestCase = null;
