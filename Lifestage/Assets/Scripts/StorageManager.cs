@@ -57,7 +57,6 @@ public class StorageManager : MonoBehaviour
                 t.numElements = Convert.ToInt32(list[i].Attributes["numElements"].Value);
 				t.targetElementIndex = Convert.ToInt32(list[i].Attributes["targetElement"].Value) - 1;
 				t.vibroMode = PluginManager.Instance.getEnum(list[i].Attributes["vibroMode"].Value);
-				t.repetitions = Convert.ToInt32(list[i].Attributes["repetitions"].Value);
                 scenario.AddTestCase(t);
             }
             if (list.Count == 0)
@@ -132,14 +131,20 @@ public class StorageManager : MonoBehaviour
 		doc.Load(SCENARIO_FILE_PATH);
 		XmlElement root = doc.DocumentElement;
 		XmlNodeList list = root.GetElementsByTagName("TestCase");
-		int count = 0;
-		for (int i = 0; i < list.Count; i++) {
-			count+=Convert.ToInt32(list[i].Attributes["repetitions"].Value);
-		}
-		return count;
+		return list.Count*getNumberOfRepetitions();
 	}
 
 	/// <summary>
+	/// This method gets the number of repetitions.
+	/// </summary>
+	public int getNumberOfRepetitions() {
+		XmlDocument doc = new XmlDocument();
+		doc.Load(SCENARIO_FILE_PATH);
+		XmlElement root = doc.DocumentElement;
+		return Convert.ToInt32(root.GetAttribute("repetitions"));
+	}
+
+	/// <summary> TODO
 	/// This method gets the last userID from the xml file or -1 if xml file does not exist.
 	/// </summary>
 	public int getLastIDfromXML() {

@@ -37,7 +37,7 @@ public class SceneController : MonoBehaviour
     public Material highlightingMaterial;
     private GameObject boundingVolume;
 
-    public int numRepetitions = 5;
+    public int numRepetitions = 0;
     private int currentRepetition = 0;
 
     private bool isStarted = false;
@@ -66,7 +66,7 @@ public class SceneController : MonoBehaviour
         boundingVolume = GameObject.Find("BoundingVolume");
 
         PluginManager.Instance.SetMaxDistance = MaxDistance;
-
+		numRepetitions=StorageManager.Instance.getNumberOfRepetitions();
     }
 
 
