@@ -6,9 +6,10 @@ Das Unity Projekt.
 Beinhaltet den Service für die Verbindung zwischen Android und dem SparkCore sowie den OrientationService.  
 
 ####Verwendung
-1. Installieren des Projekts am Smartphone und das Smartphone mti dem Wlan verbinden.  
-2. Sparkcore mit Vibros bereitstellen und mit dem Wlan verbinden.  
-3a. lifestage_testcases.xml muss auf den Massenspeicher des Handys kopiert werden, oder in den Projekt-Folder des Untiy Projektmodes für den Playmode.  
-3b. VibroModes für Testcases: Both, SmartphoneOnly, VibroOnly, None.  
-4. lifestage_output.xml file muss auf den Massenspeicher des Handys kopiert werden, oder in den Projekt-Folder des Untiy Projektmodes für den Playmode.  
-5. spark_auth.txt muss auf den Massenspeicher des Handys kopiert werden, oder in den Projekt-Folder des Untiy Projektmodes für den Playmode.  
+1. Das Projekt am Smartphone installieren.
+2. Das Smartphone mit Wlan verbinden
+3. Sparkcore mit Vibros bereitstellen und mit dem Wlan verbinden.  
+4a. lifestage_testcases.xml muss auf den Massenspeicher des Handys kopiert werden oder in den Projekt-Folder des Untiy Projektmodes für den Playmode.  
+4b. VibroModes für lifestage_testcases.xml: Both, SmartphoneOnly, VibroOnly, None.  
+5. lifestage_output.xml file muss auf den Massenspeicher des Handys kopiert werden oder in den Projekt-Folder des Untiy Projektmodes für den Playmode.  
+6. spark_auth.txt muss auf den Massenspeicher des Handys kopiert werden oder in den Projekt-Folder des Untiy Projektmodes für den Playmode.  
