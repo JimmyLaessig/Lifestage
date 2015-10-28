@@ -125,43 +125,80 @@ public class StorageManager : MonoBehaviour
 
 
 	/// <summary>
-	/// This method gets number of all available testcases.
+	/// This method gets number of all available testcases or -1 if xml file does not exist.
 	/// </summary>
 	private int getNumberOfTestCases() {
 		XmlDocument doc = new XmlDocument();
-		doc.Load(SCENARIO_FILE_PATH);
-		XmlElement root = doc.DocumentElement;
-		XmlNodeList list = root.GetElementsByTagName("TestCase");
-		return list.Count*getNumberOfRepetitions();
+		if (File.Exists(SCENARIO_FILE_PATH)) {  
+			doc.Load(SCENARIO_FILE_PATH);
+			XmlElement root = doc.DocumentElement;
+			XmlNodeList list = root.GetElementsByTagName("TestCase");
+			return list.Count;
+		}
+		Debug.Log ("Output XML File does not exist, please make sure it does.");
+		return -1;
 	}
 
 
 	/// <summary>
-	/// This method gets the number of repetitions.
+	/// This method gets the number of repetitions or -1 if xml file does not exist.
 	/// </summary>
 	public int getNumberOfRepetitions() {
 		XmlDocument doc = new XmlDocument();
-		doc.Load(SCENARIO_FILE_PATH);
-		XmlElement root = doc.DocumentElement;
-		return Convert.ToInt32(root.GetAttribute("repetitions"));
+		if (File.Exists(SCENARIO_FILE_PATH)) {   
+			doc.Load(SCENARIO_FILE_PATH);
+			XmlElement root = doc.DocumentElement;
+			return Convert.ToInt32(root.GetAttribute("repetitions"));
+		}
+		Debug.Log ("Output XML File does not exist, please make sure it does.");
+		return -1;
 	}
 
-	/// <summary> TODO
-	/// This method gets the last userID from the xml file or -1 if xml file does not exist.
+	/// <summary>
+	/// This method gets the latest repetition number from the xml file or -1 if xml file does not exist.
 	/// </summary>
-	public int getLastIDfromXML() {
-		XmlDocument xmlDoc = new XmlDocument();
+	public int getLatestRepetition() {
+		XmlDocument doc = new XmlDocument();
+		if (File.Exists(OUTPUT_FILE_PATH)) {   
+			doc.Load(OUTPUT_FILE_PATH);
+			XmlElement root = doc.DocumentElement;
+			int rep = 0;
+			if (root.LastChild != null) {
+				if(root.LastChild.ChildNodes.Count<getNumberOfTestCases()) {
+					rep = Int32.Parse(root.LastChild.Attributes["repetition"].Value);
+				} else {
+					rep = Int32.Parse(root.LastChild.Attributes["repetition"].Value)+1;
+				}
+				if (rep>=getNumberOfRepetitions()) {
+					rep=0;
+				}
+			}
+			return rep;
+		}
+		Debug.Log ("Output XML File does not exist, please make sure it does.");
+		return -1;
+	}
+
+	/// <summary>
+	/// This method gets the latest userID from the xml file or -1 if xml file does not exist.
+	/// </summary>
+	public int getLatestUserID() {
+		XmlDocument doc = new XmlDocument();
 		if (File.Exists(OUTPUT_FILE_PATH)) {            
-			xmlDoc.Load(OUTPUT_FILE_PATH);
-			XmlElement elmRoot = xmlDoc.DocumentElement;
+			doc.Load(OUTPUT_FILE_PATH);
+			XmlElement root = doc.DocumentElement;
 			
 			int user_id = 0;
-			if (elmRoot.LastChild != null) {
-				int id = Int32.Parse(elmRoot.LastChild.Attributes["userID"].Value);
-				user_id = id;
+			if (root.LastChild != null) {
+				if(root.ChildNodes.Count % 5 == 0) {
+					user_id = Int32.Parse(root.LastChild.Attributes["userID"].Value)+1;
+				} else {
+					user_id = Int32.Parse(root.LastChild.Attributes["userID"].Value);
+				}
 			}
 			return user_id;
 		}
+		Debug.Log ("Output XML File does not exist, please make sure it does.");
 		return -1;
 	}
 
@@ -174,86 +211,82 @@ public class StorageManager : MonoBehaviour
 			return;
 
 		XmlDocument xmlDoc = new XmlDocument();
-		if (File.Exists(OUTPUT_FILE_PATH)) {
+		if (File.Exists (OUTPUT_FILE_PATH)) {
 			bool newResult = true;
-			xmlDoc.Load(OUTPUT_FILE_PATH);
+			xmlDoc.Load (OUTPUT_FILE_PATH);
 
-			if(xmlDoc.DocumentElement.LastChild!=null)
-				if(xmlDoc.DocumentElement.LastChild.ChildNodes.Count<getNumberOfTestCases())
-					newResult=false;
+			if (xmlDoc.DocumentElement.LastChild != null)
+				if (xmlDoc.DocumentElement.LastChild.ChildNodes.Count < getNumberOfTestCases())
+					newResult = false;
 
-			if(newResult) {
-				XmlElement elm = xmlDoc.CreateElement("Result");
-				int user_id = getLastIDfromXML()+1;
-				XmlAttribute userId = xmlDoc.CreateAttribute("userID"); 
-				userId.Value = user_id+"";
-				elm.Attributes.Append(userId);
+			if (newResult) {
+				XmlElement elm = xmlDoc.CreateElement ("Result");
+				XmlAttribute userId = xmlDoc.CreateAttribute ("userID");
+				userId.Value = getLatestUserID() + "";
+				elm.Attributes.Append (userId);
+				XmlAttribute repetition = xmlDoc.CreateAttribute ("repetition");
+				repetition.Value = "" + getLatestRepetition();
+				elm.Attributes.Append(repetition);
 
-				XmlElement elmNew = xmlDoc.CreateElement("TestCase");
-				XmlAttribute testcaseID = xmlDoc.CreateAttribute("testcaseID");
+				XmlElement elmNew = xmlDoc.CreateElement ("TestCase");
+				XmlAttribute testcaseID = xmlDoc.CreateAttribute ("testcaseID");
 				testcaseID.Value = testcase.id + "";
-				elmNew.Attributes.Append(testcaseID);
-				XmlAttribute noElem = xmlDoc.CreateAttribute("numElements");
+				elmNew.Attributes.Append (testcaseID);
+				XmlAttribute noElem = xmlDoc.CreateAttribute ("numElements");
 				noElem.Value = testcase.numElements + "";
-				elmNew.Attributes.Append(noElem);
-				XmlAttribute rightObject = xmlDoc.CreateAttribute("targetElementIndex");
+				elmNew.Attributes.Append (noElem);
+				XmlAttribute rightObject = xmlDoc.CreateAttribute ("targetElementIndex");
 				rightObject.Value = testcase.targetElementIndex + "";
-				elmNew.Attributes.Append(rightObject);
-				XmlAttribute pickSuccessful = xmlDoc.CreateAttribute("correct");
+				elmNew.Attributes.Append (rightObject);
+				XmlAttribute pickSuccessful = xmlDoc.CreateAttribute ("correct");
 				pickSuccessful.Value = testcase.isCorrect + "";
-				elmNew.Attributes.Append(pickSuccessful);
-				XmlAttribute timePassed = xmlDoc.CreateAttribute("time");
+				elmNew.Attributes.Append (pickSuccessful);
+				XmlAttribute timePassed = xmlDoc.CreateAttribute ("time");
 				timePassed.Value = testcase.time + "";
-				elmNew.Attributes.Append(timePassed);
-				XmlAttribute attemptS = xmlDoc.CreateAttribute("attempts");
+				elmNew.Attributes.Append (timePassed);
+				XmlAttribute attemptS = xmlDoc.CreateAttribute ("attempts");
 				attemptS.Value = testcase.attempts + "";
-				elmNew.Attributes.Append(attemptS);
-				XmlAttribute repetitions = xmlDoc.CreateAttribute("repetition");
-				repetitions.Value = ""+1;
-				elmNew.Attributes.Append(repetitions);
+				elmNew.Attributes.Append (attemptS);
 
-				elm.AppendChild(elmNew);
-				xmlDoc.DocumentElement.AppendChild(elm);
-			} else {
-				XmlNodeList list = xmlDoc.DocumentElement.LastChild.ChildNodes;
-				int count=0;
+				elm.AppendChild (elmNew);
+				xmlDoc.DocumentElement.AppendChild (elm);
+			} else {			
+				XmlNode elm = xmlDoc.DocumentElement.LastChild;	
+
+				XmlNodeList list = elm.ChildNodes;
 				for (int i = 0; i < list.Count; i++) {
 					if(Convert.ToInt32(list[i].Attributes["testcaseID"].Value)==testcase.id) {
-						count++;
+						xmlDoc.DocumentElement.LastChild.RemoveChild(list[i]);
+						break;
 					}
 				}
-				if(count<testcase.repetitions) {				
-					XmlNode elm = xmlDoc.DocumentElement.LastChild;
 					
-					XmlElement elmNew = xmlDoc.CreateElement("TestCase");
-					XmlAttribute testcaseID = xmlDoc.CreateAttribute("testcaseID");
-					testcaseID.Value = testcase.id + "";
-					elmNew.Attributes.Append(testcaseID);
-					XmlAttribute noElem = xmlDoc.CreateAttribute("numElements");
-					noElem.Value = testcase.numElements + "";
-					elmNew.Attributes.Append(noElem);
-					XmlAttribute rightObject = xmlDoc.CreateAttribute("targetElementIndex");
-					rightObject.Value = testcase.targetElementIndex + "";
-					elmNew.Attributes.Append(rightObject);
-					XmlAttribute pickSuccessful = xmlDoc.CreateAttribute("correct");
-					pickSuccessful.Value = testcase.isCorrect + "";
-					elmNew.Attributes.Append(pickSuccessful);
-					XmlAttribute timePassed = xmlDoc.CreateAttribute("time");
-					timePassed.Value = testcase.time + "";
-					elmNew.Attributes.Append(timePassed);
-					XmlAttribute attemptS = xmlDoc.CreateAttribute("attempts");
-					attemptS.Value = testcase.attempts + "";
-					elmNew.Attributes.Append(attemptS);
-					XmlAttribute repetitions = xmlDoc.CreateAttribute("repetition");
-					count++;
-					repetitions.Value = count+"";
-					elmNew.Attributes.Append(repetitions);
+				XmlElement elmNew = xmlDoc.CreateElement ("TestCase");
+				XmlAttribute testcaseID = xmlDoc.CreateAttribute ("testcaseID");
+				testcaseID.Value = testcase.id + "";
+				elmNew.Attributes.Append (testcaseID);
+				XmlAttribute noElem = xmlDoc.CreateAttribute ("numElements");
+				noElem.Value = testcase.numElements + "";
+				elmNew.Attributes.Append (noElem);
+				XmlAttribute rightObject = xmlDoc.CreateAttribute ("targetElementIndex");
+				rightObject.Value = testcase.targetElementIndex + "";
+				elmNew.Attributes.Append (rightObject);
+				XmlAttribute pickSuccessful = xmlDoc.CreateAttribute ("correct");
+				pickSuccessful.Value = testcase.isCorrect + "";
+				elmNew.Attributes.Append (pickSuccessful);
+				XmlAttribute timePassed = xmlDoc.CreateAttribute ("time");
+				timePassed.Value = testcase.time + "";
+				elmNew.Attributes.Append (timePassed);
+				XmlAttribute attemptS = xmlDoc.CreateAttribute ("attempts");
+				attemptS.Value = testcase.attempts + "";
+				elmNew.Attributes.Append (attemptS);
 					
-					elm.AppendChild(elmNew);
-				}
+				elm.AppendChild (elmNew);
 			}
-			xmlDoc.Save(OUTPUT_FILE_PATH);
-			Debug.Log("Writing in output XML file.");
-        }
+			xmlDoc.Save (OUTPUT_FILE_PATH);
+			Debug.Log ("Writing in output XML file.");
+		} else {
+			Debug.Log ("Output XML File does not exist, please make sure it does.");
+		}
     }
 }

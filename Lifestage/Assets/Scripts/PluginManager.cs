@@ -227,7 +227,9 @@ public class PluginManager : MonoBehaviour
 
         if (distance>=0 && timeStamp >= vibrationIntervall) {
 			timeStamp=0;
-			if (vibroMode==VibroMode.Both) {
+			if (vibroMode==VibroMode.None) {
+				//do nohing
+			} else if (vibroMode==VibroMode.Both) {
 				int intensity=0;
 				float part=maxDistance/20f;
 				if(distance<=maxDistance/2f) {

@@ -17,7 +17,6 @@ public class TestCase
 	public int attempts;
 	public string userID;
 	public VibroMode vibroMode;
-	public int repetitions;
 
 	public TestCase()
 	{
