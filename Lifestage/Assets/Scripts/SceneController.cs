@@ -188,11 +188,8 @@ public class SceneController : MonoBehaviour
     public void Reset()
     {
         StorageManager.Instance.ClearTestCaseProgress();
-        //if(currentRepetition == numRepetitions -1)
-           //  currentRepetition = StorageManager.Instance.getLatestRepetition();
-
-        if(currentRepetition == numRepetitions )
-             currentRepetition = 0;
+        if(currentRepetition == numRepetitions -1)
+        	currentRepetition = StorageManager.Instance.getLatestRepetition();
         ClearTestCase();
         scenario.Reset();
         currentTestCase = null;
