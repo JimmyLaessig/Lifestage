@@ -67,6 +67,7 @@ public class SceneController : MonoBehaviour
 
         PluginManager.Instance.SetMaxDistance = MaxDistance;
 		numRepetitions=StorageManager.Instance.getNumberOfRepetitions();
+        Debug.Log("Number of Repetitions: " + numRepetitions);
 		currentRepetition=StorageManager.Instance.getLatestRepetition();
 		userID = StorageManager.Instance.getLatestUserID()+"";
     }
