@@ -14,6 +14,9 @@ public class Scenario
     private List<TestCase> solvedTestCases;
     private int numTestCases = 0;
 
+    public Vector3 sceneScale;
+
+
     public int NumTestCases
     {
         get { return numTestCases; }

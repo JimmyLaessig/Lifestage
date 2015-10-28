@@ -27,8 +27,7 @@ public class UIController : MonoBehaviour
 
     private static UIController instance;
 
-    private bool InputEnabled;
-    private bool errorMsg;
+    private bool inputEnabled;
 
     // Show marker for two seconds
     private float showMarkerDuration = 1.5f;
@@ -49,7 +48,7 @@ public class UIController : MonoBehaviour
         if (!instance)
             instance = this;
 
-        InputEnabled = true;
+        inputEnabled = true;
 
         startButton = GameObject.Find("StartButton").GetComponent<Button>();
         nextButton = GameObject.Find("NextButton").GetComponent<Button>();
@@ -85,7 +84,7 @@ public class UIController : MonoBehaviour
         startButton.enabled = false;
         nextButton.enabled = false;
         cancelButton.enabled = false;
-        InputEnabled = false;
+        inputEnabled = false;
     }
 
 
@@ -94,7 +93,7 @@ public class UIController : MonoBehaviour
     /// </summary>
     public void ShowNextButton(bool enabled)
     {
-        if (!InputEnabled)
+        if (!inputEnabled)
             return;
         nextButton.gameObject.SetActive(enabled);
     }
@@ -105,7 +104,7 @@ public class UIController : MonoBehaviour
     /// </summary>
     public void ShowStartButton(bool enabled)
     {
-        if (!InputEnabled)
+        if (!inputEnabled)
             return;
         startButton.gameObject.SetActive(enabled);
     }
@@ -116,7 +115,7 @@ public class UIController : MonoBehaviour
     /// </summary>
     public void ShowCancelButton(bool enabled)
     {
-        if (!InputEnabled)
+        if (!inputEnabled)
             return;
         cancelButton.gameObject.SetActive(enabled);
     }
@@ -134,7 +133,7 @@ public class UIController : MonoBehaviour
     {
         userIDText.text = "UserID: <b>" + userID + "</b>";
         testcaseText.text = (enabled) ? "Testcase: <b>" + (numTestCases - numTestCasesLeft) + " / " + numTestCases + "</b>" : "-";
-        repetitionText.text = "Repetition: <b>" + (repetition + 1) + "</b>" ;
+        repetitionText.text = "Repetition: <b>" + (repetition) + "</b>" ;
     }
 
 
@@ -145,7 +144,9 @@ public class UIController : MonoBehaviour
     /// <param name="txt">The text to be displayed</param>
     /// <param name="color">The colorof the text</param>
     public void ShowMessageText(bool enabled, string txt, Color color)
-    {       
+    {
+        if (!inputEnabled)
+            return;
         messageObject.SetActive(enabled);
         messageText.text = txt;
         messageText.color = color;
@@ -194,7 +195,7 @@ public class UIController : MonoBehaviour
     /// <param name="correct">Shows a green check on if true, otherwhise a red x</param>
     public void ShowCorrectMarker(bool correct)
     {
-        if (!InputEnabled)
+        if (!inputEnabled)
             return;
 
         startTime = Time.time;
@@ -226,14 +227,18 @@ public class UIController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Hides all UI elements
+    /// </summary>
     public void HideAll()
     { 
-
         startButton.gameObject.SetActive(false);
         nextButton.gameObject.SetActive(false);
         cancelButton.gameObject.SetActive(false);
-
-        ShowMessageText(false, "", Color.black);
+        if (!inputEnabled)
+        { 
+            ShowMessageText(false, "", Color.black);
+        }
         ShowSelectText(false, 0, 0);
         ShowInfoText(false, "-", 0, 0, 0);    
     }

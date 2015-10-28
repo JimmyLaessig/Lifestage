@@ -57,7 +57,13 @@ public class StorageManager : MonoBehaviour
                 t.numElements = Convert.ToInt32(list[i].Attributes["numElements"].Value);
 				t.targetElementIndex = Convert.ToInt32(list[i].Attributes["targetElement"].Value) - 1;
 				t.vibroMode = PluginManager.Instance.getEnum(list[i].Attributes["vibroMode"].Value);
-				t.repetitions = Convert.ToInt32(list[i].Attributes["repetitions"].Value);
+                Vector3 scale = new Vector3();
+
+                    scale.x = (list[i].Attributes["scaleX"] != null) ? (float)Convert.ToDouble(list[i].Attributes["scaleX"].Value) : 40.0f;
+                    scale.y = (list[i].Attributes["scaleY"] != null) ? (float)Convert.ToDouble(list[i].Attributes["scaleY"].Value) : 10.0f;
+                    scale.z = (list[i].Attributes["scaleZ"] != null) ? (float)Convert.ToDouble(list[i].Attributes["scaleZ"].Value) : 20.0f;
+
+                t.sceneScale = scale;
                 scenario.AddTestCase(t);
             }
             if (list.Count == 0)
