@@ -13,10 +13,6 @@ public class CameraController : MonoBehaviour
 
     private LineRenderer rayRenderer;
 
-    // The unique id of the user
-
-    private string userID = "todo";
-
     // Offset to the ray position such that the ray does not go through the exact center of the camera
     public float rayOffset = -0.5f;
 
@@ -85,7 +81,7 @@ public class CameraController : MonoBehaviour
     /// </summary>
     public void OnCancelButtonClicked()
     {
-        sceneController.CancelTestCase("", attempts);
+        sceneController.CancelTestCase(attempts);
     }
 
 
@@ -120,7 +116,7 @@ public class CameraController : MonoBehaviour
             // Solve the TestCase if an object was selected
             if (selectedObj)
             {
-                if (sceneController.SolveTestCase(timePassed, userID, attempts))
+                if (sceneController.SolveTestCase(timePassed, attempts))
                     attempts = 0;
             }
         }

@@ -183,15 +183,15 @@ public class UIController : MonoBehaviour
         string txt = "";
 
         if (selectIndex == 0)
-            txt = "Select closest Element";
+            txt = "Select the closest Element";
         else if (selectIndex == 1)
-            txt = "Select second closest Element";
+            txt = "Select the second closest Element";
         else if (selectIndex == 2)
-            txt = "Select third closest Element";
+            txt = "Select the third closest Element";
         else if (selectIndex == numElements - 1)
-            txt = "Select furthermost Element";
+            txt = "Select the furthermost Element";
         else if (selectIndex == (int)(numElements / 2))
-            txt = "Select Element in the Middle";
+            txt = "Select the Element in the Middle";
 
         selectText.enabled = enabled;
         selectText.text = txt;

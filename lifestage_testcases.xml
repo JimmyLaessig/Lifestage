@@ -1,5 +1,5 @@
-<TestCaseCollection>
-  <TestCase numElements ="10" targetElement ="10" vibroMode="Both" repetitions="1"/>
-  <TestCase numElements ="5" targetElement ="1" vibroMode="SmartphoneOnly" repetitions="2"/>
-  <TestCase numElements ="15" targetElement ="15" vibroMode="VibroOnly" repetitions="3"/>
+<TestCaseCollection  repetitions="5">
+  <TestCase numElements ="10" targetElement ="10" vibroMode="Both"/>
+  <TestCase numElements ="5" targetElement ="1" vibroMode="SmartphoneOnly"/>
+  <TestCase numElements ="15" targetElement ="15" vibroMode="VibroOnly"/>
 </TestCaseCollection>

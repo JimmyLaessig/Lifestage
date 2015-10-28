@@ -18,7 +18,6 @@ public class TestCase
 	public string userID;
     public int repetitions = 1;
 	public VibroMode vibroMode;
-
     public Vector3 sceneScale;
 
 	public TestCase()

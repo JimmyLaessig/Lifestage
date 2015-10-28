@@ -14,7 +14,7 @@ public class SceneController : MonoBehaviour
     private Scenario scenario;
     private TestCase currentTestCase = null;
 
-    private string userID = "01";
+    private string userID = "-";
    
     // A Collection of Materials to choose from for the primitives
     public Material material;
@@ -37,8 +37,8 @@ public class SceneController : MonoBehaviour
     public Material highlightingMaterial;
     private GameObject boundingVolume;
 
-    public int numRepetitions = 5;
-    private int currentRepetition = 0;
+	private int numRepetitions;
+    private int currentRepetition;
 
     private bool isStarted = false;
 
@@ -66,7 +66,9 @@ public class SceneController : MonoBehaviour
         boundingVolume = GameObject.Find("BoundingVolume");
 
         PluginManager.Instance.SetMaxDistance = MaxDistance;
-
+		numRepetitions=StorageManager.Instance.getNumberOfRepetitions();
+		currentRepetition=StorageManager.Instance.getLatestRepetition();
+		userID = StorageManager.Instance.getLatestUserID()+"";
     }
 
 
@@ -76,12 +78,11 @@ public class SceneController : MonoBehaviour
     /// </summary>
     public void StartButtonClicked()
     {
-        Debug.Log("START BUTTON CLICKED: Repetition: " + currentRepetition);
+        Debug.Log("START BUTTON CLICKED! Repetition: " + currentRepetition);
         
         // This block is called on start and when all testcases in all reputations are finished
         if (currentRepetition == numRepetitions || isStarted == false)
         {
-            // TODO: Load new userID here
             Debug.Log("Starting new stuff");
         }
         isStarted = true;
@@ -98,7 +99,7 @@ public class SceneController : MonoBehaviour
         PluginManager.Instance.SetVibroMode(currentTestCase.vibroMode);
         inputEnabled = true;
         
-        // TODO HERE READ NEW USER ID
+		userID=StorageManager.Instance.getLatestUserID()+"";
     }
 
 
@@ -130,9 +131,9 @@ public class SceneController : MonoBehaviour
             UIController.Instance.HideAll();
             UIController.Instance.ShowStartButton(true);
             if(isStarted)
-                UIController.Instance.ShowMessageText(true, "All Testcases finished! Starting new Repetition!", Color.black);
+				UIController.Instance.ShowMessageText(true, "All Testcases finished! Starting a new Repetition.", Color.black);
             else
-                UIController.Instance.ShowMessageText(true, "Start new Repetition!", Color.black);
+				UIController.Instance.ShowMessageText(true, "Starting a new Repetition!", Color.black);
 
             UIController.Instance.ShowInfoText(false, userID, scenario.NumTestCasesLeft, scenario.NumTestCases, currentRepetition);
             if (currentRepetition == numRepetitions)
@@ -217,17 +218,17 @@ public class SceneController : MonoBehaviour
     /// </summary>
     /// <param name="userID">The ID of the user</param>
     /// <param name="attempts">Number of attempts</param>
-    public void CancelTestCase(string userID, int attempts)
+    public void CancelTestCase(int attempts)
     {
         Debug.Log("Canceling TestCase after " + attempts + " attempts");
         scenario.SolveCurrentTestCase(false, userID, attempts, 0);
         UIController.Instance.ShowCorrectMarker(false);
         testcaseFinished = true;
-        
+
         if (scenario.NumTestCasesLeft == 0)
-        {           
+        {
             finished = true;
-        }
+		}
         Debug.Log("Solving Testcase: Testcases left: + " + scenario.NumTestCasesLeft);
     }
 
@@ -239,7 +240,7 @@ public class SceneController : MonoBehaviour
     /// <param name="time">The duration of the interaction</param>
     /// <param name="userID">The unique id of the user</param>
     /// <returns>True if all winning conditions are met (An Object was previously selected)</returns>
-    public bool SolveTestCase(float time, string userID, int attempts)
+    public bool SolveTestCase(float time, int attempts)
     {
         bool isCorrect = false;
 
@@ -247,15 +248,14 @@ public class SceneController : MonoBehaviour
         {
             isCorrect = true;
             scenario.SolveCurrentTestCase(true, userID, attempts, time);
-            testcaseFinished = true;
+			testcaseFinished = true;
 
             if (scenario.NumTestCasesLeft == 0)
             {            
                 finished = true;
-            }
+			}
             Debug.Log("Solving Testcase: Testcases left: + " + scenario.NumTestCasesLeft);
-        }
-       
+        }       
         Debug.Log("Trying to Solve TestCase: isCorrect = " + isCorrect);
         UIController.Instance.ShowCorrectMarker(isCorrect);
         return isCorrect;
