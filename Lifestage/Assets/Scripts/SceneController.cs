@@ -124,8 +124,8 @@ public class SceneController : MonoBehaviour
 
 
     void Update()
-    {
-
+    {		
+		currentRepetition=StorageManager.Instance.getLatestRepetition();
         if (testcaseFinished && finished)
         {
             
@@ -189,7 +189,7 @@ public class SceneController : MonoBehaviour
     {
         StorageManager.Instance.ClearTestCaseProgress();
         if(currentRepetition == numRepetitions -1)
-             currentRepetition = 0;
+             currentRepetition = StorageManager.Instance.getLatestRepetition();
         ClearTestCase();
         scenario.Reset();
         currentTestCase = null;
@@ -228,7 +228,6 @@ public class SceneController : MonoBehaviour
 
         if (scenario.NumTestCasesLeft == 0)
         {
-			currentRepetition++;
             finished = true;
 		}
         Debug.Log("Solving Testcase: Testcases left: + " + scenario.NumTestCasesLeft);
@@ -254,7 +253,6 @@ public class SceneController : MonoBehaviour
 
             if (scenario.NumTestCasesLeft == 0)
             {
-                currentRepetition++;
                 finished = true;
 			}
             Debug.Log("Solving Testcase: Testcases left: + " + scenario.NumTestCasesLeft);

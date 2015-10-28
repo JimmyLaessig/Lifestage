@@ -28,13 +28,11 @@ public class StorageManager : MonoBehaviour
         get { return StorageManager.instance; }
     }
 
-
     void Awake()
     {
         if (!StorageManager.instance)
             StorageManager.instance = this;
     }
-
 
     /// <summary>
     /// Loads a scenario from the given XML-File. 
@@ -73,7 +71,6 @@ public class StorageManager : MonoBehaviour
         return scenario;
     }
 
-
     /// <summary>
     /// Removes all stored information about previously solved TestCases
     /// </summary>
@@ -81,7 +78,6 @@ public class StorageManager : MonoBehaviour
     {
         PlayerPrefs.DeleteKey(SOLVED_TESTCASES_KEY);
     }
-
 
     /// <summary>
     /// Saves the IDs of the TestCases to the internal storage. 
@@ -100,7 +96,6 @@ public class StorageManager : MonoBehaviour
             PlayerPrefs.Save();
         }
     }
-
 
     /// <summary>
     /// Retrieves a list of IDs of TestCases that where written to the internal storage.
