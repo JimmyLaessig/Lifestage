@@ -67,6 +67,7 @@ public class SceneController : MonoBehaviour
 
         PluginManager.Instance.SetMaxDistance = MaxDistance;
 		numRepetitions=StorageManager.Instance.getNumberOfRepetitions();
+        Debug.Log("Number of Repetitions: " + numRepetitions);
 		currentRepetition=StorageManager.Instance.getLatestRepetition();
 		userID = StorageManager.Instance.getLatestUserID()+"";
     }
@@ -81,7 +82,7 @@ public class SceneController : MonoBehaviour
         Debug.Log("START BUTTON CLICKED! Repetition: " + currentRepetition);
         
         // This block is called on start and when all testcases in all reputations are finished
-        if (currentRepetition == numRepetitions - 1 || isStarted == false)
+        if (currentRepetition == numRepetitions || isStarted == false)
         {
             Debug.Log("Starting new stuff");
         }
@@ -90,7 +91,7 @@ public class SceneController : MonoBehaviour
      
         testcaseFinished = false;
         finished = false;
-
+        currentRepetition++;
         ClearTestCase();
         StartNextTestCase();
         GenerateGameObjects(currentTestCase);
@@ -127,8 +128,7 @@ public class SceneController : MonoBehaviour
     {		
 		currentRepetition=StorageManager.Instance.getLatestRepetition();
         if (testcaseFinished && finished)
-        {
-            
+        {           
             UIController.Instance.HideAll();
             UIController.Instance.ShowStartButton(true);
             if(isStarted)
@@ -137,7 +137,7 @@ public class SceneController : MonoBehaviour
 				UIController.Instance.ShowMessageText(true, "Starting a new Repetition!", Color.black);
 
             UIController.Instance.ShowInfoText(false, userID, scenario.NumTestCasesLeft, scenario.NumTestCases, currentRepetition);
-            if (currentRepetition == numRepetitions - 1)
+            if (currentRepetition == numRepetitions)
             {
                 UIController.Instance.ShowMessageText(true, "All Testcases and Repetitions finished! Thank you for participating in LifeStage!", Color.black);
             }
@@ -188,8 +188,11 @@ public class SceneController : MonoBehaviour
     public void Reset()
     {
         StorageManager.Instance.ClearTestCaseProgress();
-        if(currentRepetition == numRepetitions -1)
-             currentRepetition = StorageManager.Instance.getLatestRepetition();
+        //if(currentRepetition == numRepetitions -1)
+           //  currentRepetition = StorageManager.Instance.getLatestRepetition();
+
+        if(currentRepetition == numRepetitions )
+             currentRepetition = 0;
         ClearTestCase();
         scenario.Reset();
         currentTestCase = null;
@@ -292,7 +295,7 @@ public class SceneController : MonoBehaviour
     /// </summary>
     public void GenerateGameObjects(TestCase testCase)
     {
-
+        this.transform.localScale = testCase.sceneScale;
         Quaternion rotation = Random.rotation;
 
         Bounds bounds = boundingVolume.GetComponent<MeshFilter>().mesh.bounds;

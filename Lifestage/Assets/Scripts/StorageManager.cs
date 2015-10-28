@@ -55,6 +55,14 @@ public class StorageManager : MonoBehaviour
                 t.numElements = Convert.ToInt32(list[i].Attributes["numElements"].Value);
 				t.targetElementIndex = Convert.ToInt32(list[i].Attributes["targetElement"].Value) - 1;
 				t.vibroMode = PluginManager.Instance.getEnum(list[i].Attributes["vibroMode"].Value);
+
+                Vector3 scale = new Vector3();
+
+                    scale.x = (list[i].Attributes["scaleX"] != null) ? (float)Convert.ToDouble(list[i].Attributes["scaleX"].Value) : 40.0f;
+                    scale.y = (list[i].Attributes["scaleY"] != null) ? (float)Convert.ToDouble(list[i].Attributes["scaleY"].Value) : 10.0f;
+                    scale.z = (list[i].Attributes["scaleZ"] != null) ? (float)Convert.ToDouble(list[i].Attributes["scaleZ"].Value) : 20.0f;
+
+                t.sceneScale = scale;
                 scenario.AddTestCase(t);
             }
             if (list.Count == 0)
@@ -150,7 +158,7 @@ public class StorageManager : MonoBehaviour
 	}
 
 	/// <summary>
-	/// This method gets the latest repetition number from the xml file or -1 if xml file does not exist.
+	/// This method gets the latest repetition number from the xml file or 0 if xml file does not exist.
 	/// </summary>
 	public int getLatestRepetition() {
 		XmlDocument doc = new XmlDocument();
@@ -171,7 +179,7 @@ public class StorageManager : MonoBehaviour
 			return rep;
 		}
 		Debug.Log ("Output XML File does not exist, please make sure it does.");
-		return -1;
+		return 0;
 	}
 
 	/// <summary>

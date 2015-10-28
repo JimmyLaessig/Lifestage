@@ -16,6 +16,7 @@ public class UIController : MonoBehaviour
 
     private Text selectText;
     private Text messageText;
+    private Text errorText;
     private GameObject messageObject;
 
     private Text userIDText;
@@ -27,8 +28,7 @@ public class UIController : MonoBehaviour
 
     private static UIController instance;
 
-    private bool InputEnabled;
-    private bool errorMsg;
+    private bool inputEnabled;
 
     // Show marker for two seconds
     private float showMarkerDuration = 1.5f;
@@ -49,7 +49,7 @@ public class UIController : MonoBehaviour
         if (!instance)
             instance = this;
 
-        InputEnabled = true;
+        inputEnabled = true;
 
         startButton = GameObject.Find("StartButton").GetComponent<Button>();
         nextButton = GameObject.Find("NextButton").GetComponent<Button>();
@@ -57,7 +57,7 @@ public class UIController : MonoBehaviour
 
         messageObject = GameObject.Find("MessageField");
         messageText = GameObject.Find("MessageText").GetComponent<Text>();
-
+        errorText = GameObject.Find("ErrorText").GetComponent<Text>();
         selectText = GameObject.Find("SelectText").GetComponent<Text>();
 
         userIDText = GameObject.Find("UserIDText").GetComponent<Text>();
@@ -80,12 +80,15 @@ public class UIController : MonoBehaviour
     /// <param name="msg">The error message.</param>
     public void ReportError(string msg)
     {
-        ShowMessageText(true, msg, Color.red);
+        ShowMessageText(false, "", Color.black);
+        messageObject.SetActive(enabled);
+        errorText.text = msg;
+        errorText.color = Color.red;
 
         startButton.enabled = false;
         nextButton.enabled = false;
         cancelButton.enabled = false;
-        InputEnabled = false;
+        inputEnabled = false;
     }
 
 
@@ -94,7 +97,7 @@ public class UIController : MonoBehaviour
     /// </summary>
     public void ShowNextButton(bool enabled)
     {
-        if (!InputEnabled)
+        if (!inputEnabled)
             return;
         nextButton.gameObject.SetActive(enabled);
     }
@@ -105,8 +108,9 @@ public class UIController : MonoBehaviour
     /// </summary>
     public void ShowStartButton(bool enabled)
     {
-        if (!InputEnabled)
+        if (!inputEnabled)
             return;
+
         startButton.gameObject.SetActive(enabled);
     }
 
@@ -116,7 +120,7 @@ public class UIController : MonoBehaviour
     /// </summary>
     public void ShowCancelButton(bool enabled)
     {
-        if (!InputEnabled)
+        if (!inputEnabled)
             return;
         cancelButton.gameObject.SetActive(enabled);
     }
@@ -132,9 +136,11 @@ public class UIController : MonoBehaviour
     /// <param name="repetition">the current repetition</param>
     public void ShowInfoText(bool enabled, string userID, int numTestCasesLeft, int numTestCases, int repetition)
     {
+        if (!inputEnabled)
+            return;
         userIDText.text = "UserID: <b>" + userID + "</b>";
         testcaseText.text = (enabled) ? "Testcase: <b>" + (numTestCases - numTestCasesLeft) + " / " + numTestCases + "</b>" : "-";
-        repetitionText.text = "Repetition: <b>" + (repetition + 1) + "</b>" ;
+        repetitionText.text = "Repetition: <b>" + (repetition) + "</b>" ;
     }
 
 
@@ -145,7 +151,9 @@ public class UIController : MonoBehaviour
     /// <param name="txt">The text to be displayed</param>
     /// <param name="color">The colorof the text</param>
     public void ShowMessageText(bool enabled, string txt, Color color)
-    {       
+    {
+        if (!inputEnabled)
+            return;
         messageObject.SetActive(enabled);
         messageText.text = txt;
         messageText.color = color;
@@ -158,6 +166,8 @@ public class UIController : MonoBehaviour
     /// <param name="enabled"></param>
     public void ShowFinishedMessage(bool enabled)
     {
+        if (!inputEnabled)
+            return;
         ShowMessageText(enabled, finishedMessage, Color.black);
     }
 
@@ -194,8 +204,6 @@ public class UIController : MonoBehaviour
     /// <param name="correct">Shows a green check on if true, otherwhise a red x</param>
     public void ShowCorrectMarker(bool correct)
     {
-        if (!InputEnabled)
-            return;
 
         startTime = Time.time;
         if (correct)
@@ -226,14 +234,17 @@ public class UIController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Hides all UI elements
+    /// </summary>
     public void HideAll()
     { 
-
         startButton.gameObject.SetActive(false);
         nextButton.gameObject.SetActive(false);
         cancelButton.gameObject.SetActive(false);
 
-        ShowMessageText(false, "", Color.black);
+            ShowMessageText(false, "", Color.black);
+
         ShowSelectText(false, 0, 0);
         ShowInfoText(false, "-", 0, 0, 0);    
     }

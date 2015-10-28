@@ -12,7 +12,11 @@ public class Scenario
     private List<TestCase> openTestCases;
     private TestCase currentTestCase;
     private List<TestCase> solvedTestCases;
+
     private int numTestCases = 0;
+
+    public Vector3 sceneScale;
+
 
     public int NumTestCases
     {
