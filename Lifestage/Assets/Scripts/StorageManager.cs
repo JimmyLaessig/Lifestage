@@ -53,7 +53,7 @@ public class StorageManager : MonoBehaviour
             {
                 TestCase t = new TestCase();
                 t.numElements = Convert.ToInt32(list[i].Attributes["numElements"].Value);
-				t.targetElementIndex = Convert.ToInt32(list[i].Attributes["targetElement"].Value) - 1;
+				t.targetElement = Convert.ToInt32(list[i].Attributes["targetElement"].Value) - 1;
 				t.phoneIntensity[0]=Convert.ToInt32(list[i].Attributes["phoneIntensityMin"].Value);
 				t.phoneIntensity[1]=Convert.ToInt32(list[i].Attributes["phoneIntensityMax"].Value);
 				t.vibroIntensity[0]=Convert.ToInt32(list[i].Attributes["vibroIntensityMin"].Value);
@@ -240,7 +240,7 @@ public class StorageManager : MonoBehaviour
 				noElem.Value = testcase.numElements + "";
 				elmNew.Attributes.Append (noElem);
 				XmlAttribute rightObject = xmlDoc.CreateAttribute ("targetElementIndex");
-				rightObject.Value = testcase.targetElementIndex + "";
+				rightObject.Value = testcase.targetElement + "";
 				elmNew.Attributes.Append (rightObject);
 				XmlAttribute pickSuccessful = xmlDoc.CreateAttribute ("correct");
 				pickSuccessful.Value = testcase.isCorrect + "";
@@ -273,7 +273,7 @@ public class StorageManager : MonoBehaviour
 				noElem.Value = testcase.numElements + "";
 				elmNew.Attributes.Append (noElem);
 				XmlAttribute rightObject = xmlDoc.CreateAttribute ("targetElementIndex");
-				rightObject.Value = testcase.targetElementIndex + "";
+				rightObject.Value = testcase.targetElement + "";
 				elmNew.Attributes.Append (rightObject);
 				XmlAttribute pickSuccessful = xmlDoc.CreateAttribute ("correct");
 				pickSuccessful.Value = testcase.isCorrect + "";

@@ -11,7 +11,7 @@ public class TestCase
 
     public int id;
 	public int numElements;
-	public int targetElementIndex;
+	public int targetElement;
 	public bool isCorrect;
 	public float time;
 	public int attempts;
