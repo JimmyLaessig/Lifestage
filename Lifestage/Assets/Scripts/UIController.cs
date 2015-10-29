@@ -152,6 +152,7 @@ public class UIController : MonoBehaviour
     /// <param name="color">The colorof the text</param>
     public void ShowMessageText(bool enabled, string txt, Color color)
     {
+       
         if (!inputEnabled)
             return;
         messageObject.SetActive(enabled);
@@ -181,18 +182,20 @@ public class UIController : MonoBehaviour
     public void ShowSelectText(bool enabled, int selectIndex, int numElements)
     {
         string txt = "";
-
-        if (selectIndex == 0)
+        Debug.Log("Showing Message Text: selectIndex: " + selectIndex);
+        if (selectIndex == 1)
             txt = "Select the closest Element";
-        else if (selectIndex == 1)
-            txt = "Select the second closest Element";
         else if (selectIndex == 2)
+            txt = "Select the second closest Element";
+        else if (selectIndex == 3)
             txt = "Select the third closest Element";
-        else if (selectIndex == numElements - 1)
+        else if (selectIndex == numElements)
             txt = "Select the furthermost Element";
         else if (selectIndex == (int)(numElements / 2))
             txt = "Select the Element in the Middle";
-
+        else if (selectIndex > 0)
+            txt = "Select " + selectIndex + "th Element";
+        Debug.Log("SelectText should be: " + txt);
         selectText.enabled = enabled;
         selectText.text = txt;
     }

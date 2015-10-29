@@ -15,7 +15,7 @@ public class SceneController : MonoBehaviour
     private TestCase currentTestCase = null;
 
     private string userID = "-";
-   
+
     // A Collection of Materials to choose from for the primitives
     public Material material;
 
@@ -37,7 +37,7 @@ public class SceneController : MonoBehaviour
     public Material highlightingMaterial;
     private GameObject boundingVolume;
 
-	private int numRepetitions;
+    private int numRepetitions;
     private int currentRepetition;
 
     private bool isStarted = false;
@@ -65,11 +65,11 @@ public class SceneController : MonoBehaviour
 
         boundingVolume = GameObject.Find("BoundingVolume");
 
-        PluginManager.Instance.SetMaxDistance = MaxDistance;
-		numRepetitions=StorageManager.Instance.getNumberOfRepetitions();
+
+        numRepetitions = StorageManager.Instance.getNumberOfRepetitions();
         Debug.Log("Number of Repetitions: " + numRepetitions);
-		currentRepetition=StorageManager.Instance.getLatestRepetition();
-		userID = StorageManager.Instance.getLatestUserID()+"";
+        currentRepetition = StorageManager.Instance.getLatestRepetition();
+        userID = StorageManager.Instance.getLatestUserID() + "";
     }
 
 
@@ -80,7 +80,7 @@ public class SceneController : MonoBehaviour
     public void StartButtonClicked()
     {
         Debug.Log("START BUTTON CLICKED! Repetition: " + currentRepetition);
-        
+
         // This block is called on start and when all testcases in all reputations are finished
         if (currentRepetition == numRepetitions || isStarted == false)
         {
@@ -88,19 +88,19 @@ public class SceneController : MonoBehaviour
         }
         isStarted = true;
         Reset();
-     
+
         testcaseFinished = false;
         finished = false;
         currentRepetition++;
         ClearTestCase();
         StartNextTestCase();
-        GenerateGameObjects(currentTestCase);
 
+        PluginManager.Instance.SetMaxDistance = MaxDistance;
         PluginManager.Instance.InitBaseRotation();
         PluginManager.Instance.SetVibroMode(currentTestCase.vibroMode);
         inputEnabled = true;
-        
-		userID=StorageManager.Instance.getLatestUserID()+"";
+
+        userID = StorageManager.Instance.getLatestUserID() + "";
     }
 
 
@@ -110,16 +110,15 @@ public class SceneController : MonoBehaviour
     /// </summary>
     public void NextButtonClicked()
     {
-        
+
         testcaseFinished = false;
-        
+
         ClearTestCase();
-        currentTestCase = scenario.GetNextTestCase();
-        GenerateGameObjects(currentTestCase);
-       
+        StartNextTestCase();
+
         PluginManager.Instance.InitBaseRotation();
         PluginManager.Instance.SetVibroMode(currentTestCase.vibroMode);
-       
+
         inputEnabled = true;
     }
 
@@ -128,20 +127,20 @@ public class SceneController : MonoBehaviour
     {
 
         if (testcaseFinished && finished)
-        {           
+        {
             UIController.Instance.HideAll();
             UIController.Instance.ShowStartButton(true);
-            if(isStarted)
-				UIController.Instance.ShowMessageText(true, "All Testcases finished! Starting a new Repetition.", Color.black);
+            if (isStarted)
+                UIController.Instance.ShowMessageText(true, "All Testcases finished! Starting a new Repetition.", Color.black);
             else
-				UIController.Instance.ShowMessageText(true, "Starting a new Repetition!", Color.black);
+                UIController.Instance.ShowMessageText(true, "Starting a new Repetition!", Color.black);
 
             UIController.Instance.ShowInfoText(false, userID, scenario.NumTestCasesLeft, scenario.NumTestCases, currentRepetition);
             if (currentRepetition == numRepetitions)
             {
                 UIController.Instance.ShowMessageText(true, "All Testcases and Repetitions finished! Thank you for participating in LifeStage!", Color.black);
             }
-            
+
             inputEnabled = false;
 
         }
@@ -155,7 +154,7 @@ public class SceneController : MonoBehaviour
         else if (!testcaseFinished && !finished)
         {
             UIController.Instance.HideAll();
-            UIController.Instance.ShowSelectText(true, currentTestCase.targetElementIndex, currentTestCase.numElements);
+            UIController.Instance.ShowSelectText(true, currentTestCase.targetElement, currentTestCase.numElements);
             UIController.Instance.ShowInfoText(true, userID, scenario.NumTestCasesLeft, scenario.NumTestCases, currentRepetition);
             UIController.Instance.ShowCancelButton(true);
             inputEnabled = true;
@@ -177,7 +176,7 @@ public class SceneController : MonoBehaviour
 
         inputEnabled = true;
         GenerateGameObjects(currentTestCase);
-       
+
         return true;
     }
 
@@ -188,8 +187,8 @@ public class SceneController : MonoBehaviour
     public void Reset()
     {
         StorageManager.Instance.ClearTestCaseProgress();
-        if(currentRepetition == numRepetitions )
-             currentRepetition = 0;
+        if (currentRepetition == numRepetitions)
+            currentRepetition = 0;
         ClearTestCase();
         scenario.Reset();
         currentTestCase = null;
@@ -229,7 +228,7 @@ public class SceneController : MonoBehaviour
         if (scenario.NumTestCasesLeft == 0)
         {
             finished = true;
-		}
+        }
         Debug.Log("Solving Testcase: Testcases left: + " + scenario.NumTestCasesLeft);
     }
 
@@ -249,14 +248,14 @@ public class SceneController : MonoBehaviour
         {
             isCorrect = true;
             scenario.SolveCurrentTestCase(true, userID, attempts, time);
-			testcaseFinished = true;
+            testcaseFinished = true;
 
             if (scenario.NumTestCasesLeft == 0)
-            {            
+            {
                 finished = true;
-			}
+            }
             Debug.Log("Solving Testcase: Testcases left: + " + scenario.NumTestCasesLeft);
-        }       
+        }
         Debug.Log("Trying to Solve TestCase: isCorrect = " + isCorrect);
         UIController.Instance.ShowCorrectMarker(isCorrect);
         return isCorrect;
@@ -297,7 +296,7 @@ public class SceneController : MonoBehaviour
 
         Bounds bounds = boundingVolume.GetComponent<MeshFilter>().mesh.bounds;
         // Calculate the maximum distance
-        float maxZ = MaxDistance;
+        float maxZ = bounds.max.z * this.transform.localScale.z + boundingVolume.transform.position.z - this.transform.position.z;
         // calculate the absolute max Height
         float maxY = bounds.max.y * this.transform.localScale.y;
         float maxX = bounds.max.x * this.transform.localScale.x;
@@ -336,7 +335,8 @@ public class SceneController : MonoBehaviour
             obj.transform.position = position;
             gameObjects.Insert(i, obj);
         }
-        targetObject = gameObjects[testCase.targetElementIndex];
+        targetObject = gameObjects[testCase.targetElement - 1];
+
     }
 
 
@@ -355,15 +355,24 @@ public class SceneController : MonoBehaviour
 
 
     /// <summary>
-    /// returns the maximum distance of an object, relatively to this GameObject position
+    /// returns the maximum distance of an object, relatively to the camera.
     /// </summary>
     public float MaxDistance
     {
         get
         {
-            Bounds bounds = boundingVolume.GetComponent<MeshFilter>().mesh.bounds;
-            float distance = bounds.max.z * this.transform.localScale.z + boundingVolume.transform.position.z - this.transform.position.z;
-            return distance;
+            return (gameObjects[gameObjects.Count - 1].transform.position - camera.transform.position).magnitude;
+        }
+    }
+
+    /// <summary>
+    /// Returns the minimum distance of an object, relatively to the camera.
+    /// </summary>
+    public float MinDistance
+    {
+        get
+        {
+            return (gameObjects[0].transform.position - camera.transform.position).magnitude;
         }
     }
 }
