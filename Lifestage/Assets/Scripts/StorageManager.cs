@@ -54,14 +54,15 @@ public class StorageManager : MonoBehaviour
                 TestCase t = new TestCase();
                 t.numElements = Convert.ToInt32(list[i].Attributes["numElements"].Value);
 				t.targetElementIndex = Convert.ToInt32(list[i].Attributes["targetElement"].Value) - 1;
-				t.vibroMode = PluginManager.Instance.getEnum(list[i].Attributes["vibroMode"].Value);
+				t.phoneIntensity[0]=Convert.ToInt32(list[i].Attributes["phoneIntensityMin"].Value);
+				t.phoneIntensity[1]=Convert.ToInt32(list[i].Attributes["phoneIntensityMax"].Value);
+				t.vibroIntensity[0]=Convert.ToInt32(list[i].Attributes["vibroIntensityMin"].Value);
+				t.vibroIntensity[1]=Convert.ToInt32(list[i].Attributes["vibroIntensityMax"].Value);
 
                 Vector3 scale = new Vector3();
-
-                    scale.x = (list[i].Attributes["scaleX"] != null) ? (float)Convert.ToDouble(list[i].Attributes["scaleX"].Value) : 40.0f;
-                    scale.y = (list[i].Attributes["scaleY"] != null) ? (float)Convert.ToDouble(list[i].Attributes["scaleY"].Value) : 10.0f;
-                    scale.z = (list[i].Attributes["scaleZ"] != null) ? (float)Convert.ToDouble(list[i].Attributes["scaleZ"].Value) : 20.0f;
-
+                scale.x = (list[i].Attributes["scaleX"] != null) ? (float)Convert.ToDouble(list[i].Attributes["scaleX"].Value) : 40.0f;
+                scale.y = (list[i].Attributes["scaleY"] != null) ? (float)Convert.ToDouble(list[i].Attributes["scaleY"].Value) : 10.0f;
+                scale.z = (list[i].Attributes["scaleZ"] != null) ? (float)Convert.ToDouble(list[i].Attributes["scaleZ"].Value) : 20.0f;
                 t.sceneScale = scale;
                 scenario.AddTestCase(t);
             }

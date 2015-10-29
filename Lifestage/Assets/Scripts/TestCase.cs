@@ -17,11 +17,14 @@ public class TestCase
 	public int attempts;
 	public string userID;
     public int repetitions = 1;
-	public VibroMode vibroMode;
     public Vector3 sceneScale;
+	public int[] phoneIntensity;
+	public int[] vibroIntensity;
 
 	public TestCase()
 	{
+		phoneIntensity=new int[2];
+		vibroIntensity=new int[2];
 		id = ID_COUNTER;
 		ID_COUNTER++;
 	}

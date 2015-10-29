@@ -3,13 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public enum VibroMode {
-	Both=0,
-	SmartphoneOnly=1,
-	VibroOnly=2,
-	None=3
-}
-
 /// <summary>
 /// This script is used to track the cameras' orientation using the OrientationTracker service and provides an interface to the VibroModule
 /// </summary>
@@ -34,20 +27,19 @@ public class PluginManager : MonoBehaviour
     private Quaternion gyroRotation = Quaternion.identity;
     private float initRotationY;
 
-
     // Distance for Vibration Feedback
-	private float distance = -1, maxDistance=20;
+	private float distance = -1, maxDistance=20, minDistance=0;
 
     // Intervall in which the vibrations of a certain pattern are triggered in seconds
-	private float vibrationIntervall = 0.7f;
-	private int duration=500;
-	private float timeStamp = 0;
+	private float vibrationIntervall = 0.7f, timeStamp = 0;
+	private int duration=500, pauseAfter=50;
 	private bool phoneVibration=false;
 
     private List<long[]> intensityPattern = new List<long[]>();
     private float intensityVibrateTimeLeft = 0.0f;
 
-	private VibroMode vibroMode=VibroMode.Both;
+	private int[] phoneIntensity;
+	private int[] vibroIntensity;
 
     #region [Unity Callback Methods]
 
@@ -69,7 +61,9 @@ public class PluginManager : MonoBehaviour
         {
             intensityPattern.Add(new long[2] { 10 - i, i * 5 });
         }
-        ConnectToSparkCore();
+		ConnectToSparkCore();
+		phoneIntensity=new int[2];
+		vibroIntensity=new int[2];
     }
 
     // Update is called once per frame
@@ -85,19 +79,6 @@ public class PluginManager : MonoBehaviour
 
     #region[Public Methods]
 
-	public VibroMode getEnum(String s) {
-		switch(s) {
-			case "SmartphoneOnly":
-				return VibroMode.SmartphoneOnly;
-			case "VibroOnly":
-				return VibroMode.VibroOnly;
-			case "None":
-				return VibroMode.None;
-			default:
-				return VibroMode.Both;
-		}
-	}
-
     /// <summary>
     /// Sets the distance that is used to calculate the vibration pattern.
     /// Setting its value to a negative value will disable the vibration
@@ -110,9 +91,13 @@ public class PluginManager : MonoBehaviour
 		set { maxDistance = value; }
 	}
 
-	public void SetVibroMode(VibroMode v) {
-		vibroMode = v;
-		//vibroMode = VibroMode.VibroOnly;
+	public float SetMinDistance {
+		set { minDistance = value; }
+	}
+
+	public void setIntensities(int[] intensity1, int[] intensity2) {
+		phoneIntensity=intensity1;
+		vibroIntensity=intensity2;
 	}
 
     /// <summary>
@@ -223,95 +208,57 @@ public class PluginManager : MonoBehaviour
 			intensityVibrateTimeLeft -= Time.deltaTime;
         }
 
-        timeStamp += Time.deltaTime;
+		timeStamp += Time.deltaTime;
 
         if (distance>=0 && timeStamp >= vibrationIntervall) {
 			timeStamp=0;
-			if (vibroMode==VibroMode.None) {
+			//TODO testing
+			if (phoneIntensity[1]==0 && vibroIntensity[1]==0) { //NOTHING
 				//do nohing
-			} else if (vibroMode==VibroMode.Both) {
-				int intensity=0;
-				float part=maxDistance/20f;
-				if(distance<=maxDistance/2f) {
-					if(distance<=part)
-						intensity=9;
-					else if(distance>part && distance<=part*2)
-						intensity=8;
-					else if(distance>part*2 && distance<=part*3)
-						intensity=7;
-					else if(distance>part*3 && distance<=part*4)
-						intensity=6;
-					else if(distance>part*4 && distance<=part*5)
-						intensity=5;
-					else if(distance>part*5 && distance<=part*6)
-						intensity=4;
-					else if(distance>part*6 && distance<=part*7)
-						intensity=3;
-					else if(distance>part*7 && distance<=part*8)
-						intensity=2;
-					else if(distance>part*8 && distance<=part*9)
-						intensity=1;
-					else if(distance>part*9 && distance<=part*10)
-						intensity=0;
-					VibratePhone(intensity, duration);
+			} else if (phoneIntensity[1]>0 && vibroIntensity[1]>0) { //VIBRO AND PHONE
+				float halfdist=maxDistance/2f;
+				if(distance<halfdist) {
+					VibratePhone(
+						linearInterpolationPhone(phoneIntensity[0], phoneIntensity[1], minDistance, halfdist, distance/2f),
+						duration);
 				} else {
-					if(distance<=part*11)
-						intensity=100;
-					else if(distance>part*11 && distance<=part*12)
-						intensity=90;
-					else if(distance>part*12 && distance<=part*13)
-						intensity=80;
-					else if(distance>part*13 && distance<=part*14)
-						intensity=70;
-					else if(distance>part*14 && distance<=part*15)
-						intensity=60;
-					else if(distance>part*15 && distance<=part*16)
-						intensity=50;
-					else if(distance>part*16 && distance<=part*17)
-						intensity=40;
-					else if(distance>part*17 && distance<=part*18)
-						intensity=30;
-					else if(distance>part*18 && distance<=part*19)
-						intensity=20;
-					else if(distance>part*19)
-						intensity=10;
-					SendVibrationToCore(0, intensity, 0, duration, 5);
-					SendVibrationToCore(1, intensity, 0, duration, 5);
+					SendVibrationToCore(0,
+					                    linearInterpolationVibro(vibroIntensity[0], vibroIntensity[1], halfdist, maxDistance, distance),
+					                    linearInterpolationVibro(vibroIntensity[0], vibroIntensity[1], halfdist, maxDistance, distance),
+					                    duration, pauseAfter);
 				}
-			} else {
-				int intensity=0;
-				float part=maxDistance/10f;
-				if(distance<=part)
-					intensity=9;
-				else if(distance>part && distance<=part*2)
-					intensity=8;
-				else if(distance>part*2 && distance<=part*3)
-					intensity=7;
-				else if(distance>part*3 && distance<=part*4)
-					intensity=6;
-				else if(distance>part*4 && distance<=part*5)
-					intensity=5;
-				else if(distance>part*5 && distance<=part*6)
-					intensity=4;
-				else if(distance>part*6 && distance<=part*7)
-					intensity=3;
-				else if(distance>part*7 && distance<=part*8)
-					intensity=2;
-				else if(distance>part*8 && distance<=part*9)
-					intensity=1;
-				else if(distance>part*9)
-					intensity=0;
-
-				if(vibroMode==VibroMode.SmartphoneOnly) {
-					VibratePhone(intensity, duration);
-				} else if(vibroMode==VibroMode.VibroOnly) {
-					intensity=(intensity*10)+10;
-					SendVibrationToCore(0, intensity, intensity, duration, 50);
-					SendVibrationToCore(1, intensity, intensity, duration, 50);
-				}
+			} else if(phoneIntensity[1]>0 && vibroIntensity[1]==0) { //ONLY PHONE
+				VibratePhone(
+					linearInterpolationPhone(phoneIntensity[0], phoneIntensity[1], minDistance, maxDistance, distance),
+					duration);
+			} else if(phoneIntensity[1]==0 && vibroIntensity[1]>0) { //ONLY VIBRO
+				SendVibrationToCore(0,
+				                    linearInterpolationVibro(vibroIntensity[0], vibroIntensity[1], minDistance, maxDistance, distance),
+				                    linearInterpolationVibro(vibroIntensity[0], vibroIntensity[1], minDistance, maxDistance, distance),
+				                    duration, pauseAfter);
 			}
         }
     }
+
+	/// <summary>
+	/// Computes the linear interpolation of the given parameters for phone vibration.
+	/// </summary>
+	private int linearInterpolationPhone(int intensityMin, int intensityMax, float distanceMin, float distanceMax, float currentDist) {
+		float result = (((float)intensityMin + (((float)intensityMax - (float)intensityMin) / (distanceMax - distanceMin)) * (currentDist - distanceMin)) - 10f) / 10f;
+		if (result < 0)
+			return 0;
+		Debug.Log("phone: distmin: " + distanceMin +", distmax: " + distanceMax +", currentdist: "+ currentDist +", result: " + (int)Math.Round(result, 0));
+		return (int)Math.Round(result, 0);
+	}
+
+	/// <summary>
+	/// Computes the linear interpolation of the given parameters for vibro external vibration.
+	/// </summary>
+	private int linearInterpolationVibro(int intensityMin, int intensityMax, float distanceMin, float distanceMax, float currentDist) {
+		float result = (float)intensityMin + (((float)intensityMax - (float)intensityMin) / (distanceMax - distanceMin)) * (currentDist - distanceMin);
+		Debug.Log("vibro: distmin: " + distanceMin +", distmax: " + distanceMax +", currentdist: "+ currentDist +", result: " + (int)Math.Round(result, 0));
+		return (int)Math.Round (result, 0);
+	}
 
     /// <summary>
     /// Sends a vibrationPattern to the SparkCore

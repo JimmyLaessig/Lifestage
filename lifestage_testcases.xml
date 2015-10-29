@@ -1,5 +1,5 @@
-<TestCaseCollection  repetitions="1">
-  <TestCase numElements ="10" targetElement ="10" vibroMode="Both"/>
-  <TestCase numElements ="5" targetElement ="1" vibroMode="SmartphoneOnly"/>
-  <TestCase numElements ="15" targetElement ="15" vibroMode="VibroOnly"/>
+<TestCaseCollection repetitions="5">
+  <TestCase numElements ="10" targetElement ="10" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="100" vibroIntensityMin="0" vibroIntensityMax="100"/>
+  <TestCase numElements ="5" targetElement ="1" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="100"/>
+  <TestCase numElements ="15" targetElement ="15" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="100" vibroIntensityMin="0" vibroIntensityMax="0"/>
 </TestCaseCollection>

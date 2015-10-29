@@ -65,7 +65,6 @@ public class SceneController : MonoBehaviour
 
         boundingVolume = GameObject.Find("BoundingVolume");
 
-        PluginManager.Instance.SetMaxDistance = MaxDistance;
 		numRepetitions=StorageManager.Instance.getNumberOfRepetitions();
         Debug.Log("Number of Repetitions: " + numRepetitions);
 		currentRepetition=StorageManager.Instance.getLatestRepetition();
@@ -96,9 +95,12 @@ public class SceneController : MonoBehaviour
         StartNextTestCase();
         GenerateGameObjects(currentTestCase);
 
-        PluginManager.Instance.InitBaseRotation();
-        PluginManager.Instance.SetVibroMode(currentTestCase.vibroMode);
-        inputEnabled = true;
+		PluginManager.Instance.InitBaseRotation();
+		PluginManager.Instance.setIntensities(currentTestCase.phoneIntensity, currentTestCase.vibroIntensity);
+		PluginManager.Instance.SetMaxDistance = MaxDistance;
+		PluginManager.Instance.SetMinDistance = MaxDistance / currentTestCase.numElements;
+        
+		inputEnabled = true;
         
 		userID=StorageManager.Instance.getLatestUserID()+"";
     }
@@ -118,7 +120,9 @@ public class SceneController : MonoBehaviour
         GenerateGameObjects(currentTestCase);
        
         PluginManager.Instance.InitBaseRotation();
-        PluginManager.Instance.SetVibroMode(currentTestCase.vibroMode);
+		PluginManager.Instance.setIntensities(currentTestCase.phoneIntensity, currentTestCase.vibroIntensity);
+		PluginManager.Instance.SetMaxDistance = MaxDistance;
+		PluginManager.Instance.SetMinDistance = MaxDistance / currentTestCase.numElements;
        
         inputEnabled = true;
     }
@@ -339,7 +343,6 @@ public class SceneController : MonoBehaviour
         targetObject = gameObjects[testCase.targetElementIndex];
     }
 
-
     /// <summary>
     /// Returns the maximum width of the bounding volume
     /// </summary>
@@ -352,7 +355,6 @@ public class SceneController : MonoBehaviour
             return width;
         }
     }
-
 
     /// <summary>
     /// returns the maximum distance of an object, relatively to this GameObject position
