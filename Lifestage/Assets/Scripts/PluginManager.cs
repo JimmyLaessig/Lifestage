@@ -173,7 +173,6 @@ public class PluginManager : MonoBehaviour
     /// </summary>
     private void UpdateCameraRotation()
     {
-
         // Get the latest rotation matrix from the Receiver
         // float[] rotation = pluginActivity.Call<float[]>("getOrientationMatrix");
         // if (rotation == null)
@@ -219,7 +218,7 @@ public class PluginManager : MonoBehaviour
 				float halfdist=maxDistance/2f;
 				if(distance<halfdist) {
 					VibratePhone(
-						linearInterpolationPhone(phoneIntensity[0], phoneIntensity[1], minDistance, halfdist, distance/2f),
+						linearInterpolationPhone(phoneIntensity[0], phoneIntensity[1], minDistance, halfdist, distance),
 						duration);
 				} else {
 					SendVibrationToCore(0,
@@ -245,9 +244,9 @@ public class PluginManager : MonoBehaviour
 	/// </summary>
 	private int linearInterpolationPhone(int intensityMin, int intensityMax, float distanceMin, float distanceMax, float currentDist) {
 		float result = (((float)intensityMin + (((float)intensityMax - (float)intensityMin) / (distanceMax - distanceMin)) * (currentDist - distanceMin)) - 10f) / 10f;
+		//Debug.Log("phone: distmin: " + distanceMin +", distmax: " + distanceMax +", currentdist: "+ currentDist +", result: " + (int)Math.Round(result, 0));
 		if (result < 0)
 			return 0;
-		Debug.Log("phone: distmin: " + distanceMin +", distmax: " + distanceMax +", currentdist: "+ currentDist +", result: " + (int)Math.Round(result, 0));
 		return (int)Math.Round(result, 0);
 	}
 
@@ -256,7 +255,7 @@ public class PluginManager : MonoBehaviour
 	/// </summary>
 	private int linearInterpolationVibro(int intensityMin, int intensityMax, float distanceMin, float distanceMax, float currentDist) {
 		float result = (float)intensityMin + (((float)intensityMax - (float)intensityMin) / (distanceMax - distanceMin)) * (currentDist - distanceMin);
-		Debug.Log("vibro: distmin: " + distanceMin +", distmax: " + distanceMax +", currentdist: "+ currentDist +", result: " + (int)Math.Round(result, 0));
+		//Debug.Log("vibro: distmin: " + distanceMin +", distmax: " + distanceMax +", currentdist: "+ currentDist +", result: " + (int)Math.Round(result, 0));
 		return (int)Math.Round (result, 0);
 	}
 
