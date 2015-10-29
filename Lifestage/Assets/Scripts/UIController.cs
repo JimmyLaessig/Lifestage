@@ -182,7 +182,6 @@ public class UIController : MonoBehaviour
     public void ShowSelectText(bool enabled, int selectIndex, int numElements)
     {
         string txt = "";
-        Debug.Log("Showing Message Text: selectIndex: " + selectIndex);
         if (selectIndex == 1)
             txt = "Select the closest Element";
         else if (selectIndex == 2)
@@ -195,7 +194,6 @@ public class UIController : MonoBehaviour
             txt = "Select the Element in the Middle";
         else if (selectIndex > 0)
             txt = "Select " + selectIndex + "th Element";
-        Debug.Log("SelectText should be: " + txt);
         selectText.enabled = enabled;
         selectText.text = txt;
     }
