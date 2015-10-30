@@ -40,6 +40,7 @@ public class SceneController : MonoBehaviour
     private int numRepetitions;
     private int currentRepetition;
 
+    private float startTime;
     private bool isStarted = false;
 
     /// <summary>
@@ -178,8 +179,8 @@ public class SceneController : MonoBehaviour
             return false;
 
         inputEnabled = true;
-		GenerateGameObjects(currentTestCase);
-
+        GenerateGameObjects(currentTestCase);
+        startTime = Time.time;
         return true;
     }
 
@@ -207,12 +208,12 @@ public class SceneController : MonoBehaviour
     {
         // Delect the currently selected object
         targetObject = null;
-
+        startTime = 0;
+        
         // Remove all GameObjects from the scene to make room for the new scene
         foreach (GameObject obj in gameObjects)
-        {
             Destroy(obj);
-        }
+        
         gameObjects.Clear();
     }
 
@@ -225,10 +226,10 @@ public class SceneController : MonoBehaviour
     public void CancelTestCase(int attempts)
     {
         Debug.Log("Canceling TestCase after " + attempts + " attempts");
-        scenario.SolveCurrentTestCase(false, userID, attempts, 0);
+        scenario.SolveCurrentTestCase(false, userID, attempts, Time.time - startTime, 0);
         UIController.Instance.ShowCorrectMarker(false);
         testcaseFinished = true;
-
+        
         if (scenario.NumTestCasesLeft == 0)
         {
             finished = true;
@@ -241,17 +242,17 @@ public class SceneController : MonoBehaviour
     /// This method is called when the user wants to finish the test.
     /// It uses the previously selected gameObject to determine the interactions' success.
     /// </summary>
-    /// <param name="time">The duration of the interaction</param>
+    /// <param name="interactionTime">The duration of the interaction</param>
     /// <param name="userID">The unique id of the user</param>
     /// <returns>True if all winning conditions are met (An Object was previously selected)</returns>
-    public bool SolveTestCase(float time, int attempts)
+    public bool SolveTestCase(float interactionTime, int attempts)
     {
         bool isCorrect = false;
 
         if (selectedObj == targetObject)
         {
             isCorrect = true;
-            scenario.SolveCurrentTestCase(true, userID, attempts, time);
+            scenario.SolveCurrentTestCase(true, userID, attempts, Time.time - startTime, interactionTime);
             testcaseFinished = true;
 
             if (scenario.NumTestCasesLeft == 0)

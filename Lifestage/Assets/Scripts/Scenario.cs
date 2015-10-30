@@ -109,16 +109,20 @@ public class Scenario
     /// </summary>
     /// <param name="correct">Whether or not the testcase was solved correctly.</param>
     /// <param name="user">The ID of the user</param>
-    /// <param name="tries">The number of tries</param>
-    public void SolveCurrentTestCase(bool correct, string user, int attempts, float time)
+    /// <param name="attempts">The number of attempts</param>
+    /// <param name="timeTotal">The duration of the testcase</param>
+    /// <param name="interactionTime"> The duration of the last interaction</param>
+    public void SolveCurrentTestCase(bool correct, string user, int attempts, float timeTotal, float interactionTime)
     {
 		currentTestCase.userID = user;
 		currentTestCase.attempts = attempts;
-		currentTestCase.time = time;
+		currentTestCase.time = timeTotal;
+        currentTestCase.interactionTime = interactionTime;
 		currentTestCase.isCorrect=correct;
 		solvedTestCases.Add(currentTestCase);
 		StorageManager.Instance.WriteTestCaseResult(currentTestCase);
 		currentTestCase = null;
+        Debug.Log("total time: " + timeTotal);
     }
 
 

@@ -247,6 +247,8 @@ public class StorageManager : MonoBehaviour
 				elmNew.Attributes.Append (pickSuccessful);
 				XmlAttribute timePassed = xmlDoc.CreateAttribute ("time");
 				timePassed.Value = testcase.time + "";
+                XmlAttribute interactionTime = xmlDoc.CreateAttribute("interactionTime");
+                interactionTime.Value = testcase.interactionTime + "";
 				elmNew.Attributes.Append (timePassed);
 				XmlAttribute attemptS = xmlDoc.CreateAttribute ("attempts");
 				attemptS.Value = testcase.attempts + "";
