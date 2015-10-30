@@ -14,6 +14,7 @@ public class TestCase
 	public int targetElement;
 	public bool isCorrect;
 	public float time;
+    public float interactionTime;
 	public int attempts;
 	public string userID;
     public int repetitions = 1;
