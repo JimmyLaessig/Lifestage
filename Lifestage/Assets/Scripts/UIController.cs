@@ -140,7 +140,7 @@ public class UIController : MonoBehaviour
             return;
         userIDText.text = "UserID: <b>" + userID + "</b>";
         testcaseText.text = (enabled) ? "Testcase: <b>" + (numTestCases - numTestCasesLeft) + " / " + numTestCases + "</b>" : "-";
-        repetitionText.text = "Repetition: <b>" + (repetition) + "</b>" ;
+        repetitionText.text = "Repetition: <b>" + (repetition + 1) + "</b>" ;
     }
 
 
