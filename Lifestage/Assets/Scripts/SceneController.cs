@@ -67,7 +67,9 @@ public class SceneController : MonoBehaviour
 		
         numRepetitions = StorageManager.Instance.getNumberOfRepetitions();
         Debug.Log("Number of Repetitions: " + numRepetitions);
-        currentRepetition = StorageManager.Instance.getLatestRepetition();
+		currentRepetition = StorageManager.Instance.getLatestRepetition();
+		if(currentRepetition>0)
+			currentRepetition-=1;
         userID = StorageManager.Instance.getLatestUserID() + "";
     }
 
@@ -77,22 +79,22 @@ public class SceneController : MonoBehaviour
     /// Starts a new circle of repetitions.
     /// </summary>
     public void StartButtonClicked()
-    {
+	{
+		currentRepetition=StorageManager.Instance.getLatestRepetition();
         Debug.Log("START BUTTON CLICKED! Repetition: " + currentRepetition);
 
         // This block is called on start and when all testcases in all reputations are finished
         if (currentRepetition == numRepetitions || isStarted == false)
         {
-            Debug.Log("Starting new stuff");
+			Debug.Log("Starting new stuff");
         }
         isStarted = true;
         Reset();
 
         testcaseFinished = false;
-        finished = false;
-        currentRepetition++;
+		finished = false;
         ClearTestCase();
-        StartNextTestCase();
+		StartNextTestCase();
 
 		PluginManager.Instance.InitBaseRotation();
 		PluginManager.Instance.setIntensities(currentTestCase.phoneIntensity, currentTestCase.vibroIntensity);
@@ -110,8 +112,8 @@ public class SceneController : MonoBehaviour
     /// Starts a new testcase.
     /// </summary>
     public void NextButtonClicked()
-    {
-
+	{		
+		currentRepetition=StorageManager.Instance.getLatestRepetition();
         testcaseFinished = false;
 
         ClearTestCase();
@@ -126,28 +128,27 @@ public class SceneController : MonoBehaviour
 
 
     void Update()
-    {		
-		currentRepetition=StorageManager.Instance.getLatestRepetition();
+	{
         if (testcaseFinished && finished)
-        {
+		{
             UIController.Instance.HideAll();
             UIController.Instance.ShowStartButton(true);
             if (isStarted)
                 UIController.Instance.ShowMessageText(true, "All Testcases finished! Starting a new Repetition.", Color.black);
             else
-                UIController.Instance.ShowMessageText(true, "Starting a new Repetition!", Color.black);
+                UIController.Instance.ShowMessageText(true, "Welcome! Starting a new Repetition.", Color.black);
 
             UIController.Instance.ShowInfoText(false, userID, scenario.NumTestCasesLeft, scenario.NumTestCases, currentRepetition);
-            if (currentRepetition == numRepetitions)
+            if (currentRepetition == numRepetitions-1)
             {
-                UIController.Instance.ShowMessageText(true, "All Testcases and Repetitions finished! Thank you for participating in LifeStage!", Color.black);
+                UIController.Instance.ShowMessageText(true, "All Testcases and Repetitions finished! Thank you for participating in LifeStage.", Color.black);
             }
 
             inputEnabled = false;
 
         }
         else if (testcaseFinished && !finished)
-        {
+		{
             UIController.Instance.HideAll();
             UIController.Instance.ShowNextButton(true);
             UIController.Instance.ShowInfoText(true, userID, scenario.NumTestCasesLeft, scenario.NumTestCases, currentRepetition);
@@ -177,7 +178,7 @@ public class SceneController : MonoBehaviour
             return false;
 
         inputEnabled = true;
-        GenerateGameObjects(currentTestCase);
+		GenerateGameObjects(currentTestCase);
 
         return true;
     }
@@ -189,8 +190,8 @@ public class SceneController : MonoBehaviour
     public void Reset()
     {
         StorageManager.Instance.ClearTestCaseProgress();
-        if(currentRepetition == numRepetitions -1)
-        	currentRepetition = StorageManager.Instance.getLatestRepetition();
+        //if(currentRepetition == numRepetitions -1)
+        //	currentRepetition = StorageManager.Instance.getCurrentRepetition();
 
         ClearTestCase();
         scenario.Reset();

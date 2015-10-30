@@ -31,8 +31,8 @@ public class PluginManager : MonoBehaviour
 	private float distance = -1, maxDistance=20, minDistance=0;
 
     // Intervall in which the vibrations of a certain pattern are triggered in seconds
-	private float vibrationIntervall = 0.7f, timeStamp = 0;
-	private int duration=500, pauseAfter=50;
+	private float vibrationIntervall = 0.201f, timeStamp = 0;
+	private int duration=150, pauseAfter=40;
 	private bool phoneVibration=false;
 
     private List<long[]> intensityPattern = new List<long[]>();
@@ -208,9 +208,8 @@ public class PluginManager : MonoBehaviour
         }
 
 		timeStamp += Time.deltaTime;
-
         if (distance>=0 && timeStamp >= vibrationIntervall) {
-			timeStamp=0;
+			timeStamp = 0;
 			//TODO testing
 			if (phoneIntensity[1]==0 && vibroIntensity[1]==0) { //NOTHING
 				//do nohing
@@ -244,10 +243,11 @@ public class PluginManager : MonoBehaviour
 	/// </summary>
 	private int linearInterpolationPhone(int intensityMin, int intensityMax, float distanceMin, float distanceMax, float currentDist) {
 		float result = (((float)intensityMin + (((float)intensityMax - (float)intensityMin) / (distanceMax - distanceMin)) * (currentDist - distanceMin)) - 10f) / 10f;
-		//Debug.Log("phone: distmin: " + distanceMin +", distmax: " + distanceMax +", currentdist: "+ currentDist +", result: " + (int)Math.Round(result, 0));
-		if (result < 0)
+		//Debug.Log("phone: distmin: " + distanceMin +", distmax: " + distanceMax +", currentdist: "+ currentDist +", result: " + (10-(int)Math.Round(result, 0)));
+		int intres=(int)Math.Round(result, 0);
+		if (result < 0 || (10-intres<0))
 			return 0;
-		return (int)Math.Round(result, 0);
+		return 10-intres;
 	}
 
 	/// <summary>
@@ -255,8 +255,11 @@ public class PluginManager : MonoBehaviour
 	/// </summary>
 	private int linearInterpolationVibro(int intensityMin, int intensityMax, float distanceMin, float distanceMax, float currentDist) {
 		float result = (float)intensityMin + (((float)intensityMax - (float)intensityMin) / (distanceMax - distanceMin)) * (currentDist - distanceMin);
-		//Debug.Log("vibro: distmin: " + distanceMin +", distmax: " + distanceMax +", currentdist: "+ currentDist +", result: " + (int)Math.Round(result, 0));
-		return (int)Math.Round (result, 0);
+		//Debug.Log("vibro: distmin: " + distanceMin +", distmax: " + distanceMax +", currentdist: "+ currentDist +", result: " + (100-(int)Math.Round(result, 0)));
+		int intres=(int)Math.Round(result, 0);
+		if (result<0 || (100 - intres) < 0)
+			return 0;
+		return 100-intres;
 	}
 
     /// <summary>

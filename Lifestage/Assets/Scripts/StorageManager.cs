@@ -53,7 +53,7 @@ public class StorageManager : MonoBehaviour
             {
                 TestCase t = new TestCase();
                 t.numElements = Convert.ToInt32(list[i].Attributes["numElements"].Value);
-				t.targetElement = Convert.ToInt32(list[i].Attributes["targetElement"].Value) - 1;
+				t.targetElement = Convert.ToInt32(list[i].Attributes["targetElement"].Value);
 				t.phoneIntensity[0]=Convert.ToInt32(list[i].Attributes["phoneIntensityMin"].Value);
 				t.phoneIntensity[1]=Convert.ToInt32(list[i].Attributes["phoneIntensityMax"].Value);
 				t.vibroIntensity[0]=Convert.ToInt32(list[i].Attributes["vibroIntensityMin"].Value);
@@ -227,7 +227,7 @@ public class StorageManager : MonoBehaviour
 				XmlElement elm = xmlDoc.CreateElement ("Result");
 				XmlAttribute userId = xmlDoc.CreateAttribute ("userID");
 				userId.Value = getLatestUserID() + "";
-				elm.Attributes.Append (userId);
+				elm.Attributes.Append(userId);
 				XmlAttribute repetition = xmlDoc.CreateAttribute ("repetition");
 				repetition.Value = "" + getLatestRepetition();
 				elm.Attributes.Append(repetition);
