@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">VibroTouch</string>
+    <string name="action_settings">Settings</string>
+    <string name="heading">Select a test scenario!</string>
+    <string name="text_connected">connected</string>
+    <string name="text_not_connected">not connected</string>
+    <string name="button1">Cut &amp; Paste</string>
+    <string name="button2">Pick &amp; drop (to the other hand)</string>
+    <string name="button3">Pick &amp; drop (to a physical container)</string>
+    <string name="button4">Pick &amp; drop (to another person)</string>
+</resources>
