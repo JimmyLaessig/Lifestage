@@ -10,8 +10,8 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-import at.ac.tuwien.ims.lifestage.vibrotouch.Scene.Container;
-import at.ac.tuwien.ims.lifestage.vibrotouch.Scene.Rectangle;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Scene.Object;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Scene.ObjectHandler;
 
 /**
  * Activity where the different scenarios are drawn.
@@ -21,10 +21,16 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Scene.Rectangle;
  */
 public class ScenarioActivity extends AppCompatActivity {
     private DrawView drawView;
+    private ObjectHandler objectHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        objectHandler =new ObjectHandler();
+        objectHandler.add(new Object(700, 200, 250, 250, Color.RED));
+        objectHandler.add(new Object(400, 200, 200, 200, Color.BLACK));
+        objectHandler.add(new Object(150, 200, 150, 150, Color.BLUE));
+
         drawView = new DrawView(this);
         drawView.setBackgroundColor(Color.parseColor("#f9f9f9"));
         setContentView(drawView);
@@ -34,9 +40,7 @@ public class ScenarioActivity extends AppCompatActivity {
      * A view where objects are drawn and interacted with.
      *
      */
-    class DrawView extends View {
-        private Container container;
-
+    private class DrawView extends View {
         private ScaleGestureDetector mScaleDetector;
         private float mLastTouchX, mLastTouchY;
 
@@ -46,18 +50,13 @@ public class ScenarioActivity extends AppCompatActivity {
         public DrawView(Context context) {
             super(context);
             mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
-
-            container =new Container();
-            container.add(new Rectangle(150, 700, 250, 250, Color.RED));
-            container.add(new Rectangle(150, 400, 200, 200, Color.BLACK));
-            container.add(new Rectangle(150, 150, 150, 150, Color.BLUE));
         }
 
         @Override
         public void onDraw(Canvas canvas) {
             super.onDraw(canvas);
             canvas.save();
-            container.draw(canvas);
+            objectHandler.draw(canvas);
             canvas.restore();
         }
 
@@ -87,7 +86,7 @@ public class ScenarioActivity extends AppCompatActivity {
                     final float dx = x - mLastTouchX;
                     final float dy = y - mLastTouchY;
 
-                    container.handleMove(x, y, dx, dy);
+                    objectHandler.handleMove(x, y, dx, dy);
 
                     invalidate();
 
@@ -134,7 +133,7 @@ public class ScenarioActivity extends AppCompatActivity {
 
             @Override
             public void onScaleEnd(ScaleGestureDetector detector) {
-                container.handleScale(scale, x, y);
+                objectHandler.handleScale(scale, x, y);
             }
         }
     }

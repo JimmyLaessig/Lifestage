@@ -1,6 +1,7 @@
 package at.ac.tuwien.ims.lifestage.vibrotouch;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -24,10 +25,8 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Util.WifiUtil;
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
 public class MainActivity extends AppCompatActivity {
-    public static String id="48ff71065067555011472387";
-    public static String token="20e1ee31e3f0b0ecace2820c73ab71f5966acbf6";
-
     private SparkManager connectionManager;
+
     private FloatingActionButton fab;
     private Button button1, button2, button3, button4;
     private TextView text_connection;
@@ -36,15 +35,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        connectionManager=SparkManager.getInstance();
+
+        fab = (FloatingActionButton)findViewById(R.id.fab);
+        fab.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#004063")));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (getConnectionState() == 3) {
-                    connect(id, token);
+                if (connectionManager.getStatus() == 3) {
+                    connect();
                 } else {
                     disconnect();
                 }
@@ -82,24 +84,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (item.getItemId() == R.id.action_settings) {
             //TODO do we need settings?
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -114,56 +108,12 @@ public class MainActivity extends AppCompatActivity {
     //============================================================================================//
 
     /**
-     * Returns the state of the button that is connected with the spark core.
-     *
-     * @return true if button is pressed else false
-     */
-    public boolean getButtonState() {
-        if(connectionManager==null)
-            return false;
-        return connectionManager.getButtonState();
-    }
-
-    /**
-     * Returns the status between the device and the SparkCore.
-     *
-     * CONNECTED = 1;
-     * CONNECTING = 2;
-     * NOT_CONNECTED = 3;
-     */
-    public int getConnectionState() {
-        Log.d(getClass().getName(), "getConnectionState called");
-        if(connectionManager ==null)
-            return 3;
-        return connectionManager.getStatus();
-    }
-
-    /**
-     * Disconnects the device with the SparkCore over Wifi.
-     *
-     */
-    public void disconnect() {
-        Log.d(getClass().getName(), "disconnect called");
-        if(connectionManager !=null)
-            if(getConnectionState() != 3) {
-                connectionManager.disconnect();
-                fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.wifi_on));
-                text_connection.setText(getString(R.string.text_not_connected));
-                text_connection.setTextColor(Color.parseColor("#BD4141"));
-            }
-    }
-
-    /**
      * Connects the device with the SparkCore over Wifi.
      *
      */
-    public void connect(String id, String token) {
+    public void connect() {
         Log.d(getClass().getName(), "connect called");
 
-        if(id.equals("") || token.equals("")) {
-            Log.d(getClass().getName(), "invalid id or token");
-            return;
-        }
         if (!WifiUtil.isOnline(this)) {
             Log.d(getClass().getName(), "no Internet connection.. ");
             return;
@@ -173,13 +123,11 @@ public class MainActivity extends AppCompatActivity {
             Log.d(getClass().getName(), "invalid IP");
             return;
         }
-        connectionManager=new SparkManager(id, token);
-
-        if (connectionManager.getStatus() == SparkManager.CONNECTING) {
-            connectionManager.disconnect();
+        if (connectionManager.getStatus() == SparkManager.NOT_CONNECTED) {
             connectionManager.connectToCore(ip);
             Log.d(getClass().getName(), "connecting");
         } else {
+            connectionManager.disconnect();
             connectionManager.connectToCore(ip);
             Log.d(getClass().getName(), "connecting");
         }
@@ -189,23 +137,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Sends a command to Spark Core.
+     * Disconnects the device with the SparkCore over Wifi.
      *
-     * @param command command string to send
-     * @return true if command was sent else false
      */
-    public boolean sendCommand(String command) {
-        if(connectionManager==null || command.isEmpty()) {
-            Log.e(getClass().getName(), "sendevent failed");
-            return false;
-        }
-        if(getConnectionState() != 1) {
-            Log.e(getClass().getName(), "sendevent failed, not connected");
-            return false;
-        }
-
-        Log.d(getClass().getName(), "sent command: " + command);
-        connectionManager.sendCommand_executePattern(command);
-        return true;
+    public void disconnect() {
+        Log.d(getClass().getName(), "disconnect called");
+        if(connectionManager!=null)
+            if(connectionManager.getStatus() != 3) {
+                connectionManager.disconnect();
+                fab.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.wifi_on));
+                text_connection.setText(getString(R.string.text_not_connected));
+                text_connection.setTextColor(Color.parseColor("#BD4141"));
+            }
     }
 }

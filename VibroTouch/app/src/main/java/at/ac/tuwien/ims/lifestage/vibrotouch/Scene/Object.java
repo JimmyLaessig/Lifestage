@@ -5,17 +5,17 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 
 /**
- * Rectangle that will be drawn and interacted with.
+ * Object that will be drawn and interacted with.
  * <p/>
  * Application: VibroTouch
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
-public class Rectangle {
+public class Object {
     private Paint paint;
     private float x, y, width, height;
-    private boolean visible;
+    private ObjectState objectState;
 
-    public Rectangle(float x, float y, float width, float height, int color) {
+    public Object(float x, float y, float width, float height, int color) {
         paint = new Paint();
         paint.setColor(color);
         paint.setAntiAlias(true);
@@ -24,7 +24,7 @@ public class Rectangle {
         this.y = y;
         this.width = width;
         this.height = height;
-        visible=true;
+        objectState=ObjectState.OnScreen;
     }
 
     public void draw(Canvas canvas) {
@@ -79,11 +79,11 @@ public class Rectangle {
         this.height = height;
     }
 
-    public boolean isVisible() {
-        return visible;
+    public ObjectState getObjectState() {
+        return objectState;
     }
 
-    public void setVisible(boolean visible) {
-        this.visible = visible;
+    public void setObjectState(ObjectState objectState) {
+        this.objectState = objectState;
     }
 }

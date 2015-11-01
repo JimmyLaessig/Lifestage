@@ -29,6 +29,8 @@ import java.util.ArrayList;
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
 public class SparkManager {
+    private static SparkManager instance;
+
     private static final String TAG="Sparkmanager";
     public static final int SERVERPORT = 9000;
 
@@ -39,17 +41,18 @@ public class SparkManager {
     private ServerSocket serverSocket;
     private ServerThread serverThread;
     private CommunicationThread commThread;
-    private int status;
-    private int rotation_speed; // rotation speed of servo
+    private int status=NOT_CONNECTED;
+    private int rotation_speed=5; // rotation speed of servo
 
-    private static String ACCESTOKEN = "";
-    private static String DEVICE_ID = "";
+    private static String ACCESTOKEN = "48ff71065067555011472387";
+    private static String DEVICE_ID = "20e1ee31e3f0b0ecace2820c73ab71f5966acbf6";
 
-    public SparkManager(String dev_id, String acc_token) {
-        status = NOT_CONNECTED;
-        rotation_speed = 5;
-        ACCESTOKEN=acc_token;
-        DEVICE_ID=dev_id;
+    public SparkManager() {}
+    public static synchronized SparkManager getInstance() {
+        if (SparkManager.instance == null) {
+            SparkManager.instance = new SparkManager();
+        }
+        return SparkManager.instance;
     }
 
     /*

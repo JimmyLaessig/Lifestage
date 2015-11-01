@@ -21,24 +21,13 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/text_not_connected"
-        android:id="@+id/text_connection"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
-        android:textColor="#bd4141" />
-
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/button1"
         android:id="@+id/button_1"
         android:background="#ffffff"
-        android:layout_below="@+id/text_connection"
+        android:layout_below="@+id/textView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="15dp" />
@@ -75,4 +64,15 @@
         android:layout_below="@+id/button_3"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/text_not_connected"
+        android:id="@+id/text_connection"
+        android:layout_below="@+id/button_4"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:textColor="#bd4141" />
 </RelativeLayout>
