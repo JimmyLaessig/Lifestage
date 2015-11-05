@@ -14,7 +14,7 @@ public class CameraController : MonoBehaviour
     private LineRenderer rayRenderer;
 
     // Offset to the ray position such that the ray does not go through the exact center of the camera
-    public float rayOffset = -0.5f;
+    public float rayOffset = -0.25f;
 
     // The maximum distance of the Raycast
     public float rayMaxDistance = 50.0f;

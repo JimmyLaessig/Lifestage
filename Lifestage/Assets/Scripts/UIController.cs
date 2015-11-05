@@ -134,13 +134,13 @@ public class UIController : MonoBehaviour
     /// <param name="numTestCasesLeft">the index of the current test case</param>
     /// <param name="numTestCases">The number of testcases</param>
     /// <param name="repetition">the current repetition</param>
-    public void ShowInfoText(bool enabled, string userID, int numTestCasesLeft, int numTestCases, int repetition)
+    public void ShowInfoText(bool enabled, string userID, int numTestCasesLeft, int numTestCases, int repetition, int numRepetitions)
     {
         if (!inputEnabled)
             return;
         userIDText.text = "UserID: <b>" + userID + "</b>";
         testcaseText.text = (enabled) ? "Testcase: <b>" + (numTestCases - numTestCasesLeft) + " / " + numTestCases + "</b>" : "-";
-        repetitionText.text = "Repetition: <b>" + (repetition + 1) + "</b>" ;
+        repetitionText.text = "Repetition: <b>" + (repetition + 1) +" / " + numRepetitions + "</b>" ;
     }
 
 
@@ -247,6 +247,6 @@ public class UIController : MonoBehaviour
             ShowMessageText(false, "", Color.black);
 
         ShowSelectText(false, 0, 0);
-        ShowInfoText(false, "-", 0, 0, 0);    
+        ShowInfoText(false, "-", 0, 0, 0, 0);    
     }
 }

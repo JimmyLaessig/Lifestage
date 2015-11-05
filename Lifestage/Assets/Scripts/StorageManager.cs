@@ -152,11 +152,27 @@ public class StorageManager : MonoBehaviour
 		if (File.Exists(SCENARIO_FILE_PATH)) {   
 			doc.Load(SCENARIO_FILE_PATH);
 			XmlElement root = doc.DocumentElement;
-			return Convert.ToInt32(root.GetAttribute("repetitions"));
+			return root.GetElementsByTagName("repetition").Count;
 		}
 		Debug.Log ("Output XML File does not exist, please make sure it does.");
 		return -1;
 	}
+
+    /// <summary>
+    /// Returns the seed value for random generation for the given repetition
+    /// </summary>
+    public int getSeedValue(int repetition)
+    {
+        XmlDocument doc = new XmlDocument();
+        if (File.Exists(SCENARIO_FILE_PATH))
+        {
+            doc.Load(SCENARIO_FILE_PATH);
+            XmlElement root = doc.DocumentElement;
+            return Convert.ToInt32(root.GetElementsByTagName("repetition").Item(repetition).Attributes["seed"].Value);
+        }
+        Debug.Log("Output XML File does not exist, please make sure it does.");
+        return 0;
+    }
 
 	/// <summary>
 	/// This method gets the latest repetition number from the xml file or 0 if xml file does not exist.
