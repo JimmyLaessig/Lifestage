@@ -110,13 +110,14 @@ public class Scenario
     /// <param name="attempts">The number of attempts</param>
     /// <param name="timeTotal">The duration of the testcase</param>
     /// <param name="interactionTime"> The duration of the last interaction</param>
-    public void SolveCurrentTestCase(bool correct, string user, int attempts, float timeTotal, float interactionTime)
+    public void SolveCurrentTestCase(bool correct, string user, int attempts, float timeTotal, float interactionTime, int seedValue)
     {
 		currentTestCase.userID = user;
 		currentTestCase.attempts = attempts;
 		currentTestCase.time = timeTotal;
         currentTestCase.interactionTime = interactionTime;
 		currentTestCase.isCorrect=correct;
+        currentTestCase.seedValue = seedValue;
 		solvedTestCases.Add(currentTestCase);
 		StorageManager.Instance.WriteTestCaseResult(currentTestCase);
 		currentTestCase = null;

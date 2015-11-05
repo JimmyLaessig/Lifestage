@@ -263,12 +263,16 @@ public class StorageManager : MonoBehaviour
 				elmNew.Attributes.Append (pickSuccessful);
 				XmlAttribute timePassed = xmlDoc.CreateAttribute ("time");
 				timePassed.Value = testcase.time + "";
+                elmNew.Attributes.Append(timePassed);
                 XmlAttribute interactionTime = xmlDoc.CreateAttribute("interactionTime");
                 interactionTime.Value = testcase.interactionTime + "";
-				elmNew.Attributes.Append (timePassed);
+                elmNew.Attributes.Append(interactionTime);
 				XmlAttribute attemptS = xmlDoc.CreateAttribute ("attempts");
 				attemptS.Value = testcase.attempts + "";
 				elmNew.Attributes.Append (attemptS);
+                XmlAttribute seedValue = xmlDoc.CreateAttribute("seed");
+                seedValue.Value = testcase.seedValue + "";
+                elmNew.Attributes.Append(seedValue);
 
 				elm.AppendChild (elmNew);
 				xmlDoc.DocumentElement.AppendChild (elm);
@@ -299,9 +303,15 @@ public class StorageManager : MonoBehaviour
 				XmlAttribute timePassed = xmlDoc.CreateAttribute ("time");
 				timePassed.Value = testcase.time + "";
 				elmNew.Attributes.Append (timePassed);
+                XmlAttribute interactionTime = xmlDoc.CreateAttribute("interactionTime");
+                interactionTime.Value = testcase.interactionTime + "";
+                elmNew.Attributes.Append(interactionTime);
 				XmlAttribute attemptS = xmlDoc.CreateAttribute ("attempts");
 				attemptS.Value = testcase.attempts + "";
 				elmNew.Attributes.Append (attemptS);
+                XmlAttribute seedValue = xmlDoc.CreateAttribute("seed");
+                seedValue.Value = testcase.seedValue + "";
+                elmNew.Attributes.Append(seedValue);
 					
 				elm.AppendChild (elmNew);
 			}

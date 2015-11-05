@@ -45,6 +45,7 @@ public class SceneController : MonoBehaviour
     private float startTime;
     private bool isStarted = false;
 
+    private int currentSeedValue;
     /// <summary>
     /// Returns true whether or not the scene currently is enabled for input
     /// </summary>
@@ -81,11 +82,11 @@ public class SceneController : MonoBehaviour
         userID = StorageManager.Instance.getLatestUserID() + "";
         numRepetitions = StorageManager.Instance.getNumberOfRepetitions();
         currentRepetition = StorageManager.Instance.getLatestRepetition();
-        int seed = StorageManager.Instance.getSeedValue(currentRepetition);
+        currentSeedValue = StorageManager.Instance.getSeedValue(currentRepetition);
 
         // Resetting Random Generator with new seed value
-        Random.seed = seed;
-        Debug.Log("Starting new Repetition! Repetition " + (currentRepetition + 1) + " of " + numRepetitions +", new seed: " + seed);
+        Random.seed = currentSeedValue;
+        Debug.Log("Starting new Repetition! Repetition " + (currentRepetition + 1) + " of " + numRepetitions +", new seed: " + currentSeedValue);
         
         isStarted = true;
         Reset();
@@ -226,7 +227,7 @@ public class SceneController : MonoBehaviour
     public void CancelTestCase(int attempts)
     {
         Debug.Log("Canceling TestCase after " + attempts + " attempts");
-        scenario.SolveCurrentTestCase(false, userID, attempts, Time.time - startTime, 0);
+        scenario.SolveCurrentTestCase(false, userID, attempts, Time.time - startTime, 0, currentSeedValue);
         UIController.Instance.ShowCorrectMarker(false);
         testcaseFinished = true;
 
@@ -252,7 +253,7 @@ public class SceneController : MonoBehaviour
         if (selectedObj == targetObject)
         {
             isCorrect = true;
-            scenario.SolveCurrentTestCase(true, userID, attempts, Time.time - startTime, interactionTime);
+            scenario.SolveCurrentTestCase(true, userID, attempts, Time.time - startTime, interactionTime, currentSeedValue);
             testcaseFinished = true;
 
             if (scenario.NumTestCasesLeft == 0)
