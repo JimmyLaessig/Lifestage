@@ -105,8 +105,10 @@ public class PluginManager : MonoBehaviour
     /// </summary>
     /// <returns></returns>
     public bool GetButtonState()
-    {
-        return pluginActivity.Call<bool>("getButtonState");
+	{
+		if (pluginActivity != null)
+        	return pluginActivity.Call<bool>("getButtonState");
+		return false;
     }
 
     /// <summary>
@@ -151,8 +153,9 @@ public class PluginManager : MonoBehaviour
     /// Disconnects the phone from the SparkCore.
     /// </summary>
     private void DisconnectFromSparkCore()
-    {
-        pluginActivity.Call("disconnect");
+	{
+		if (pluginActivity != null)
+        	pluginActivity.Call("disconnect");
     }
 
     /// <summary>
@@ -208,9 +211,8 @@ public class PluginManager : MonoBehaviour
         }
 
 		timeStamp += Time.deltaTime;
-        if (distance>=0 && timeStamp >= vibrationIntervall) {
+		if (distance>=0 && timeStamp >= vibrationIntervall) {
 			timeStamp = 0;
-			//TODO testing
 			if (phoneIntensity[1]==0 && vibroIntensity[1]==0) { //NOTHING
 				//do nohing
 			} else if (phoneIntensity[1]>0 && vibroIntensity[1]>0) { //VIBRO AND PHONE

@@ -35,4 +35,5 @@ dependencies {
     compile 'commons-validator:commons-validator:1.4.0'
     compile 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
     compile 'com.android.support:support-v4:23.0.1'
+    compile 'se.emilsjolander:stickylistheaders:2.7.0'
 }

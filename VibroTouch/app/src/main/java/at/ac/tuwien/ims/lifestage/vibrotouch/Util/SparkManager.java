@@ -55,6 +55,13 @@ public class SparkManager {
         return SparkManager.instance;
     }
 
+    public void setIDandToken(String[] input) {
+        if(input[0].isEmpty() || input[1].isEmpty())
+            return;
+        DEVICE_ID=input[0];
+        ACCESTOKEN=input[1];
+    }
+
     /*
      * tries to establish a local wlan connection with the core
      *
@@ -231,6 +238,9 @@ public class SparkManager {
         private OutputStream output;
         boolean closed = false;
         private String button="";
+        private String prevButton="";
+        private boolean buttonStateChanged=false;
+        private boolean eventDone=false;
 
         public CommunicationThread(Socket clientSocket) {
             this.clientSocket = clientSocket;
@@ -249,6 +259,7 @@ public class SparkManager {
             while (!Thread.currentThread().isInterrupted() || closed) {
                 try {
                     String read = input.readLine(); // receive strings from core
+                    //Log.d(TAG, "received: " + read);
                     if (read == null) {
                         closed = true;
                         break;
@@ -258,7 +269,13 @@ public class SparkManager {
                         Log.d(TAG, "received: " + read);
                     }
                     if(read.startsWith("buttonstate")) {
+                        prevButton=button;
                         button=read.substring(read.indexOf('=')+1);
+                        if(!buttonStateChanged && prevButton.equals("off") && button.equals("on"))
+                            buttonStateChanged=true;
+                    }
+                    if(read.startsWith("exec event done")) {
+                        eventDone=true;
                     }
                 } catch (Exception e) {
                     closed = true;
@@ -266,11 +283,27 @@ public class SparkManager {
             }
         }
 
+        public boolean getEventDone() {
+            return eventDone;
+        }
+
+        public void setEventDone(boolean eventDone) {
+            this.eventDone=eventDone;
+        }
+
         public boolean getButtonString() {
-            if(button.equals("on"))
+            if(button.equals("on")) {
                 return true;
-            else
-                return false;
+            }
+            return false;
+        }
+
+        public boolean getButtonStateChanged() {
+            return buttonStateChanged;
+        }
+
+        public void setButtonStateChanged(boolean a) {
+            buttonStateChanged=a;
         }
 
         public void sendCommand_executePattern(String command){
@@ -350,5 +383,20 @@ public class SparkManager {
 
     public boolean getButtonState() {
         return commThread.getButtonString();
+    }
+
+    public boolean getButtonStateChanged() {
+        return commThread.getButtonStateChanged();
+    }
+
+    public void setButtonStateChangedRecognized() {
+        commThread.setButtonStateChanged(false);
+    }
+
+    public boolean getEventDone() {
+        return commThread.getEventDone();
+    }
+    public void setEventDone(boolean a) {
+        commThread.setEventDone(a);
     }
 }

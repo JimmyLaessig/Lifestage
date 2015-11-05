@@ -53,6 +53,7 @@ public class MainActivity extends UnityPlayerActivity {
     public boolean getButtonState() {
         if(connectionManager==null)
             return false;
+        Log.d(getClass().getName(), "buttonstate: " +connectionManager.getButtonState());
         return connectionManager.getButtonState();
     }
 

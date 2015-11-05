@@ -1,8 +1,10 @@
-package at.ac.tuwien.ims.lifestage.vibrotouch.Scene;
+package at.ac.tuwien.ims.lifestage.vibrotouch.Entities;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+
+import at.ac.tuwien.ims.lifestage.vibrotouch.Scenario.ObjectState;
 
 /**
  * Object that will be drawn and interacted with.
@@ -12,10 +14,10 @@ import android.graphics.RectF;
  */
 public class Object {
     private Paint paint;
-    private float x, y, width, height;
+    private float x, y, width, height, minArea, maxArea;
     private ObjectState objectState;
 
-    public Object(float x, float y, float width, float height, int color) {
+    public Object(float x, float y, float width, float height, int color, float minWidth, float maxWidth, float minHeight, float maxHeight) {
         paint = new Paint();
         paint.setColor(color);
         paint.setAntiAlias(true);
@@ -24,11 +26,13 @@ public class Object {
         this.y = y;
         this.width = width;
         this.height = height;
-        objectState=ObjectState.OnScreen;
+        this.minArea=minWidth*minHeight;
+        this.maxArea=maxWidth*maxHeight;
+        this.objectState=ObjectState.OnScreen;
     }
 
     public void draw(Canvas canvas) {
-        canvas.drawRect(new RectF(x, y, x+width, y+height), paint);
+        canvas.drawRect(new RectF(x, y, x + width, y + height), paint);
     }
 
     public void move(float dx, float dy) {
@@ -38,13 +42,15 @@ public class Object {
 
     public boolean contains(float x, float y) {
         if (x>getX() && x<(getX()+getWidth()) && y>getY() && y<(getY()+getHeight())) {
-           return true;
+            return true;
         }
         return false;
     }
 
-    public float getArea() {
-        return width*height;
+    public int getIntensity() {
+        float currArea=width*height;
+        float result = (float)10 + (((float)100 - (float)10) / (maxArea - minArea)) * (currArea - minArea);
+        return Math.round(result);
     }
 
     public float getX() {
@@ -83,7 +89,10 @@ public class Object {
         return objectState;
     }
 
-    public void setObjectState(ObjectState objectState) {
-        this.objectState = objectState;
+    public void changeObjectState() {
+        if(this.objectState==ObjectState.OnScreen)
+            this.objectState = ObjectState.PickedUp;
+        else
+            this.objectState = ObjectState.OnScreen;
     }
 }

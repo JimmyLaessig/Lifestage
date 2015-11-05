@@ -1,13 +1,12 @@
-package at.ac.tuwien.ims.lifestage.vibrotouch.Scene;
+package at.ac.tuwien.ims.lifestage.vibrotouch.Scenario;
 
 /**
- * States that an object can be in.
+ * State that an Object can be in.
  * <p/>
  * Application: VibroTouch
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
 public enum ObjectState {
     OnScreen,
-    PickedUpVibro0,
-    PickedUpVibro1
+    PickedUp
 }

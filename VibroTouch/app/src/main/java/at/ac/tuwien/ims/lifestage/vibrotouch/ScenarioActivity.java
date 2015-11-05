@@ -4,14 +4,12 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.support.v4.view.MotionEventCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-import at.ac.tuwien.ims.lifestage.vibrotouch.Scene.Object;
-import at.ac.tuwien.ims.lifestage.vibrotouch.Scene.ObjectHandler;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Scenario.ObjectHandler;
 
 /**
  * Activity where the different scenarios are drawn.
@@ -19,21 +17,26 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Scene.ObjectHandler;
  * Application: VibroTouch
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
-public class ScenarioActivity extends AppCompatActivity {
-    private DrawView drawView;
+public class ScenarioActivity extends BaseActivity {
     private ObjectHandler objectHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        objectHandler =new ObjectHandler();
-        objectHandler.add(new Object(700, 200, 250, 250, Color.RED));
-        objectHandler.add(new Object(400, 200, 200, 200, Color.BLACK));
-        objectHandler.add(new Object(150, 200, 150, 150, Color.BLUE));
+        /*switch(getIntent().getIntExtra("scenario", 0)) {
+            default:
+        }*/
+        objectHandler=new ObjectHandler();
 
-        drawView = new DrawView(this);
+        DrawView drawView = new DrawView(this);
         drawView.setBackgroundColor(Color.parseColor("#f9f9f9"));
         setContentView(drawView);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(objectHandler!=null)
+            objectHandler.stopThreads();
     }
 
     /**
@@ -134,6 +137,7 @@ public class ScenarioActivity extends AppCompatActivity {
             @Override
             public void onScaleEnd(ScaleGestureDetector detector) {
                 objectHandler.handleScale(scale, x, y);
+                invalidate();
             }
         }
     }
