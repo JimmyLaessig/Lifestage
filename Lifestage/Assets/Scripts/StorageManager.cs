@@ -152,7 +152,7 @@ public class StorageManager : MonoBehaviour
 		if (File.Exists(SCENARIO_FILE_PATH)) {   
 			doc.Load(SCENARIO_FILE_PATH);
 			XmlElement root = doc.DocumentElement;
-			return root.GetElementsByTagName("repetition").Count;
+			return root.GetElementsByTagName("Repetition").Count;
 		}
 		Debug.Log ("Output XML File does not exist, please make sure it does.");
 		return -1;
@@ -168,7 +168,7 @@ public class StorageManager : MonoBehaviour
         {
             doc.Load(SCENARIO_FILE_PATH);
             XmlElement root = doc.DocumentElement;
-            return Convert.ToInt32(root.GetElementsByTagName("repetition").Item(repetition).Attributes["seed"].Value);
+            return Convert.ToInt32(root.GetElementsByTagName("Repetition").Item(repetition).Attributes["seed"].Value);
         }
         Debug.Log("Output XML File does not exist, please make sure it does.");
         return 0;
