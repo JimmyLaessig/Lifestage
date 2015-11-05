@@ -4,12 +4,19 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
+import java.io.File;
+import java.util.ArrayList;
+
+import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Testcase;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.SparkManager;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.WifiUtil;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
 
 /**
  * BaseActivity that all Activities use.
@@ -19,6 +26,7 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Util.WifiUtil;
  */
 public class BaseActivity extends AppCompatActivity {
     protected SparkManager connectionManager;
+    protected ArrayList<Testcase> testcases;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +34,15 @@ public class BaseActivity extends AppCompatActivity {
         verifyStoragePermissions(this);
 
         connectionManager=SparkManager.getInstance();
+        try {
+            testcases=XmlHelper.getTestcases(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.inputXMLPath);
+        } catch (Exception e) {
+            Toast.makeText(BaseActivity.this, "Please make sure your XML Files are correct.", Toast.LENGTH_SHORT).show();
+        }
+        if(testcases==null || testcases.isEmpty()) {
+            Toast.makeText(BaseActivity.this, "Please add Testcases in the XML file.", Toast.LENGTH_SHORT).show();
+            return;
+        }
     }
 
     //============================================================================================//

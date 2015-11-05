@@ -14,16 +14,20 @@ public class Testcase {
     private int scenario;
     private boolean buttonOn;
     private ArrayList<Object> objects;
+    private int minIntensity;
+    private int maxIntensity;
 
     public Testcase() {
         this.objects = new ArrayList<>();
     }
 
-    public Testcase(int id, int scenario, boolean buttonOn) {
+    public Testcase(int id, int scenario, boolean buttonOn, int minIntensity, int maxIntensity) {
         this.scenario = scenario;
         this.buttonOn = buttonOn;
         this.objects = new ArrayList<>();
         this.id = id;
+        this.minIntensity=minIntensity;
+        this.maxIntensity=maxIntensity;
     }
 
     public int getScenario() {
@@ -56,5 +60,21 @@ public class Testcase {
 
     public int getId() {
         return id;
+    }
+
+    public int getMinIntensity() {
+        return minIntensity;
+    }
+
+    public void setMinIntensity(int minIntensity) {
+        this.minIntensity = minIntensity;
+    }
+
+    public int getMaxIntensity() {
+        return maxIntensity;
+    }
+
+    public void setMaxIntensity(int maxIntensity) {
+        this.maxIntensity = maxIntensity;
     }
 }

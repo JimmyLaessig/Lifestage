@@ -3,13 +3,19 @@ package at.ac.tuwien.ims.lifestage.vibrotouch;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.os.Environment;
 import android.support.v4.view.MotionEventCompat;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.Toast;
 
+import java.io.File;
+
+import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Testcase;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Scenario.ObjectHandler;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
 
 /**
  * Activity where the different scenarios are drawn.
@@ -23,10 +29,13 @@ public class ScenarioActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*switch(getIntent().getIntExtra("scenario", 0)) {
-            default:
-        }*/
-        objectHandler=new ObjectHandler();
+        Testcase testcase=null;
+        try {
+            testcase = testcases.get(getIntent().getIntExtra("testcase", 0)-1);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        objectHandler=new ObjectHandler(testcase);
 
         DrawView drawView = new DrawView(this);
         drawView.setBackgroundColor(Color.parseColor("#f9f9f9"));
@@ -37,6 +46,14 @@ public class ScenarioActivity extends BaseActivity {
         super.onPause();
         if(objectHandler!=null)
             objectHandler.stopThreads();
+
+        /*TODO
+        try {
+            XmlHelper.writeTestCase1Result(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.outputtXMLPath, 1, 2, 3, 4, 5, 6, 7);
+        } catch (Exception e) {
+            Toast.makeText(ScenarioActivity.this, "Something went wrong while saving.", Toast.LENGTH_SHORT).show();
+        }
+        */
     }
 
     /**

@@ -17,15 +17,15 @@ public class Object {
     private float x, y, width, height, minArea, maxArea;
     private ObjectState objectState;
 
-    public Object(float x, float y, float width, float height, int color, float minWidth, float maxWidth, float minHeight, float maxHeight) {
+    public Object(float x, float y, float size, int color, float minWidth, float maxWidth, float minHeight, float maxHeight) {
         paint = new Paint();
         paint.setColor(color);
         paint.setAntiAlias(true);
 
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
+        this.width = size;
+        this.height = size;
         this.minArea=minWidth*minHeight;
         this.maxArea=maxWidth*maxHeight;
         this.objectState=ObjectState.OnScreen;

@@ -1,38 +1,26 @@
 <SparkCore id="48ff71065067555011472387" token="20e1ee31e3f0b0ecace2820c73ab71f5966acbf6"/>
-<Testcases>
-	<Testcase id="1" scenario="1" button="on">
-		<Object width="10" height="10"/>
-		<Object width="20" height="20"/>
-		<Object width="30" height="30"/>
+<Testcases screenWidth="790" screenHeight="1330">
+	<Testcase id="1" scenario="1" button="on" minIntensity="10" maxIntensity="100">
+		<Object size="20"/>
+		<Object size="10"/>
+		<Object size="30"/>
 	</Testcase>
-	<Testcase id="2" scenario="1" button="on">
-		<Object width="10" height="10"/>
-		<Object width="20" height="20"/>
-		<Object width="25" height="25"/>
-		<Object width="30" height="30"/>
+	<Testcase id="2" scenario="1" button="on" minIntensity="10" maxIntensity="100">
+		<Object size="10"/>
+		<Object size="20"/>
+		<Object size="25"/>
+		<Object size="30"/>
 	</Testcase>
-	<Testcase id="3" scenario="2" button="on">
-		<Object width="30" height="30"/>
+	<Testcase id="3" scenario="2" button="on" minIntensity="10" maxIntensity="100">
+		<Object size="30"/>
 	</Testcase>
-	<Testcase id="4" scenario="2" button="on">
-		<Object width="50" height="50"/>
+	<Testcase id="4" scenario="2" button="on" minIntensity="10" maxIntensity="100">
+		<Object size="50"/>
 	</Testcase>
-	<Testcase id="5" scenario="2" button="on">
-		<Object width="70" height="70"/>
+	<Testcase id="5" scenario="2" button="on" minIntensity="10" maxIntensity="100">
+		<Object size="70"/>
 	</Testcase>
-	<Testcase id="6" scenario="2" button="on">
-		<Object width="70" height="70"/>
-	</Testcase>
-	<Testcase id="7" scenario="2" button="on">
-		<Object width="70" height="70"/>
-	</Testcase>
-	<Testcase id="8" scenario="2" button="on">
-		<Object width="70" height="70"/>
-	</Testcase>
-	<Testcase id="9" scenario="2" button="on">
-		<Object width="70" height="70"/>
-	</Testcase>
-	<Testcase id="10" scenario="2" button="on">
-		<Object width="70" height="70"/>
+	<Testcase id="6" scenario="2" button="on" minIntensity="10" maxIntensity="100">
+		<Object size="70"/>
 	</Testcase>
 </Testcases>

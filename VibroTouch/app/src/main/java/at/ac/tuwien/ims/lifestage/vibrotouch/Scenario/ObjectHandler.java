@@ -11,6 +11,7 @@ import java.util.Stack;
 
 import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Event;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Object;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Testcase;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.SparkManager;
 
 /**
@@ -47,20 +48,20 @@ public class ObjectHandler {
 
     private float minWidth, maxWidth, minHeight, maxHeight;
 
-    public ObjectHandler() {
+    public ObjectHandler(Testcase testcase) {
         allObjects =new ArrayList<>();
         pickedUpObjects =new Stack<>();
         connectionManager=SparkManager.getInstance();
         usedVibro=UsedVibro.Vibro0;
 
-        //TODO testobects spawnable => xml
+        //TODO testobects spawnable => xml getScreenWidthAndHeight()
         minWidth=150;
         maxWidth=250;
         minHeight=150;
         maxHeight=250;
-        allObjects.add(new Object(700, 200, 250, 250, Color.RED, minWidth, maxWidth, minHeight, maxHeight));
-        allObjects.add(new Object(450, 200, 200, 200, Color.GREEN, minWidth, maxWidth, minHeight, maxHeight));
-        allObjects.add(new Object(150, 200, 150, 150, Color.BLUE, minWidth, maxWidth, minHeight, maxHeight));
+        allObjects.add(new Object(700, 200, 250, Color.RED, minWidth, maxWidth, minHeight, maxHeight));
+        allObjects.add(new Object(450, 200, 200, Color.GREEN, minWidth, maxWidth, minHeight, maxHeight));
+        allObjects.add(new Object(150, 200, 150, Color.BLUE, minWidth, maxWidth, minHeight, maxHeight));
 
         buttonThread();
         vibroThread();

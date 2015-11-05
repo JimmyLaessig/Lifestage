@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,6 +24,12 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
+/**
+ * Activity where you can select testcases.
+ * <p/>
+ * Application: VibroTouch
+ * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
+ */
 public class SelectionActivity extends BaseActivity {
     private FloatingActionButton fab;
 
@@ -35,7 +42,11 @@ public class SelectionActivity extends BaseActivity {
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(btnListener);
-        connectionManager.setIDandToken(XmlHelper.getIDandToken(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.inputXMLPath));
+        try {
+            connectionManager.setIDandToken(XmlHelper.getIDandToken(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.inputXMLPath));
+        } catch (Exception e) {
+            Toast.makeText(SelectionActivity.this, "Please make sure your XML Files are correct.", Toast.LENGTH_SHORT).show();
+        }
         connect();
         initializeList();
     }
@@ -65,11 +76,6 @@ public class SelectionActivity extends BaseActivity {
     private MyAdapter myAdapter;
     private void initializeList() {
         StickyListHeadersListView stickyList = (StickyListHeadersListView) findViewById(R.id.list);
-        ArrayList<Testcase> testcases=XmlHelper.getTestcases(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.inputXMLPath);
-        if(testcases==null || testcases.isEmpty()) {
-            Toast.makeText(SelectionActivity.this, "Please add Testcases in the XML file.", Toast.LENGTH_SHORT).show();
-            return;
-        }
         myAdapter=new MyAdapter(testcases);
         stickyList.setAdapter(myAdapter);
 
@@ -82,7 +88,7 @@ public class SelectionActivity extends BaseActivity {
                 }
 
                 Intent myIntent = new Intent(SelectionActivity.this, ScenarioActivity.class);
-                myIntent.putExtra("scenario", ((Testcase) myAdapter.getItem(position)).getId());
+                myIntent.putExtra("testcase", ((Testcase) myAdapter.getItem(position)).getId());
                 startActivity(myIntent);
             }
         });
