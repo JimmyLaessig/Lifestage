@@ -9,6 +9,7 @@ using System.Collections.Generic;
 /// </summary>
 public class SceneController : MonoBehaviour
 {
+
     private new Camera camera;
     private CameraController cameraController;
 
@@ -40,7 +41,6 @@ public class SceneController : MonoBehaviour
 
     private int numRepetitions;
     private int currentRepetition;
-    private int currentSeedValue;
 
     private float startTime;
     private bool isStarted = false;
@@ -64,7 +64,7 @@ public class SceneController : MonoBehaviour
         cameraController = GetComponentInChildren<CameraController>();
         gameObjects = new List<GameObject>();
 
-        scenario = StorageManager.Instance.LoadScenario();
+        scenario = StorageManager.Instance.LoadScenario();       
 
         boundingVolume = GameObject.Find("BoundingVolume");
         currentRepetition = -1;
@@ -77,18 +77,16 @@ public class SceneController : MonoBehaviour
     /// </summary>
     public void StartButtonClicked()
     {
+
         userID = StorageManager.Instance.getLatestUserID() + "";
         numRepetitions = StorageManager.Instance.getNumberOfRepetitions();
         currentRepetition = StorageManager.Instance.getLatestRepetition();
-        Random.seed = StorageManager.Instance.getSeedValue(currentRepetition);
-        Debug.Log("Starting new Repetitions! Repetition " + (currentRepetition + 1) + " of " + numRepetitions);
-        Debug.Log("Seed Value: " + currentSeedValue);
+        int seed = StorageManager.Instance.getSeedValue(currentRepetition);
+
+        // Resetting Random Generator with new seed value
+        Random.seed = seed;
+        Debug.Log("Starting new Repetition! Repetition " + (currentRepetition + 1) + " of " + numRepetitions +", new seed: " + seed);
         
-        // This block is called on start and when all testcases in all reputations are finished
-        if (currentRepetition == numRepetitions || isStarted == false)
-        {
-            Debug.Log("Starting new stuff");
-        }
         isStarted = true;
         Reset();
 
@@ -114,7 +112,9 @@ public class SceneController : MonoBehaviour
     /// </summary>
     public void NextButtonClicked()
     {
+        
         currentRepetition = StorageManager.Instance.getLatestRepetition();
+
         testcaseFinished = false;
 
         ClearTestCase();
@@ -295,14 +295,16 @@ public class SceneController : MonoBehaviour
     /// Note: Call ClearScene before generating a scene to avoid misbehaviour.
     /// </summary>
     public void GenerateGameObjects(TestCase testCase)
-    {
+    {       
+        // Set the scale to the scale of the TestCase
         this.transform.localScale = testCase.sceneScale;
+
+        // Calculate the Rotation of all elements
         Quaternion rotation = Random.rotation;
 
+        // Calculate the max bounds of the spawning area
         Bounds bounds = boundingVolume.GetComponent<MeshFilter>().mesh.bounds;
-        // Calculate the maximum distance
         float maxZ = bounds.max.z * this.transform.localScale.z + boundingVolume.transform.position.z - this.transform.position.z;
-        // calculate the absolute max Height
         float maxY = bounds.max.y * this.transform.localScale.y;
         float maxX = bounds.max.x * this.transform.localScale.x;
 
@@ -351,6 +353,7 @@ public class SceneController : MonoBehaviour
         targetObject = gameObjects[testCase.targetElement - 1];
 
     }
+
 
     /// <summary>
     /// Returns the maximum width of the bounding volume

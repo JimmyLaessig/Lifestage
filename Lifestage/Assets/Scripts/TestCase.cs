@@ -17,7 +17,7 @@ public class TestCase
     public float interactionTime;
 	public int attempts;
 	public string userID;
-    public int repetitions = 1;
+    public int seed;
     public Vector3 sceneScale;
 	public int[] phoneIntensity;
 	public int[] vibroIntensity;
