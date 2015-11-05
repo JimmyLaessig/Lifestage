@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
@@ -10,6 +9,7 @@ public class Scenario
 {
 
     private List<TestCase> openTestCases;
+    private List<TestCase> allTestCases;
     private TestCase currentTestCase;
     private List<TestCase> solvedTestCases;
 
@@ -34,6 +34,7 @@ public class Scenario
     /// </summary>
     public Scenario()
     {
+        allTestCases = new List<TestCase>();
         openTestCases = new List<TestCase>();
         solvedTestCases = new List<TestCase>();
     }
@@ -45,6 +46,7 @@ public class Scenario
     /// <param name="t"></param>
     public void AddTestCase(TestCase t)
     {
+        allTestCases.Add(t);
         openTestCases.Add(t);
     }
 
@@ -65,7 +67,7 @@ public class Scenario
         else
 		{
             Debug.Log("Returning new TestCase");
-            int index = UnityEngine.Random.Range(0, openTestCases.Count);
+            int index = Random.Range(0, openTestCases.Count);
             currentTestCase = openTestCases[index];
             openTestCases.RemoveAt(index);
         }
@@ -89,15 +91,11 @@ public class Scenario
     /// </summary>
     public void Reset()
     {
-        if (currentTestCase != null)
-            openTestCases.Add(currentTestCase);
         currentTestCase = null;
-
-        foreach (TestCase t in solvedTestCases)
-        {
-            openTestCases.Add(t);            
-        }
+        openTestCases.Clear();
         solvedTestCases.Clear();
+        openTestCases = new List<TestCase>(allTestCases);
+
         numTestCases = openTestCases.Count;
         Debug.Log("After Reset: NumTestCases: " + openTestCases.Count);
     }
@@ -112,13 +110,14 @@ public class Scenario
     /// <param name="attempts">The number of attempts</param>
     /// <param name="timeTotal">The duration of the testcase</param>
     /// <param name="interactionTime"> The duration of the last interaction</param>
-    public void SolveCurrentTestCase(bool correct, string user, int attempts, float timeTotal, float interactionTime)
+    public void SolveCurrentTestCase(bool correct, string user, int attempts, float timeTotal, float interactionTime, int seedValue)
     {
 		currentTestCase.userID = user;
 		currentTestCase.attempts = attempts;
 		currentTestCase.time = timeTotal;
         currentTestCase.interactionTime = interactionTime;
 		currentTestCase.isCorrect=correct;
+        currentTestCase.seedValue = seedValue;
 		solvedTestCases.Add(currentTestCase);
 		StorageManager.Instance.WriteTestCaseResult(currentTestCase);
 		currentTestCase = null;
