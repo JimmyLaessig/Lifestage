@@ -84,7 +84,7 @@ public class SelectionActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 if(connectionManager.getStatus()!=SparkManager.CONNECTED) {
                     Toast.makeText(SelectionActivity.this, "Please connect to SparkCore first.", Toast.LENGTH_SHORT).show();
-                    return;
+                    //return; TODO
                 }
 
                 Intent myIntent = new Intent(SelectionActivity.this, ScenarioActivity.class);
@@ -128,8 +128,7 @@ public class SelectionActivity extends BaseActivity {
                 holder = (ViewHolder) convertView.getTag();
             }
             Testcase testcase=testcases.get(position);
-            String btn= testcase.isButtonOn() ? getString(R.string.on) : getString(R.string.off);
-            holder.text.setText(getString(R.string.testcase) + " " + testcase.getId() + " ("+ getString(R.string.button) +": " + btn + ")");
+            holder.text.setText(getString(R.string.testcase) + " " + testcase.getId() + " (" + testcase.getObjects().size() + " Object(s), MinIntensity: "+ testcase.getMinIntensity()+ "/MaxIntensity: "+testcase.getMaxIntensity() +")");
 
             return convertView;
         }
@@ -145,7 +144,18 @@ public class SelectionActivity extends BaseActivity {
             } else {
                 holder = (HeaderViewHolder) convertView.getTag();
             }
-            String headerText = "Scenario " + testcases.get(position).getScenario();
+            String att;
+            switch (testcases.get(position).getScenario()) {
+                case 1:
+                    att=" - Precision Test";
+                    break;
+                case 2:
+                    att=" - Recreate Size";
+                    break;
+                default:
+                    att=" - Playground";
+            }
+            String headerText = "Scenario " + testcases.get(position).getScenario() + att;
             holder.text.setText(headerText);
 
             return convertView;

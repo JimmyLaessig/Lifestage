@@ -1,9 +1,14 @@
 package at.ac.tuwien.ims.lifestage.vibrotouch.Scenario;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
+import android.graphics.Point;
+import android.os.Environment;
 import android.util.Log;
+import android.view.Display;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +18,7 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Event;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Object;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Testcase;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.SparkManager;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
 
 /**
  * ObjectHandler containing objects that are drawn and interacted with.
@@ -20,7 +26,7 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Util.SparkManager;
  * Application: VibroTouch
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
-public class ObjectHandler {
+public abstract class ObjectHandler {
     private enum UsedVibro {
         Vibro0(0),
         Vibro1(1);
@@ -33,50 +39,81 @@ public class ObjectHandler {
         }
     }
 
-    private List<Object> allObjects;
-    private Stack<Object> pickedUpObjects;
+    protected Stack<Object> pickedUpObjects;
     private SparkManager connectionManager;
 
     private UsedVibro usedVibro;
-
-    private long pauseBetweenVibes=1000L;
-    private long pauseAfterVibe=400L;
-    private long durationOfVibe=100L;
+    private final long pauseBetweenVibes=1000L;
+    private final long pauseAfterVibe=400L;
+    private final long durationOfVibe=100L;
 
     private volatile boolean vibroThreadRunning = true;
     private volatile boolean buttonThreadRunning = true;
 
-    private float minWidth, maxWidth, minHeight, maxHeight;
+    protected Testcase testcase;
+    protected float screenWidthInPX, screenHeightInPX, screenWidthInMM, screenHeightInMM;
 
-    public ObjectHandler(Testcase testcase) {
-        allObjects =new ArrayList<>();
-        pickedUpObjects =new Stack<>();
+    protected int attempts=0;
+    protected long time;
+
+    public ObjectHandler(Context context, Testcase testcase) {
+        pickedUpObjects=new Stack<>();
         connectionManager=SparkManager.getInstance();
         usedVibro=UsedVibro.Vibro0;
 
-        //TODO testobects spawnable => xml getScreenWidthAndHeight()
-        minWidth=150;
-        maxWidth=250;
-        minHeight=150;
-        maxHeight=250;
-        allObjects.add(new Object(700, 200, 250, Color.RED, minWidth, maxWidth, minHeight, maxHeight));
-        allObjects.add(new Object(450, 200, 200, Color.GREEN, minWidth, maxWidth, minHeight, maxHeight));
-        allObjects.add(new Object(150, 200, 150, Color.BLUE, minWidth, maxWidth, minHeight, maxHeight));
+        this.testcase=testcase;
 
-        buttonThread();
-        vibroThread();
+        float[] screen={-1,-1};
+        try {
+            screen=XmlHelper.getScreenWidthAndHeight(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.inputXMLPath);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), e.getMessage());
+        }
+        screenWidthInMM=screen[0];
+        screenHeightInMM=screen[1];
+
+        Display mdisp = ((Activity)context).getWindowManager().getDefaultDisplay();
+        Point mdispSize = new Point();
+        mdisp.getSize(mdispSize);
+        screenWidthInPX = mdispSize.x;
+        screenHeightInPX = mdispSize.y;
+
+        placeObjects();
+
+        if(testcase.isButtonOn())
+            startButtonThread();
+        startVibroThread();
+
+        time=System.currentTimeMillis();
         Log.d(getClass().getName(), "begin handling objects");
     }
 
+    abstract void placeObjects();
+    abstract void finishTestcase();
+    abstract void layDownObject(float x, float y);
+
+    protected void stopTime() {
+        long begin=time;
+        time=System.currentTimeMillis()-begin;
+    }
+
+    protected float pixelsToMM(float pixels) {
+        return pixels/(screenHeightInPX/screenHeightInMM);
+    }
+
+    protected float mmToPixels(float mm) {
+        return mm/(screenHeightInMM/screenHeightInPX);
+    }
+
     public void draw(Canvas canvas) {
-        for(Object object : allObjects)
+        for(Object object : testcase.getObjects())
             if(object.getObjectState()== ObjectState.OnScreen)
                 object.draw(canvas);
     }
 
     public void handleScale(float scaleFactor, float xFocus, float yFocus) {
         if (scaleFactor < 1.0f) {
-            for (Object object : allObjects)
+            for (Object object : testcase.getObjects())
                 if (object.getObjectState()==ObjectState.OnScreen && object.contains(xFocus, yFocus)) {
                     pickUpObject(object);
                 }
@@ -87,20 +124,9 @@ public class ObjectHandler {
     }
 
     public void handleMove(float x, float y, float dx, float dy) {
-        for(Object object : allObjects)
+        for(Object object : testcase.getObjects())
             if (object.getObjectState()==ObjectState.OnScreen && object.contains(x, y))
                 object.move(dx, dy);
-    }
-
-    private void layDownObject(float x, float y) {
-        Object picked=pickedUpObjects.pop();
-
-        for (Object object : allObjects)
-            if(picked.equals(object)) {
-                picked.setX(x - (picked.getWidth() / 2));
-                picked.setY(y - (picked.getHeight() / 2));
-                object.changeObjectState();
-            }
     }
 
     private void pickUpObject(Object object) {
@@ -108,7 +134,7 @@ public class ObjectHandler {
         pickedUpObjects.push(object);
     }
 
-    private void vibroThread() {
+    private void startVibroThread() {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -117,7 +143,7 @@ public class ObjectHandler {
                         if (!pickedUpObjects.isEmpty()) {
                             ArrayList<Event> events = new ArrayList<>();
                             for (Object o : pickedUpObjects) {
-                                events.add(new Event(usedVibro.getID(), 0, o.getIntensity(), durationOfVibe, pauseAfterVibe));
+                                events.add(new Event(usedVibro.getID(), 0, o.getIntensity(testcase.getMinIntensity(), testcase.getMaxIntensity()), durationOfVibe, pauseAfterVibe));
                             }
                             Collections.reverse(events);
                             while(!events.isEmpty()) {
@@ -137,13 +163,12 @@ public class ObjectHandler {
         thread.start();
     }
 
-    private void buttonThread() {
+    private void startButtonThread() {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (buttonThreadRunning) {
                     try {
-                        //TODO test
                         if (connectionManager.getButtonStateChanged()) {
                             if(usedVibro==UsedVibro.Vibro0) {
                                 usedVibro=UsedVibro.Vibro1;

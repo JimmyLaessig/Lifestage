@@ -1,15 +1,9 @@
 <SparkCore id="48ff71065067555011472387" token="20e1ee31e3f0b0ecace2820c73ab71f5966acbf6"/>
-<Testcases screenWidth="790" screenHeight="1330">
+<Testcases screenWidth="79" screenHeight="133" minObjectSize="20" maxObjectSize="50">
 	<Testcase id="1" scenario="1" button="on" minIntensity="10" maxIntensity="100">
-		<Object size="20"/>
-		<Object size="10"/>
-		<Object size="30"/>
-	</Testcase>
-	<Testcase id="2" scenario="1" button="on" minIntensity="10" maxIntensity="100">
-		<Object size="10"/>
-		<Object size="20"/>
-		<Object size="25"/>
-		<Object size="30"/>
+		<Object size="20" posX="34.5" posY="20"/>
+		<Object size="10" posX="29.5" posY="55"/>
+		<Object size="30" posX="24.5" posY="90"/>
 	</Testcase>
 	<Testcase id="3" scenario="2" button="on" minIntensity="10" maxIntensity="100">
 		<Object size="30"/>

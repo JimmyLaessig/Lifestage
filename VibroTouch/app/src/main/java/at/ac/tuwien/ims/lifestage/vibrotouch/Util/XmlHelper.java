@@ -94,16 +94,22 @@ public class XmlHelper {
         ArrayList<Testcase> testcases=null;
         Testcase current=null;
         XmlPullParser xpp=createParser(filename);
+        float minSize=0;
+        float maxSize=0;
         int eventType = xpp.getEventType();
         while(eventType != XmlResourceParser.END_DOCUMENT) {
             String name = null;
             switch (eventType){
                 case XmlPullParser.START_DOCUMENT:
                     testcases = new ArrayList<>();
+                    testcases.add(new Testcase(0, 0, true, 10, 100));
                     break;
                 case XmlPullParser.START_TAG:
                     name = xpp.getName();
-                    if (name.equals("Testcase")) {
+                    if (name.equals("Testcases")) {
+                        minSize=Integer.parseInt(xpp.getAttributeValue(null, "minObjectSize"));
+                        maxSize=Integer.parseInt(xpp.getAttributeValue(null, "maxObjectSize"));
+                    } else if (name.equals("Testcase")) {
                         current=new Testcase();
                         current.setId(Integer.parseInt(xpp.getAttributeValue(null, "id")));
                         current.setScenario(Integer.parseInt(xpp.getAttributeValue(null, "scenario")));
@@ -112,7 +118,12 @@ public class XmlHelper {
                         current.setMaxIntensity(Integer.parseInt(xpp.getAttributeValue(null, "maxIntensity")));
                     } else if (current != null && name.equals("Object")) {
                         int size=Integer.parseInt(xpp.getAttributeValue(null, "size"));
-                        current.addObject(new Object(0, 0, size, Color.RED, 0,0,0,0));//TODO
+                        if (current.getScenario()==1) {
+                            float x=Float.parseFloat(xpp.getAttributeValue(null, "posX"));
+                            float y=Float.parseFloat(xpp.getAttributeValue(null, "posY"));
+                            current.addObject(new Object(size, x, y, minSize, maxSize, Color.RED));
+                        } else if (current.getScenario()==2)
+                            current.addObject(new Object(size, 0, 0, minSize, maxSize, Color.RED));
                     }
                     break;
                 case XmlPullParser.END_TAG:

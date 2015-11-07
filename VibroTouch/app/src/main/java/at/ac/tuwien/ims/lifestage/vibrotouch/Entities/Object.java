@@ -14,25 +14,24 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Scenario.ObjectState;
  */
 public class Object {
     private Paint paint;
-    private float x, y, width, height, minArea, maxArea;
+    private float x, y, size, minSize, maxSize;
     private ObjectState objectState;
 
-    public Object(float x, float y, float size, int color, float minWidth, float maxWidth, float minHeight, float maxHeight) {
+    public Object(float size, float x, float y, float minSize, float maxSize,  int color) {
         paint = new Paint();
         paint.setColor(color);
         paint.setAntiAlias(true);
 
         this.x = x;
         this.y = y;
-        this.width = size;
-        this.height = size;
-        this.minArea=minWidth*minHeight;
-        this.maxArea=maxWidth*maxHeight;
+        this.size = size;
+        this.minSize =minSize;
+        this.maxSize =maxSize;
         this.objectState=ObjectState.OnScreen;
     }
 
     public void draw(Canvas canvas) {
-        canvas.drawRect(new RectF(x, y, x + width, y + height), paint);
+        canvas.drawRect(new RectF(x, y, x + size, y + size), paint);
     }
 
     public void move(float dx, float dy) {
@@ -41,15 +40,16 @@ public class Object {
     }
 
     public boolean contains(float x, float y) {
-        if (x>getX() && x<(getX()+getWidth()) && y>getY() && y<(getY()+getHeight())) {
+        if (x>getX() && x<(getX()+ getSize()) && y>getY() && y<(getY()+getSize())) {
             return true;
         }
         return false;
     }
 
-    public int getIntensity() {
-        float currArea=width*height;
-        float result = (float)10 + (((float)100 - (float)10) / (maxArea - minArea)) * (currArea - minArea);
+    public int getIntensity(int minIntesity, int maxIntesity) {
+        float s=getSize()>maxSize? maxSize : getSize();
+        s=getSize()<minSize? minSize : getSize();
+        float result = (float)minIntesity + (((float)maxIntesity - (float)minIntesity) / (maxSize - minSize)) * (s - minSize);
         return Math.round(result);
     }
 
@@ -69,20 +69,8 @@ public class Object {
         this.y = y;
     }
 
-    public float getWidth() {
-        return width;
-    }
-
-    public void setWidth(float width) {
-        this.width = width;
-    }
-
-    public float getHeight() {
-        return height;
-    }
-
-    public void setHeight(float height) {
-        this.height = height;
+    public float getSize() {
+        return size;
     }
 
     public ObjectState getObjectState() {

@@ -3,19 +3,17 @@ package at.ac.tuwien.ims.lifestage.vibrotouch;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.os.Environment;
 import android.support.v4.view.MotionEventCompat;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.widget.Toast;
-
-import java.io.File;
 
 import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Testcase;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Scenario.ObjectHandler;
-import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Scenario.ObjectHandlerPlayground;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Scenario.ObjectHandlerScenario1;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Scenario.ObjectHandlerScenario2;
 
 /**
  * Activity where the different scenarios are drawn.
@@ -31,11 +29,20 @@ public class ScenarioActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Testcase testcase=null;
         try {
-            testcase = testcases.get(getIntent().getIntExtra("testcase", 0)-1);
+            testcase = testcases.get(getIntent().getIntExtra("testcase", 0));
         } catch(Exception e){
             e.printStackTrace();
         }
-        objectHandler=new ObjectHandler(testcase);
+        switch(testcase.getScenario()) {
+            case 1:
+                objectHandler=new ObjectHandlerScenario1(this, testcase);
+                break;
+            case 2:
+                objectHandler=new ObjectHandlerScenario2(this, testcase);
+                break;
+            default:
+                objectHandler=new ObjectHandlerPlayground(this, testcase);
+        }
 
         DrawView drawView = new DrawView(this);
         drawView.setBackgroundColor(Color.parseColor("#f9f9f9"));
