@@ -1,20 +1,17 @@
 <SparkCore id="48ff71065067555011472387" token="20e1ee31e3f0b0ecace2820c73ab71f5966acbf6"/>
 <Testcases screenWidth="79" screenHeight="133" minObjectSize="20" maxObjectSize="50">
 	<Testcase id="1" scenario="1" button="on" minIntensity="10" maxIntensity="100">
-		<Object size="20" posX="34.5" posY="20"/>
-		<Object size="10" posX="29.5" posY="55"/>
+		<Object size="20" posX="29.5" posY="55"/>
+		<Object size="10" posX="34.5" posY="20"/>
 		<Object size="30" posX="24.5" posY="90"/>
 	</Testcase>
 	<Testcase id="3" scenario="2" button="on" minIntensity="10" maxIntensity="100">
-		<Object size="30"/>
+		<Object size="20"/>
 	</Testcase>
 	<Testcase id="4" scenario="2" button="on" minIntensity="10" maxIntensity="100">
-		<Object size="50"/>
+		<Object size="30"/>
 	</Testcase>
 	<Testcase id="5" scenario="2" button="on" minIntensity="10" maxIntensity="100">
-		<Object size="70"/>
-	</Testcase>
-	<Testcase id="6" scenario="2" button="on" minIntensity="10" maxIntensity="100">
-		<Object size="70"/>
+		<Object size="40"/>
 	</Testcase>
 </Testcases>

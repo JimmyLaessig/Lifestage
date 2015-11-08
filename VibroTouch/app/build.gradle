@@ -36,4 +36,5 @@ dependencies {
     compile 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
     compile 'com.android.support:support-v4:23.0.1'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
+    compile 'com.github.sd6352051.niftydialogeffects:niftydialogeffects:1.0.0'
 }

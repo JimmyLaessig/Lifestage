@@ -7,16 +7,18 @@ import android.graphics.Point;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Display;
+import android.widget.Button;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Stack;
 
 import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Event;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Object;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Testcase;
+import at.ac.tuwien.ims.lifestage.vibrotouch.R;
+import at.ac.tuwien.ims.lifestage.vibrotouch.ScenarioActivity;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.SparkManager;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
 
@@ -39,6 +41,9 @@ public abstract class ObjectHandler {
         }
     }
 
+    protected ScenarioActivity context;
+    protected Button button;
+
     protected Stack<Object> pickedUpObjects;
     private SparkManager connectionManager;
 
@@ -56,10 +61,13 @@ public abstract class ObjectHandler {
     protected int attempts=0;
     protected long time;
 
-    public ObjectHandler(Context context, Testcase testcase) {
+    public ObjectHandler(ScenarioActivity context, Testcase testcase) {
+        this.context=context;
         pickedUpObjects=new Stack<>();
         connectionManager=SparkManager.getInstance();
         usedVibro=UsedVibro.Vibro0;
+
+        button=(Button)context.findViewById(R.id.button_finish);
 
         this.testcase=testcase;
 
@@ -72,31 +80,35 @@ public abstract class ObjectHandler {
         screenWidthInMM=screen[0];
         screenHeightInMM=screen[1];
 
-        Display mdisp = ((Activity)context).getWindowManager().getDefaultDisplay();
+        Display mdisp = context.getWindowManager().getDefaultDisplay();
         Point mdispSize = new Point();
         mdisp.getSize(mdispSize);
         screenWidthInPX = mdispSize.x;
         screenHeightInPX = mdispSize.y;
 
-        placeObjects();
-
-        if(testcase.isButtonOn())
-            startButtonThread();
-        startVibroThread();
-
-        time=System.currentTimeMillis();
         Log.d(getClass().getName(), "begin handling objects");
     }
 
     abstract void placeObjects();
     abstract void finishTestcase();
-    abstract void layDownObject(float x, float y);
+    public abstract void handleThreeFingerTap(float xFocus, float yFocus);
+    public abstract void handleScale(float scale, float xFocus, float yFocus);
+
+    protected void startTestCase() {
+        if(testcase.isButtonOn())
+            startButtonThread();
+        startVibroThread();
+
+        time=System.currentTimeMillis();
+        //TODO
+    }
 
     protected void stopTime() {
         long begin=time;
         time=System.currentTimeMillis()-begin;
     }
 
+    //TODO fix offsets
     protected float pixelsToMM(float pixels) {
         return pixels/(screenHeightInPX/screenHeightInMM);
     }
@@ -111,27 +123,26 @@ public abstract class ObjectHandler {
                 object.draw(canvas);
     }
 
-    public void handleScale(float scaleFactor, float xFocus, float yFocus) {
-        if (scaleFactor < 1.0f) {
-            for (Object object : testcase.getObjects())
-                if (object.getObjectState()==ObjectState.OnScreen && object.contains(xFocus, yFocus)) {
-                    pickUpObject(object);
-                }
-        } else if (scaleFactor > 1.0f) {
-            if(!pickedUpObjects.isEmpty())
-                layDownObject(xFocus, yFocus);
-        }
+    void layDownObject(float x, float y) {
+        Object picked=pickedUpObjects.pop();
+
+        for (Object object : testcase.getObjects())
+            if(picked.equals(object)) {
+                picked.setX(x - (picked.getSize() / 2));
+                picked.setY(y - (picked.getSize() / 2));
+                object.changeObjectState();
+            }
     }
 
-    public void handleMove(float x, float y, float dx, float dy) {
-        for(Object object : testcase.getObjects())
-            if (object.getObjectState()==ObjectState.OnScreen && object.contains(x, y))
-                object.move(dx, dy);
-    }
-
-    private void pickUpObject(Object object) {
+    void pickUpObject(Object object) {
         object.changeObjectState();
         pickedUpObjects.push(object);
+    }
+
+    public void handleMove(float xFocus, float yFocus, float dx, float dy) {
+        for(Object object : testcase.getObjects())
+            if (object.getObjectState()==ObjectState.OnScreen && object.contains(xFocus, yFocus))
+                object.move(dx, dy);
     }
 
     private void startVibroThread() {

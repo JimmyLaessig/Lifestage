@@ -32,6 +32,8 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
  */
 public class SelectionActivity extends BaseActivity {
     private FloatingActionButton fab;
+    private long time=0;
+    private volatile boolean running=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +47,36 @@ public class SelectionActivity extends BaseActivity {
         try {
             connectionManager.setIDandToken(XmlHelper.getIDandToken(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.inputXMLPath));
         } catch (Exception e) {
-            Toast.makeText(SelectionActivity.this, "Please make sure your XML Files are correct.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SelectionActivity.this, getString(R.string.xml_correct), Toast.LENGTH_SHORT).show();
         }
         connect();
         initializeList();
+        startConnectionThread();
+    }
+
+    private void startConnectionThread() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (running) {
+                    if (System.currentTimeMillis() - time >= 700) {
+                        final boolean connected=connectionManager.getStatus() == SparkManager.CONNECTED;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (connected) {
+                                    fab.setImageDrawable(ContextCompat.getDrawable(SelectionActivity.this, R.drawable.wifi_off));
+                                } else {
+                                    fab.setImageDrawable(ContextCompat.getDrawable(SelectionActivity.this, R.drawable.wifi_on));
+                                }
+                            }
+                        });
+                        time = System.currentTimeMillis();
+                    }
+                }
+            }
+        });
+        thread.start();
     }
 
     private View.OnClickListener btnListener = new View.OnClickListener() {
@@ -70,6 +98,7 @@ public class SelectionActivity extends BaseActivity {
     @Override
     protected void onDestroy () {
         super.onDestroy();
+        running=false;
         disconnect();
     }
 
@@ -83,7 +112,7 @@ public class SelectionActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 if(connectionManager.getStatus()!=SparkManager.CONNECTED) {
-                    Toast.makeText(SelectionActivity.this, "Please connect to SparkCore first.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SelectionActivity.this, getString(R.string.connectToCore), Toast.LENGTH_SHORT).show();
                     //return; TODO
                 }
 
@@ -147,13 +176,13 @@ public class SelectionActivity extends BaseActivity {
             String att;
             switch (testcases.get(position).getScenario()) {
                 case 1:
-                    att=" - Precision Test";
+                    att=" - "+getString(R.string.scenario1);
                     break;
                 case 2:
-                    att=" - Recreate Size";
+                    att=" - "+getString(R.string.scenario2);
                     break;
                 default:
-                    att=" - Playground";
+                    att=" - "+getString(R.string.scenario0);
             }
             String headerText = "Scenario " + testcases.get(position).getScenario() + att;
             holder.text.setText(headerText);

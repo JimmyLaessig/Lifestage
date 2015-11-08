@@ -17,6 +17,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -128,16 +130,34 @@ public class XmlHelper {
                     break;
                 case XmlPullParser.END_TAG:
                     name = xpp.getName();
-                    if (name.equals("Testcase") && testcases!=null && current!=null){
+                    if (name.equals("Testcase") && testcases!=null && current!=null) {
+                        Collections.sort(current.getObjects(), new Comparator<Object>() {
+                            @Override
+                            public int compare(Object o1, Object o2) {
+                                return Math.round(o2.getSize()-o1.getSize());
+                            }
+                        });
                         testcases.add(current);
                     }
             }
             eventType=xpp.next();
         }
+        Collections.sort(testcases, new Comparator<Testcase>() {
+            @Override
+            public int compare(Testcase t1, Testcase t2) {
+                return t1.getId()-t2.getId();
+            }
+        });
+        Collections.sort(testcases, new Comparator<Testcase>() {
+            @Override
+            public int compare(Testcase t1, Testcase t2) {
+                return t1.getScenario()-t2.getScenario();
+            }
+        });
         return testcases;
     }
 
-    public static void writeTestCase1Result(String filename, int userId, int id, int scenario, long time, int attempts, int screenPlacements, float accuracyDeviation) throws IOException, SAXException, ParserConfigurationException, TransformerException {
+    public static void writeTestCase1Result(String filename, int userId, int id, int scenario, float time, int attempts, int screenPlacements, float accuracyDeviation) throws IOException, SAXException, ParserConfigurationException, TransformerException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
         Document doc = docBuilder.parse(new File(filename));
@@ -181,7 +201,7 @@ public class XmlHelper {
         transformer.transform(new DOMSource(doc), new StreamResult(new File(filename)));
     }
 
-    public static void writeTestCase2Result(String filename, int userId, int id, int scenario, long time, float deviation) throws IOException, SAXException, ParserConfigurationException, TransformerException {
+    public static void writeTestCase2Result(String filename, int userId, int id, int scenario, float time, float deviation) throws IOException, SAXException, ParserConfigurationException, TransformerException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
         Document doc = docBuilder.parse(new File(filename));

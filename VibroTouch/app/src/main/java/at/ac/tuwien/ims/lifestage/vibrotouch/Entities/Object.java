@@ -53,6 +53,13 @@ public class Object {
         return Math.round(result);
     }
 
+    public void changeObjectState() {
+        if(this.objectState==ObjectState.OnScreen)
+            this.objectState = ObjectState.PickedUp;
+        else
+            this.objectState = ObjectState.OnScreen;
+    }
+
     public float getX() {
         return x;
     }
@@ -69,6 +76,10 @@ public class Object {
         this.y = y;
     }
 
+    public void setSize(float size) {
+        this.size = size;
+    }
+
     public float getSize() {
         return size;
     }
@@ -77,10 +88,23 @@ public class Object {
         return objectState;
     }
 
-    public void changeObjectState() {
-        if(this.objectState==ObjectState.OnScreen)
-            this.objectState = ObjectState.PickedUp;
-        else
-            this.objectState = ObjectState.OnScreen;
+    public float getMinSize() {
+        return minSize;
+    }
+
+    public void setMinSize(float minSize) {
+        this.minSize = minSize;
+    }
+
+    public float getMaxSize() {
+        return maxSize;
+    }
+
+    public void setMaxSize(float maxSize) {
+        this.maxSize = maxSize;
+    }
+
+    public void setPaint(int color) {
+        this.paint.setColor(color);
     }
 }

@@ -2,13 +2,21 @@
     <string name="app_name">VibroTouch</string>
     <string name="text_connected">connected</string>
     <string name="text_not_connected">not connected</string>
-    <string name="button1">Test vibrotactile feedback (placing of objects)</string>
-    <string name="button2">Test accuracy (resizing of object)</string>
     <string name="title_activity_selection">VibroTouch</string>
     <string name="heading">Select a Testcase!</string>
     <string name="testcase">Testcase</string>
     <string name="button">Button</string>
     <string name="on">ON</string>
     <string name="off">OFF</string>
-
+    <string name="ok">OK</string>
+    <string name="scenario0">Playground</string>
+    <string name="scenario1">Precision Test</string>
+    <string name="scenario2">Recreate Size</string>
+    <string name="finish">Finish</string>
+    <string name="saved">Saved result to XML.</string>
+    <string name="connectToCore">Please connect to SparkCore first.</string>
+    <string name="saveFailed">Something went wrong while saving.</string>
+    <string name="scenario1welcome">Pick up all the objects. Afterwards try to put them down on the corresponding "holes". Try to be exact.</string>
+    <string name="scenario2welcome">Pick up the object. After that another object will appear. Try to scale the second object to the same size as the first object!</string>
+    <string name="xml_correct">Please make sure your XML Files are correct.</string>
 </resources>
