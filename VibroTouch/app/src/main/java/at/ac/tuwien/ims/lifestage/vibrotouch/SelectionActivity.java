@@ -7,12 +7,19 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
+import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,6 +27,7 @@ import java.util.List;
 
 import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Testcase;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.SparkManager;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Util.UserPreferences;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
@@ -32,8 +40,11 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
  */
 public class SelectionActivity extends BaseActivity {
     private FloatingActionButton fab;
-    private long time=0;
+    private NiftyDialogBuilder dialogBuilder;
+    private EditText userID;
+
     private volatile boolean running=true;
+    private long time=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +53,7 @@ public class SelectionActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(btnListener);
         try {
@@ -49,9 +61,66 @@ public class SelectionActivity extends BaseActivity {
         } catch (Exception e) {
             Toast.makeText(SelectionActivity.this, getString(R.string.xml_correct), Toast.LENGTH_SHORT).show();
         }
+        createIDDialog();
         connect();
         initializeList();
         startConnectionThread();
+
+        if(UserPreferences.getCurrentUserID(this)==null)
+            dialogBuilder.show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_user) {
+            dialogBuilder.show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void createIDDialog() {
+        View nameView = getLayoutInflater().inflate(R.layout.dialog_userid, null, false);
+        userID=(EditText)(nameView.findViewById(R.id.dialog_edittext_field));
+        String curr= UserPreferences.getCurrentUserID(this)==null ? "not set yet" : UserPreferences.getCurrentUserID(this);
+        userID.setHint("Current: "+curr);
+
+        dialogBuilder= NiftyDialogBuilder.getInstance(SelectionActivity.this);
+        dialogBuilder.setCancelable(false);
+        dialogBuilder
+                .withEffect(Effectstype.Fadein)
+                .isCancelableOnTouchOutside(false)
+                .setCustomView(nameView, SelectionActivity.this)
+                .withTitle(getString(R.string.setUserid))
+                .withTitleColor("#000000")
+                .withMessageColor("#000000")
+                .withDialogColor("#f9f9f9")
+                .withButton1Text(getString(R.string.ok))
+                .setButton1Click(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (userID.getText().length() != 0) {
+                            String id = userID.getText().toString();
+                            UserPreferences.saveUserID(SelectionActivity.this, id);
+                        }
+                        dialogBuilder.dismiss();
+                        createIDDialog();
+                    }
+                })
+                .withButton2Text(getString(R.string.cancel))
+                .setButton2Click(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialogBuilder.dismiss();
+                        createIDDialog();
+                    }
+                });
     }
 
     private void startConnectionThread() {

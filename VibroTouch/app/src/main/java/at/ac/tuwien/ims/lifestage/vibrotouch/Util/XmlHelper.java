@@ -19,6 +19,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -123,7 +125,7 @@ public class XmlHelper {
                         if (current.getScenario()==1) {
                             float x=Float.parseFloat(xpp.getAttributeValue(null, "posX"));
                             float y=Float.parseFloat(xpp.getAttributeValue(null, "posY"));
-                            current.addObject(new Object(size, x, y, minSize, maxSize, Color.RED));
+                            current.addObject(new Object(size, x-size/2f, y-size/2f, minSize, maxSize, Color.RED));
                         } else if (current.getScenario()==2)
                             current.addObject(new Object(size, 0, 0, minSize, maxSize, Color.RED));
                     }
@@ -157,7 +159,7 @@ public class XmlHelper {
         return testcases;
     }
 
-    public static void writeTestCase1Result(String filename, int userId, int id, int scenario, float time, int attempts, int screenPlacements, float accuracyDeviation) throws IOException, SAXException, ParserConfigurationException, TransformerException {
+    public static void writeTestCase1Result(String filename, String userId, int id, int scenario, float time, int errors, int screenPlacements, Map<Integer, Float> accuracyDeviation) throws IOException, SAXException, ParserConfigurationException, TransformerException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
         Document doc = docBuilder.parse(new File(filename));
@@ -172,7 +174,7 @@ public class XmlHelper {
         testcase.setAttributeNode(attr_id);
 
         Attr attr_userId = doc.createAttribute("userId");
-        attr_userId.setValue(userId+"");
+        attr_userId.setValue(userId);
         testcase.setAttributeNode(attr_userId);
 
         Attr attr_scenario = doc.createAttribute("scenario");
@@ -183,25 +185,28 @@ public class XmlHelper {
         attr_time.setValue(time+"");
         testcase.setAttributeNode(attr_time);
 
-        Attr attr_attempts = doc.createAttribute("attempts");
-        attr_attempts.setValue(attempts+"");
-        testcase.setAttributeNode(attr_attempts);
+        Attr attr_errors = doc.createAttribute("errors");
+        attr_errors.setValue(errors+"");
+        testcase.setAttributeNode(attr_errors);
 
         Attr attr_screenPlacements = doc.createAttribute("screenPlacements");
-        attr_screenPlacements.setValue(screenPlacements+"");
+        attr_screenPlacements.setValue(screenPlacements + "");
         testcase.setAttributeNode(attr_screenPlacements);
 
-        Attr attr_accuracyDeviation = doc.createAttribute("accuracyDeviation");
-        attr_accuracyDeviation.setValue(accuracyDeviation+"");
-        testcase.setAttributeNode(attr_accuracyDeviation);
-
+        int i=0;
+        for(Integer key : accuracyDeviation.keySet()) {
+            Attr attr_accuracyDeviation = doc.createAttribute("deviationObject"+i);
+            attr_accuracyDeviation.setValue(accuracyDeviation.get(key) + "");
+            testcase.setAttributeNode(attr_accuracyDeviation);
+            i++;
+        }
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         transformer.transform(new DOMSource(doc), new StreamResult(new File(filename)));
     }
 
-    public static void writeTestCase2Result(String filename, int userId, int id, int scenario, float time, float deviation) throws IOException, SAXException, ParserConfigurationException, TransformerException {
+    public static void writeTestCase2Result(String filename, String userId, int id, int scenario, float time, float deviation) throws IOException, SAXException, ParserConfigurationException, TransformerException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
         Document doc = docBuilder.parse(new File(filename));
@@ -216,7 +221,7 @@ public class XmlHelper {
         testcase.setAttributeNode(attr_id);
 
         Attr attr_userId = doc.createAttribute("userId");
-        attr_userId.setValue(userId+"");
+        attr_userId.setValue(userId);
         testcase.setAttributeNode(attr_userId);
 
         Attr attr_scenario = doc.createAttribute("scenario");

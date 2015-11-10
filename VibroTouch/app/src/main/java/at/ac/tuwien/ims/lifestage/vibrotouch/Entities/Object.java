@@ -13,6 +13,8 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Scenario.ObjectState;
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
 public class Object {
+    private static int ID_COUNTER=0;
+    private int id;
     private Paint paint;
     private float x, y, size, minSize, maxSize;
     private ObjectState objectState;
@@ -28,6 +30,8 @@ public class Object {
         this.minSize =minSize;
         this.maxSize =maxSize;
         this.objectState=ObjectState.OnScreen;
+        this.id=ID_COUNTER;
+        ID_COUNTER++;
     }
 
     public void draw(Canvas canvas) {
@@ -58,6 +62,26 @@ public class Object {
             this.objectState = ObjectState.PickedUp;
         else
             this.objectState = ObjectState.OnScreen;
+    }
+
+    public float getCenterX() {
+        return x+(getSize()/2f);
+    }
+
+    public float getCenterY() {
+        return y+(getSize()/2f);
+    }
+
+    public float distTo(Object object) {
+        float devX=getCenterX()-object.getCenterX();
+        float devY=getCenterY()-object.getCenterY();
+        return (float)Math.sqrt(Math.pow(devX, 2) + Math.pow(devY, 2));
+    }
+
+    public float distTo(RectF rect) {
+        float devX=rect.centerX()-getCenterX();
+        float devY=rect.centerY()-getCenterY();
+        return (float)Math.sqrt(Math.pow(devX, 2) + Math.pow(devY, 2));
     }
 
     public float getX() {
@@ -106,5 +130,9 @@ public class Object {
 
     public void setPaint(int color) {
         this.paint.setColor(color);
+    }
+
+    public int getId() {
+        return id;
     }
 }

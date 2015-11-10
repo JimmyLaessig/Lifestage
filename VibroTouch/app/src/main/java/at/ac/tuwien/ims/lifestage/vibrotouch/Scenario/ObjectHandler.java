@@ -20,6 +20,7 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Testcase;
 import at.ac.tuwien.ims.lifestage.vibrotouch.R;
 import at.ac.tuwien.ims.lifestage.vibrotouch.ScenarioActivity;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.SparkManager;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Util.UserPreferences;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
 
 /**
@@ -58,9 +59,11 @@ public abstract class ObjectHandler {
     protected Testcase testcase;
     protected float screenWidthInPX, screenHeightInPX, screenWidthInMM, screenHeightInMM;
 
-    protected int attempts=0;
     protected long time;
 
+    protected String userID;
+
+    //TODO try on different phone...
     public ObjectHandler(ScenarioActivity context, Testcase testcase) {
         this.context=context;
         pickedUpObjects=new Stack<>();
@@ -86,6 +89,8 @@ public abstract class ObjectHandler {
         screenWidthInPX = mdispSize.x;
         screenHeightInPX = mdispSize.y;
 
+        userID=UserPreferences.getCurrentUserID(context);
+
         Log.d(getClass().getName(), "begin handling objects");
     }
 
@@ -100,7 +105,6 @@ public abstract class ObjectHandler {
         startVibroThread();
 
         time=System.currentTimeMillis();
-        //TODO
     }
 
     protected void stopTime() {
@@ -108,13 +112,12 @@ public abstract class ObjectHandler {
         time=System.currentTimeMillis()-begin;
     }
 
-    //TODO fix offsets
     protected float pixelsToMM(float pixels) {
-        return pixels/(screenHeightInPX/screenHeightInMM);
+        return pixels/(screenWidthInPX/screenWidthInMM);
     }
 
     protected float mmToPixels(float mm) {
-        return mm/(screenHeightInMM/screenHeightInPX);
+        return mm/(screenWidthInMM/screenWidthInPX);
     }
 
     public void draw(Canvas canvas) {
@@ -139,11 +142,11 @@ public abstract class ObjectHandler {
         pickedUpObjects.push(object);
     }
 
-    public void handleMove(float xFocus, float yFocus, float dx, float dy) {
+    /*public void handleMove(float xFocus, float yFocus, float dx, float dy) {
         for(Object object : testcase.getObjects())
             if (object.getObjectState()==ObjectState.OnScreen && object.contains(xFocus, yFocus))
                 object.move(dx, dy);
-    }
+    }*/
 
     private void startVibroThread() {
         Thread thread = new Thread(new Runnable() {

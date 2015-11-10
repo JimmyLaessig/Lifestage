@@ -83,7 +83,7 @@ public class ObjectHandlerScenario2 extends ObjectHandler {
         try {
             XmlHelper.writeTestCase2Result(
                     Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.outputtXMLPath,
-                    2, //TODO
+                    userID,
                     testcase.getId(),
                     testcase.getScenario(),
                     timeEnd,

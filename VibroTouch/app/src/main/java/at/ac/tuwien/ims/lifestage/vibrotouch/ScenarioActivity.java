@@ -21,7 +21,6 @@ public class ScenarioActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scenario);
-
         Testcase testcase=null;
         try {
             int id=getIntent().getIntExtra("testcase", 0);
@@ -31,19 +30,21 @@ public class ScenarioActivity extends BaseActivity {
         } catch(Exception e){
             e.printStackTrace();
         }
-        switch(testcase.getScenario()) {
-            case 1:
-                objectHandler=new ObjectHandlerScenario1(this, testcase);
-                break;
-            case 2:
-                objectHandler=new ObjectHandlerScenario2(this, testcase);
-                break;
-            default:
-                objectHandler=new ObjectHandlerPlayground(this, testcase);
+        if(testcase!=null) {
+            switch (testcase.getScenario()) {
+                case 1:
+                    objectHandler = new ObjectHandlerScenario1(this, testcase);
+                    break;
+                case 2:
+                    objectHandler = new ObjectHandlerScenario2(this, testcase);
+                    break;
+                default:
+                    objectHandler = new ObjectHandlerPlayground(this, testcase);
+            }
+            ((DrawView) findViewById(R.id.drawview)).setObjectHandler(objectHandler);
         }
-        ((DrawView)findViewById(R.id.drawview)).setObjectHandler(objectHandler);
-
     }
+
     @Override
     public void onPause() {
         super.onPause();
