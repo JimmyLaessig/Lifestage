@@ -1,13 +1,12 @@
 package at.ac.tuwien.ims.lifestage.vibrotouch.Scenario;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Display;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,9 +48,9 @@ public abstract class ObjectHandler {
     private SparkManager connectionManager;
 
     private UsedVibro usedVibro;
-    private final long pauseBetweenVibes=1000L;
-    private final long pauseAfterVibe=400L;
-    private final long durationOfVibe=100L;
+    private final long pauseBetweenVibes=750L;
+    private final long pauseAfterVibe=250L;
+    private final long durationOfVibe=250L;
 
     private volatile boolean vibroThreadRunning = true;
     private volatile boolean buttonThreadRunning = true;
@@ -63,7 +62,6 @@ public abstract class ObjectHandler {
 
     protected String userID;
 
-    //TODO try on different phone...
     public ObjectHandler(ScenarioActivity context, Testcase testcase) {
         this.context=context;
         pickedUpObjects=new Stack<>();
@@ -157,13 +155,30 @@ public abstract class ObjectHandler {
                         if (!pickedUpObjects.isEmpty()) {
                             ArrayList<Event> events = new ArrayList<>();
                             for (Object o : pickedUpObjects) {
-                                events.add(new Event(usedVibro.getID(), 0, o.getIntensity(testcase.getMinIntensity(), testcase.getMaxIntensity()), durationOfVibe, pauseAfterVibe));
+                                //min 250, max 750
+                                /*long durationOfVibe=o.calculateDuration(250, 750);
+                                events.add(
+                                        new Event(
+                                                usedVibro.getID(),
+                                                100 ,
+                                                100 ,
+                                                durationOfVibe,
+                                                pauseAfterVibe));*/
+                                events.add(
+                                        new Event(
+                                                usedVibro.getID(),
+                                                o.getIntensity(testcase.getMinIntensity(),testcase.getMaxIntensity()),
+                                                o.getIntensity(testcase.getMinIntensity(), testcase.getMaxIntensity()),
+                                                durationOfVibe,
+                                                pauseAfterVibe));
                             }
                             Collections.reverse(events);
                             while(!events.isEmpty()) {
                                 sendEvent(events.get(0));
+                                long dur=events.get(0).getDuration();
+                                long pause=events.get(0).getPauseAfter();
                                 events.remove(0);
-                                Thread.sleep(durationOfVibe+pauseAfterVibe+1L);
+                                Thread.sleep(dur+pause+1L);
                             }
                             Thread.sleep(pauseBetweenVibes);
                         }
@@ -183,6 +198,9 @@ public abstract class ObjectHandler {
             public void run() {
                 while (buttonThreadRunning) {
                     try {
+                        if(connectionManager.getStatus()==SparkManager.NOT_CONNECTED) {
+                            Toast.makeText(context, context.getResources().getString(R.string.connectionLost), Toast.LENGTH_SHORT).show();
+                        }
                         if (connectionManager.getButtonStateChanged()) {
                             if(usedVibro==UsedVibro.Vibro0) {
                                 usedVibro=UsedVibro.Vibro1;

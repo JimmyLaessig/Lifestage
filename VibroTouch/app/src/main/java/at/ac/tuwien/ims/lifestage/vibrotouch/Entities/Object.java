@@ -50,10 +50,32 @@ public class Object {
         return false;
     }
 
+    public boolean intersects(RectF object) {
+        RectF ra=new RectF(getX(), getY(), getX()+getSize(), getY()+getSize());
+        return ra.intersect(object);
+    }
+
     public int getIntensity(int minIntesity, int maxIntesity) {
-        float s=getSize()>maxSize? maxSize : getSize();
-        s=getSize()<minSize? minSize : getSize();
+        float s=getSize();
+        if(s>maxSize) {
+            s=maxSize;
+        }
+        if(s<minSize) {
+            s=minSize;
+        }
         float result = (float)minIntesity + (((float)maxIntesity - (float)minIntesity) / (maxSize - minSize)) * (s - minSize);
+        return Math.round(result);
+    }
+
+    public long calculateDuration(long minTime, long maxTime) {
+        float s=getSize();
+        if(s>maxSize) {
+            s=maxSize;
+        }
+        if(s<minSize) {
+            s=minSize;
+        }
+        float result = (float)minTime + (((float)maxTime - (float)minTime) / (maxSize - minSize)) * (s - minSize);
         return Math.round(result);
     }
 

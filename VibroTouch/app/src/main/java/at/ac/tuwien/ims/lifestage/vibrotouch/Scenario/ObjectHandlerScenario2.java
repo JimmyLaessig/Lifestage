@@ -1,7 +1,5 @@
 package at.ac.tuwien.ims.lifestage.vibrotouch.Scenario;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Environment;
@@ -31,7 +29,7 @@ public class ObjectHandlerScenario2 extends ObjectHandler {
     private NiftyDialogBuilder dialogBuilder;
     private boolean pickedUp;
 
-    public ObjectHandlerScenario2(ScenarioActivity context, Testcase testcase){
+    public ObjectHandlerScenario2(final ScenarioActivity context, Testcase testcase){
         super(context, testcase);
         pickedUp=false;
         placeObjects();
@@ -55,7 +53,6 @@ public class ObjectHandlerScenario2 extends ObjectHandler {
                     }
                 })
                 .show();
-        button.setVisibility(View.VISIBLE);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,8 +69,7 @@ public class ObjectHandlerScenario2 extends ObjectHandler {
         object.setY(screenHeightInPX / 2 - object.getSize() / 2);
         object.setMinSize(mmToPixels(object.getMinSize()));
         object.setMaxSize(mmToPixels(object.getMaxSize()));
-        Random rnd = new Random();
-        object.setPaint(Color.rgb(rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255)));
+        object.setPaint(Color.parseColor("#FFA07A"));
     }
 
     void finishTestcase() {
@@ -109,10 +105,11 @@ public class ObjectHandlerScenario2 extends ObjectHandler {
                         0, 0,
                         min,
                         max,
-                        Color.rgb(rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255)));
+                        Color.parseColor("#98FB98"));
                 object.setX(screenWidthInPX / 2 - object.getSize() / 2);
                 object.setY(screenHeightInPX / 2 - object.getSize() / 2);
                 testcase.addObject(object);
+                button.setVisibility(View.VISIBLE);
             }
     }
 

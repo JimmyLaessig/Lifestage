@@ -392,11 +392,4 @@ public class SparkManager {
     public void setButtonStateChangedRecognized() {
         commThread.setButtonStateChanged(false);
     }
-
-    public boolean getEventDone() {
-        return commThread.getEventDone();
-    }
-    public void setEventDone(boolean a) {
-        commThread.setEventDone(a);
-    }
 }

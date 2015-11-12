@@ -182,7 +182,7 @@ public class SelectionActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 if(connectionManager.getStatus()!=SparkManager.CONNECTED) {
                     Toast.makeText(SelectionActivity.this, getString(R.string.connectToCore), Toast.LENGTH_SHORT).show();
-                    //return; TODO
+                    return;
                 }
 
                 Intent myIntent = new Intent(SelectionActivity.this, ScenarioActivity.class);
@@ -226,7 +226,7 @@ public class SelectionActivity extends BaseActivity {
                 holder = (ViewHolder) convertView.getTag();
             }
             Testcase testcase=testcases.get(position);
-            holder.text.setText(getString(R.string.testcase) + " " + testcase.getId() + " (" + testcase.getObjects().size() + " Object(s), MinIntensity: "+ testcase.getMinIntensity()+ "/MaxIntensity: "+testcase.getMaxIntensity() +")");
+            holder.text.setText(getString(R.string.testcase) + " " + testcase.getId() /*+ " (" + testcase.getObjects().size() + " Object(s), MinIntensity: "+ testcase.getMinIntensity()+ "/MaxIntensity: "+testcase.getMaxIntensity() +")"*/);
 
             return convertView;
         }

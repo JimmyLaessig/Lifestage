@@ -106,7 +106,6 @@ public class XmlHelper {
             switch (eventType){
                 case XmlPullParser.START_DOCUMENT:
                     testcases = new ArrayList<>();
-                    testcases.add(new Testcase(0, 0, true, 10, 100));
                     break;
                 case XmlPullParser.START_TAG:
                     name = xpp.getName();
@@ -122,7 +121,7 @@ public class XmlHelper {
                         current.setMaxIntensity(Integer.parseInt(xpp.getAttributeValue(null, "maxIntensity")));
                     } else if (current != null && name.equals("Object")) {
                         int size=Integer.parseInt(xpp.getAttributeValue(null, "size"));
-                        if (current.getScenario()==1) {
+                        if (current.getScenario()==0 || current.getScenario()==1) {
                             float x=Float.parseFloat(xpp.getAttributeValue(null, "posX"));
                             float y=Float.parseFloat(xpp.getAttributeValue(null, "posY"));
                             current.addObject(new Object(size, x-size/2f, y-size/2f, minSize, maxSize, Color.RED));

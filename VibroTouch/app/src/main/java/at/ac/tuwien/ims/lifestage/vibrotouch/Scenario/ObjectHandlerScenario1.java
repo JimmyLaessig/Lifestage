@@ -31,7 +31,7 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
  * Application: VibroTouch
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
-public class ObjectHandlerScenario1 extends ObjectHandler {
+public class ObjectHandlerScenario1 extends ObjectHandler { //pickup mit skalierung
     private NiftyDialogBuilder dialogBuilder;
     private int errors=0;
     private int screenPlacements=0;
@@ -152,7 +152,7 @@ public class ObjectHandlerScenario1 extends ObjectHandler {
     }
 
     public void handleThreeFingerTap(float xFocus, float yFocus) {
-        for (Object object : testcase.getObjects())
+        /*for (Object object : testcase.getObjects())
             if (object.getObjectState()==ObjectState.OnScreen && object.contains(xFocus, yFocus)) {
                 pickUpObject(object);
                 return;
@@ -179,8 +179,9 @@ public class ObjectHandlerScenario1 extends ObjectHandler {
                     float devX=rect.centerX()-xFocus;
                     float devY=rect.centerY()-yFocus;
                     float dist=(float)Math.sqrt(Math.pow(devX, 2) + Math.pow(devY, 2));
-                    if(dist > obj.getSize()/2f) { //TODO how much of a difference?
+                    if(dist > obj.getMinSize()) {
                         errors++;
+                        Toast.makeText(context, context.getResources().getString(R.string.placeOnRightTarget), Toast.LENGTH_SHORT).show();
                         return;
                     }
                     layDownObject(xFocus, yFocus);
@@ -189,10 +190,62 @@ public class ObjectHandlerScenario1 extends ObjectHandler {
                     }
                 }
             }
-        }
+        }*/
     }
 
     public void handleScale(float scale, float xFocus, float yFocus) {
+        if (scale<=1.0) {
+            for (Object object : testcase.getObjects())
+                if (object.getObjectState()==ObjectState.OnScreen && object.contains(xFocus, yFocus)) {
+                    pickUpObject(object);
+                    return;
+                }
+        } else {
+            if(!pickedUpObjects.isEmpty()) {
+                int i=0;
+                for (Object object : testcase.getObjects()) {
+                    Object object1=pickedUpObjects.peek();
+                    RectF rectF = new RectF(xFocus-object1.getSize()/2, yFocus-object1.getSize()/2, xFocus+object1.getSize()/2, yFocus+object1.getSize()/2);
+                    if (object.getObjectState() == ObjectState.OnScreen && object.intersects(rectF)) {
+                        i++;
+                    }
+                }
+                if(i==0) {
+                    int white=0, black=0;
+                    for (Object object : testcase.getObjects())
+                        if(object.getObjectState()==ObjectState.OnScreen)
+                            if((object.getY()+object.getSize()/2f)<screenHeightInPX/2)
+                                white++;
+                            else
+                                black++;
+
+                    if(yFocus<screenHeightInPX/2) { //white part
+                        if(black==0) {
+                            layDownObject(xFocus, yFocus);
+                            screenPlacements++;
+                        }
+                    } else { //black part
+                        if(white==0) {
+                            Object obj=pickedUpObjects.peek();
+                            RectF rect=targets.get(obj.getId());
+                            float devX=rect.centerX()-xFocus;
+                            float devY=rect.centerY()-yFocus;
+                            float dist=(float)Math.sqrt(Math.pow(devX, 2) + Math.pow(devY, 2));
+                            if(dist > obj.getMinSize()) {
+                                errors++;
+                                Toast.makeText(context, context.getResources().getString(R.string.placeOnRightTarget), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            layDownObject(xFocus, yFocus);
+                            if(pickedUpObjects.isEmpty()) {
+                                finishTestcase();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         /*for (Object object : testcase.getObjects())
             if (object.getObjectState()==ObjectState.OnScreen && object.contains(xFocus, yFocus)) {
                 float oldSize=object.getSize();

@@ -12,6 +12,7 @@ import android.view.View;
 import java.util.ArrayList;
 
 import at.ac.tuwien.ims.lifestage.vibrotouch.Scenario.ObjectHandler;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Scenario.ObjectHandlerScenario2;
 
 /**
  * A view where objects are drawn and interacted with.
@@ -28,7 +29,7 @@ public class DrawView extends View {
 
     private ObjectHandler objectHandler=null;
 
-    private long last3Touch=0;
+    private long lastScale=0, last3Touch=0;
 
     public DrawView(Context context) {
         super(context);
@@ -94,11 +95,11 @@ public class DrawView extends View {
                 mLastTouchY = y;
                 */
                 if (!mScaleDetector.isInProgress())
-                    if((System.currentTimeMillis()-last3Touch)>=200 && pointerCount==3) {
+                    if(pointerCount==1 && (System.currentTimeMillis()-last3Touch)>=250) {
                         ArrayList<PointF> points=new ArrayList<>();
                         points.add(new PointF(MotionEventCompat.getX(ev, 0), MotionEventCompat.getY(ev, 0)));
-                        points.add(new PointF(MotionEventCompat.getX(ev, 1), MotionEventCompat.getY(ev, 1)));
-                        points.add(new PointF(MotionEventCompat.getX(ev, 2), MotionEventCompat.getY(ev, 2)));
+                        /*points.add(new PointF(MotionEventCompat.getX(ev, 1), MotionEventCompat.getY(ev, 1)));
+                        points.add(new PointF(MotionEventCompat.getX(ev, 2), MotionEventCompat.getY(ev, 2)));*/
                         float[] coords=centroid(points);
                         if(objectHandler!=null)
                             objectHandler.handleThreeFingerTap(coords[0], coords[1]);
@@ -142,8 +143,15 @@ public class DrawView extends View {
             x=detector.getFocusX();
             y=detector.getFocusY();
 
-            if(objectHandler!=null)
-                objectHandler.handleScale(scale, x, y);
+            if (objectHandler != null)
+                if(objectHandler instanceof ObjectHandlerScenario2) {
+                    objectHandler.handleScale(scale, x, y);
+                } else {
+                    if ((System.currentTimeMillis() - lastScale) >= 25) {
+                        objectHandler.handleScale(scale, x, y);
+                        lastScale = System.currentTimeMillis();
+                    }
+                }
             invalidate();
             return true;
         }

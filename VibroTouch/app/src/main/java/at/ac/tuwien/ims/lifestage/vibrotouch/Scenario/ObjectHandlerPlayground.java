@@ -1,7 +1,9 @@
 package at.ac.tuwien.ims.lifestage.vibrotouch.Scenario;
 
-import android.content.Context;
 import android.graphics.Color;
+import android.graphics.RectF;
+
+import java.util.Random;
 
 import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Object;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Testcase;
@@ -13,20 +15,23 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.ScenarioActivity;
  * Application: VibroTouch
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
-public class ObjectHandlerPlayground extends ObjectHandler {
+public class ObjectHandlerPlayground extends ObjectHandler { //keine skalierung, pickup mit skalierung
     public ObjectHandlerPlayground(ScenarioActivity context, Testcase testcase){
         super(context, testcase);
+        placeObjects();
         startTestCase();
     }
 
     void placeObjects() {
-        Object o1=new Object(mmToPixels(10), mmToPixels(34.5f), mmToPixels(20), mmToPixels(10), mmToPixels(30), Color.RED);
-        Object o2=new Object(mmToPixels(20), mmToPixels(29.5f), mmToPixels(55), mmToPixels(10), mmToPixels(30), Color.BLUE);
-        Object o3=new Object(mmToPixels(30), mmToPixels(24.5f), mmToPixels(90), mmToPixels(10), mmToPixels(30), Color.BLACK);
-
-        testcase.addObject(o3);
-        testcase.addObject(o2);
-        testcase.addObject(o1);
+        Random rnd = new Random();
+        for(Object object : testcase.getObjects()) {
+            object.setSize(mmToPixels(object.getSize()));
+            object.setX(mmToPixels(object.getX()));
+            object.setY(mmToPixels(object.getY()));
+            object.setMinSize(mmToPixels(object.getMinSize()));
+            object.setMaxSize(mmToPixels(object.getMaxSize()));
+            object.setPaint(Color.rgb(rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255)));
+        }
     }
 
     void finishTestcase() {
@@ -34,17 +39,38 @@ public class ObjectHandlerPlayground extends ObjectHandler {
     }
 
     public void handleThreeFingerTap(float xFocus, float yFocus) {
-        for (Object object : testcase.getObjects())
+        /*for (Object object : testcase.getObjects())
             if (object.getObjectState()==ObjectState.OnScreen && object.contains(xFocus, yFocus)) {
                 pickUpObject(object);
                 return;
             }
         if(!pickedUpObjects.isEmpty())
-            layDownObject(xFocus, yFocus);
+            layDownObject(xFocus, yFocus);*/
     }
 
     public void handleScale(float scale, float xFocus, float yFocus) {
-        for (Object object : testcase.getObjects())
+        if (scale<1.0) {
+            for (Object object : testcase.getObjects())
+                if (object.getObjectState()==ObjectState.OnScreen && object.contains(xFocus, yFocus)) {
+                    pickUpObject(object);
+                    return;
+                }
+        } else {
+            if(!pickedUpObjects.isEmpty()) {
+                int i=0;
+                for (Object object : testcase.getObjects()) {
+                    Object object1=pickedUpObjects.peek();
+                    RectF rectF = new RectF(xFocus-object1.getSize()/2, yFocus-object1.getSize()/2, xFocus+object1.getSize()/2, yFocus+object1.getSize()/2);
+                    if (object.getObjectState() == ObjectState.OnScreen && object.intersects(rectF)) {
+                        i++;
+                    }
+                }
+                if(i==0)
+                    layDownObject(xFocus, yFocus);
+            }
+        }
+
+        /*for (Object object : testcase.getObjects())
             if (object.getObjectState()==ObjectState.OnScreen && object.contains(xFocus, yFocus)) {
                 float oldSize=object.getSize();
 
@@ -58,6 +84,6 @@ public class ObjectHandlerPlayground extends ObjectHandler {
                 float diff=newSize-oldSize;
                 object.setX(object.getX()-diff/2f);
                 object.setY(object.getY() - diff / 2f);
-            }
+            }*/
     }
 }

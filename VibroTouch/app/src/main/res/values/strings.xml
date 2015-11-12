@@ -16,6 +16,8 @@
     <string name="scenario1">Precision Test</string>
     <string name="scenario2">Recreate Size</string>
     <string name="finish">Finish</string>
+    <string name="placeOnRightTarget">Please place the Object on the correct target space.</string>
+    <string name="connectionLost">Connection lost. Please return to menu.</string>
     <string name="saved">Saved result to XML.</string>
     <string name="connectToCore">Please connect to SparkCore first.</string>
     <string name="saveFailed">Something went wrong while saving.</string>
