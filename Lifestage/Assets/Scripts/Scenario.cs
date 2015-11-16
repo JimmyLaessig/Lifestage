@@ -7,7 +7,6 @@ using System.Text;
 
 public class Scenario
 {
-
     private List<TestCase> openTestCases;
     private List<TestCase> allTestCases;
     private TestCase currentTestCase;

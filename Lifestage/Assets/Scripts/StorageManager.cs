@@ -6,18 +6,28 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
 using System.Text;
+using System.Linq;
 
 public class StorageManager : MonoBehaviour
 {
     private static StorageManager instance;
 #if !UNITY_EDITOR
-    private static string SCENARIO_FILE_PATH = "/sdcard/lifestage_testcases.xml";
+	private static string SCENARIO_FILE_PATH0= "/sdcard/lifestage_testcases0.xml";
+	private static string SCENARIO_FILE_PATH1 = "/sdcard/lifestage_testcases1.xml";
+	private static string SCENARIO_FILE_PATH2 = "/sdcard/lifestage_testcases2.xml";
+	private static string SCENARIO_FILE_PATH3 = "/sdcard/lifestage_testcases3.xml";
 	private static string OUTPUT_FILE_PATH = "/sdcard/lifestage_output.xml";
 #else
-    private static string SCENARIO_FILE_PATH = "lifestage_testcases.xml";
+	private static string SCENARIO_FILE_PATH1 = "lifestage_testcases0.xml";
+	private static string SCENARIO_FILE_PATH0 = "lifestage_testcases1.xml";
+	private static string SCENARIO_FILE_PATH2 = "lifestage_testcases2.xml";
+	private static string SCENARIO_FILE_PATH3 = "lifestage_testcases3.xml";
 	private static string OUTPUT_FILE_PATH = "lifestage_output.xml";
 #endif
     private static string SOLVED_TESTCASES_KEY = "solvedCasesKey";
+
+	private List<int> scenarioQueue;
+	private int scenario = 0;
 
     /// <summary>
     /// Returns an instance of the StorageManager
@@ -30,9 +40,29 @@ public class StorageManager : MonoBehaviour
 
     void Awake()
     {
-        if (!StorageManager.instance)
-            StorageManager.instance = this;
+        if (!StorageManager.instance) {
+			StorageManager.instance = this;
+
+			scenarioQueue = Enumerable.Range(1, 3).ToList();
+			scenarioQueue=Shuffle(scenarioQueue);
+			scenarioQueue.Insert(0, 0);
+		}
     }
+
+	private List<int> Shuffle(List<int> list)  
+	{  
+		List<int> ret = list;
+		System.Random rng = new System.Random();
+		int n = ret.Count;  
+		while (n > 1) {  
+			n--;  
+			int k = rng.Next(n + 1);  
+			int value = ret[k];  
+			ret[k] = ret[n];  
+			ret[n] = value;  
+		}  
+		return ret;
+	}
 
     /// <summary>
     /// Loads a scenario from the given XML-File. 
@@ -45,8 +75,7 @@ public class StorageManager : MonoBehaviour
         try
         {
             XmlDocument doc = new XmlDocument();
-            doc.Load(SCENARIO_FILE_PATH);
-
+			doc.Load(getCurrentFileName());
             XmlElement root = doc.DocumentElement;
             XmlNodeList list = root.GetElementsByTagName("TestCase");
             for (int i = 0; i < list.Count; i++)
@@ -68,17 +97,44 @@ public class StorageManager : MonoBehaviour
             }
             if (list.Count == 0)
             {
-                UIController.Instance.ReportError(SCENARIO_FILE_PATH + ": No TestCases found!");
+				UIController.Instance.ReportError(getCurrentFileName() + ": No TestCases found!");
             }
         }
         catch (Exception ex)
 		{
 			Debug.Log("Xml Loading: " + ex.ToString());
-            UIController.Instance.ReportError(SCENARIO_FILE_PATH + " not found or is invalid! Please make sure that the corresponding file exists and is well formed!");
+			UIController.Instance.ReportError(getCurrentFileName() + " not found or is invalid! Please make sure that the corresponding file exists and is well formed!");
         }
 
         return scenario;
     }
+
+	public Scenario NextScenario()
+	{
+		scenario++;
+		return LoadScenario();
+	}
+
+	private string getCurrentFileName() {
+		switch(getCurrentScenarioNumber()) {
+		case 1:
+			return SCENARIO_FILE_PATH1;
+			break;
+		case 2:
+			return SCENARIO_FILE_PATH2;
+			break;
+		case 3:
+			return SCENARIO_FILE_PATH3;
+			break;
+		default:
+			return SCENARIO_FILE_PATH0;
+			break;
+		}
+	}
+
+	public int getCurrentScenarioNumber(){
+		return scenarioQueue.ElementAt(scenario);
+	}
 
     /// <summary>
     /// Removes all stored information about previously solved TestCases
@@ -133,8 +189,8 @@ public class StorageManager : MonoBehaviour
 	/// </summary>
 	private int getNumberOfTestCases() {
 		XmlDocument doc = new XmlDocument();
-		if (File.Exists(SCENARIO_FILE_PATH)) {  
-			doc.Load(SCENARIO_FILE_PATH);
+		if (File.Exists(getCurrentFileName())) {  
+			doc.Load(getCurrentFileName());
 			XmlElement root = doc.DocumentElement;
 			XmlNodeList list = root.GetElementsByTagName("TestCase");
 			return list.Count;
@@ -149,8 +205,8 @@ public class StorageManager : MonoBehaviour
 	/// </summary>
 	public int getNumberOfRepetitions() {
 		XmlDocument doc = new XmlDocument();
-		if (File.Exists(SCENARIO_FILE_PATH)) {   
-			doc.Load(SCENARIO_FILE_PATH);
+		if (File.Exists(getCurrentFileName())) {   
+			doc.Load(getCurrentFileName());
 			XmlElement root = doc.DocumentElement;
 			return root.GetElementsByTagName("Repetition").Count;
 		}
@@ -164,9 +220,9 @@ public class StorageManager : MonoBehaviour
     public int getSeedValue(int repetition)
     {
         XmlDocument doc = new XmlDocument();
-        if (File.Exists(SCENARIO_FILE_PATH))
+		if (File.Exists(getCurrentFileName()))
         {
-            doc.Load(SCENARIO_FILE_PATH);
+			doc.Load(getCurrentFileName());
             XmlElement root = doc.DocumentElement;
             return Convert.ToInt32(root.GetElementsByTagName("Repetition").Item(repetition).Attributes["seed"].Value);
         }

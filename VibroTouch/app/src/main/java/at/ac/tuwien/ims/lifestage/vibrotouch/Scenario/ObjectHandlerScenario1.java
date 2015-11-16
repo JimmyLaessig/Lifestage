@@ -96,7 +96,6 @@ public class ObjectHandlerScenario1 extends ObjectHandler { //pickup mit skalier
             object.setMaxSize(mmToPixels(object.getMaxSize()));
             object.setPaint(Color.rgb(rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255)));
 
-            //TODO only works when objs are in a line
             float x=0, y = rnd.nextFloat() * ((screenHeightInPX - object.getSize()) - (screenHeightInPX / 2)) + (screenHeightInPX / 2);
             if(targets.isEmpty()) {
                 x=rnd.nextFloat() * (screenWidthInPX - object.getSize()-1);

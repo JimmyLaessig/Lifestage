@@ -1,21 +1,39 @@
 <SparkCore id="48ff71065067555011472387" token="20e1ee31e3f0b0ecace2820c73ab71f5966acbf6"/>
-<Testcases screenWidth="79" screenHeight="133" minObjectSize="10" maxObjectSize="25">
+<Testcases screenWidth="63" screenHeight="114" minObjectSize="10" maxObjectSize="25">
 	<Testcase id="0" scenario="0" button="on" minIntensity="50" maxIntensity="100">
 		<Object size="10" posX="35" posY="25"/>
 		<Object size="20" posX="15" posY="25"/>
-		<Object size="25" posX="55" posY="25"/>
+		<Object size="25" posX="35" posY="55"/>
 	</Testcase>
 	<!-- ^ Playground Testcase -->
 	<!-- v Other Testcases -->
 	<Testcase id="1" scenario="1" button="on" minIntensity="50" maxIntensity="100">
-		<Object size="20" posX="15" posY="25"/>
-		<Object size="10" posX="35" posY="25"/>
-		<Object size="25" posX="55" posY="25"/>
+		<Object size="20" posX="25" posY="25"/>
+		<Object size="10" posX="45" posY="25"/>
 	</Testcase>
-	<Testcase id="3" scenario="2" button="on" minIntensity="10" maxIntensity="100">
+	<Testcase id="2" scenario="1" button="on" minIntensity="50" maxIntensity="100">
+		<Object size="20" posX="15" posY="25"/>
+		<Object size="10" posX="53" posY="25"/>
+		<Object size="15" posX="35" posY="25"/>
+	</Testcase>
+	<Testcase id="3" scenario="1" button="on" minIntensity="50" maxIntensity="100">
+		<Object size="19" posX="15" posY="25"/>
+		<Object size="10" posX="30" posY="25"/>
+		<Object size="10" posX="45" posY="25"/>
+		<Object size="6" posX="55" posY="25"/>
+	</Testcase>
+	<Testcase id="4" scenario="1" button="on" minIntensity="50" maxIntensity="100">
+		<Object size="6" posX="6" posY="25"/>
+		<Object size="7" posX="15" posY="25"/>
+		<Object size="10" posX="25" posY="25"/>
+		<Object size="10" posX="38" posY="25"/>
+		<Object size="6" posX="48" posY="25"/>
+		<Object size="8" posX="56" posY="25"/>
+	</Testcase>
+	<Testcase id="5" scenario="2" button="on" minIntensity="10" maxIntensity="100">
 		<Object size="20"/>
 	</Testcase>
-	<Testcase id="4" scenario="2" button="on" minIntensity="10" maxIntensity="100">
+	<Testcase id="6" scenario="2" button="on" minIntensity="10" maxIntensity="100">
 		<Object size="30"/>
 	</Testcase>
 </Testcases>

@@ -82,6 +82,7 @@ public class CameraController : MonoBehaviour
     public void OnCancelButtonClicked()
     {
         sceneController.CancelTestCase(attempts);
+		attempts = 0;
     }
 
 

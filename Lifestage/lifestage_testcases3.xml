@@ -2,8 +2,6 @@
   <Repetition seed ="1"/>
   <Repetition seed ="2"/>
   <Repetition seed ="3"/>
-  <Repetition seed ="4"/>
-  <Repetition seed ="5"/>
   
   <!-- phone and vibro feedback (big motors start at 50% intensity)-->
   <TestCase numElements ="5" targetElement ="1" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="10" phoneIntensityMax="100" vibroIntensityMin="50" vibroIntensityMax="100"/>

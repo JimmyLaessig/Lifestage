@@ -39,8 +39,8 @@ public class SceneController : MonoBehaviour
     public Material highlightingMaterial;
     private GameObject boundingVolume;
 
-    private int numRepetitions;
-    private int currentRepetition;
+    private int numRepetitions=-1;
+	private int currentRepetition=-1;
 
     private float startTime;
     private bool isStarted = false;
@@ -65,10 +65,9 @@ public class SceneController : MonoBehaviour
         cameraController = GetComponentInChildren<CameraController>();
         gameObjects = new List<GameObject>();
 
-        scenario = StorageManager.Instance.LoadScenario();       
+		scenario = StorageManager.Instance.LoadScenario();       
 
         boundingVolume = GameObject.Find("BoundingVolume");
-        currentRepetition = -1;
     }
 
 
@@ -78,7 +77,6 @@ public class SceneController : MonoBehaviour
     /// </summary>
     public void StartButtonClicked()
     {
-
         userID = StorageManager.Instance.getLatestUserID() + "";
         numRepetitions = StorageManager.Instance.getNumberOfRepetitions();
         currentRepetition = StorageManager.Instance.getLatestRepetition();
@@ -112,8 +110,7 @@ public class SceneController : MonoBehaviour
     /// Starts a new testcase.
     /// </summary>
     public void NextButtonClicked()
-    {
-        
+    {        
         currentRepetition = StorageManager.Instance.getLatestRepetition();
 
         testcaseFinished = false;
@@ -135,15 +132,36 @@ public class SceneController : MonoBehaviour
         {
             UIController.Instance.HideAll();
             UIController.Instance.ShowStartButton(true);
-            if (isStarted)
+            /*if (isStarted)
                 UIController.Instance.ShowMessageText(true, "All Testcases finished! Starting a new Repetition.", Color.black);
             else
-                UIController.Instance.ShowMessageText(true, "Welcome! Starting a new Repetition.", Color.black);
+                UIController.Instance.ShowMessageText(true, "Welcome! Starting a new Repetition.", Color.black);*/
 
-            UIController.Instance.ShowInfoText(false, userID, scenario.NumTestCasesLeft, scenario.NumTestCases, currentRepetition, numRepetitions);
-            if (currentRepetition == numRepetitions - 1)
-            {
-                UIController.Instance.ShowMessageText(true, "All Testcases and Repetitions finished! Thank you for participating in LifeStage.", Color.black);
+			switch(StorageManager.Instance.getCurrentScenarioNumber()) {
+			case 0:
+				UIController.Instance.ShowMessageText(true, "Starting Playground Scenario.", Color.black);
+				break;
+			case 1:
+				UIController.Instance.ShowMessageText(true, "Starting Scenario Visual Only.", Color.black);
+				break;
+			case 2:
+				UIController.Instance.ShowMessageText(true, "Starting Scenario Phone Only.", Color.black);
+				break;
+			case 3:
+				UIController.Instance.ShowMessageText(true, "Starting Scenario Phone and Vibros.", Color.black);
+				break;
+			}
+
+			if(currentRepetition>-1)
+            	UIController.Instance.ShowInfoText(false, userID, scenario.NumTestCasesLeft, scenario.NumTestCases, currentRepetition, numRepetitions);
+            
+			if (currentRepetition == numRepetitions - 1)
+            {				
+				if(StorageManager.Instance.getCurrentScenarioNumber()<3) {
+					scenario=StorageManager.Instance.NextScenario();
+				} /*else {
+					UIController.Instance.ShowMessageText(true, "All Testcases and Repetitions finished! Thank you for participating in LifeStage.", Color.black);
+				}*/
             }
 
             inputEnabled = false;
