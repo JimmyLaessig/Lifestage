@@ -1,4 +1,4 @@
-<SparkCore id="48ff71065067555006342287" token="20e1ee31e3f0b0ecace2820c73ab71f5966acbf6"/>
+<SparkCore id="48ff71065067555011472387" token="20e1ee31e3f0b0ecace2820c73ab71f5966acbf6"/>
 <Testcases screenWidth="79" screenHeight="133" minObjectSize="10" maxObjectSize="25">
 	<Testcase id="0" scenario="0" button="on" minIntensity="50" maxIntensity="100">
 		<Object size="10" posX="35" posY="25"/>
