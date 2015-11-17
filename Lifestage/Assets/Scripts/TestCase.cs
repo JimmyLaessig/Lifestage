@@ -7,8 +7,6 @@ using System.Collections;
 /// </summary>
 public class TestCase
 {
-	private static int ID_COUNTER = 0;
-
     public int id;
 	public int numElements;
 	public int targetElement;
@@ -26,7 +24,5 @@ public class TestCase
 	{
 		phoneIntensity=new int[2];
 		vibroIntensity=new int[2];
-		id = ID_COUNTER;
-		ID_COUNTER++;
 	}
 }

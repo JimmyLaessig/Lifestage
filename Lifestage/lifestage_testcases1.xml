@@ -4,15 +4,15 @@
   <Repetition seed ="3"/>
   
   <!-- only visual feedback -->
-  <TestCase numElements ="5" targetElement ="1" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
-  <TestCase numElements ="10" targetElement ="1" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
-  <TestCase numElements ="20" targetElement ="1" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
+  <TestCase id="0" numElements ="5" targetElement ="1" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
+  <TestCase id="1" numElements ="10" targetElement ="1" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
+  <TestCase id="2" numElements ="20" targetElement ="1" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
   
-  <TestCase numElements ="5" targetElement ="2" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
-  <TestCase numElements ="10" targetElement ="5" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
-  <TestCase numElements ="20" targetElement ="10" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
+  <TestCase id="3" numElements ="5" targetElement ="2" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
+  <TestCase id="4" numElements ="10" targetElement ="5" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
+  <TestCase id="5" numElements ="20" targetElement ="10" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
   
-  <TestCase numElements ="5" targetElement ="5" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
-  <TestCase numElements ="10" targetElement ="10" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
-  <TestCase numElements ="20" targetElement ="20" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
+  <TestCase id="6" numElements ="5" targetElement ="5" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
+  <TestCase id="7" numElements ="10" targetElement ="10" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
+  <TestCase id="8" numElements ="20" targetElement ="20" scaleX ="40" scaleY="10" scaleZ ="20" phoneIntensityMin="0" phoneIntensityMax="0" vibroIntensityMin="0" vibroIntensityMax="0"/>
 </TestCaseCollection>

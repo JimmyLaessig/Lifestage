@@ -9,7 +9,6 @@ using System.Collections.Generic;
 /// </summary>
 public class SceneController : MonoBehaviour
 {
-
     private new Camera camera;
     private CameraController cameraController;
 
@@ -79,7 +78,7 @@ public class SceneController : MonoBehaviour
     {
         userID = StorageManager.Instance.getLatestUserID() + "";
         numRepetitions = StorageManager.Instance.getNumberOfRepetitions();
-        currentRepetition = StorageManager.Instance.getLatestRepetition();
+		currentRepetition = StorageManager.Instance.getLatestRepetition();
         currentSeedValue = StorageManager.Instance.getSeedValue(currentRepetition);
 
         // Resetting Random Generator with new seed value
@@ -100,8 +99,7 @@ public class SceneController : MonoBehaviour
         PluginManager.Instance.SetMinDistance = MinDistance;
 
         inputEnabled = true;
-
-        userID = StorageManager.Instance.getLatestUserID() + "";
+		nextscen = false;
     }
 
 
@@ -125,7 +123,7 @@ public class SceneController : MonoBehaviour
         inputEnabled = true;
     }
 
-
+	private bool nextscen=false;
     void Update()
     {
         if (testcaseFinished && finished)
@@ -137,35 +135,32 @@ public class SceneController : MonoBehaviour
             else
                 UIController.Instance.ShowMessageText(true, "Welcome! Starting a new Repetition.", Color.black);*/
 
-			switch(StorageManager.Instance.getCurrentScenarioNumber()) {
-			case 0:
-				UIController.Instance.ShowMessageText(true, "Starting Playground Scenario.", Color.black);
-				break;
-			case 1:
-				UIController.Instance.ShowMessageText(true, "Starting Scenario Visual Only.", Color.black);
-				break;
-			case 2:
-				UIController.Instance.ShowMessageText(true, "Starting Scenario Phone Only.", Color.black);
-				break;
-			case 3:
-				UIController.Instance.ShowMessageText(true, "Starting Scenario Phone and Vibros.", Color.black);
-				break;
-			}
-
 			if(currentRepetition>-1)
             	UIController.Instance.ShowInfoText(false, userID, scenario.NumTestCasesLeft, scenario.NumTestCases, currentRepetition, numRepetitions);
             
 			if (currentRepetition == numRepetitions - 1)
-            {				
-				if(StorageManager.Instance.getCurrentScenarioNumber()<3) {
+            {	
+				if(!nextscen && StorageManager.Instance.getScen()<3) {
 					scenario=StorageManager.Instance.NextScenario();
-				} /*else {
-					UIController.Instance.ShowMessageText(true, "All Testcases and Repetitions finished! Thank you for participating in LifeStage.", Color.black);
-				}*/
+					nextscen=true;
+				}
+
+				switch(StorageManager.Instance.getCurrentScenarioNumber()) {
+				case 0:
+					UIController.Instance.ShowMessageText(true, "Starting Playground Scenario.", Color.black);
+					break;
+				case 1:
+					UIController.Instance.ShowMessageText(true, "Starting Scenario Visual Only.", Color.black);
+					break;
+				case 2:
+					UIController.Instance.ShowMessageText(true, "Starting Scenario Phone Only.", Color.black);
+					break;
+				case 3:
+					UIController.Instance.ShowMessageText(true, "Starting Scenario Phone and Vibros.", Color.black);
+					break;
+				}
             }
-
             inputEnabled = false;
-
         }
         else if (testcaseFinished && !finished)
         {
@@ -184,7 +179,6 @@ public class SceneController : MonoBehaviour
         }
     }
 
-
     /// <summary>
     /// Starts the next TestCase from the scenario.
     /// </summary>
@@ -202,7 +196,6 @@ public class SceneController : MonoBehaviour
         startTime = Time.time;
         return true;
     }
-
 
     /// <summary>
     /// Resets the scenario to its initial state.
@@ -235,7 +228,6 @@ public class SceneController : MonoBehaviour
 
         gameObjects.Clear();
     }
-
 
     /// <summary>
     /// Cancels the current testcase

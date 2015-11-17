@@ -16,13 +16,19 @@ public class StorageManager : MonoBehaviour
 	private static string SCENARIO_FILE_PATH1 = "/sdcard/lifestage_testcases1.xml";
 	private static string SCENARIO_FILE_PATH2 = "/sdcard/lifestage_testcases2.xml";
 	private static string SCENARIO_FILE_PATH3 = "/sdcard/lifestage_testcases3.xml";
-	private static string OUTPUT_FILE_PATH = "/sdcard/lifestage_output.xml";
+	private static string OUTPUT_FILE_PATH0 = "/sdcard/lifestage_output0.xml";
+	private static string OUTPUT_FILE_PATH1 = "/sdcard/lifestage_output1.xml";
+	private static string OUTPUT_FILE_PATH2 = "/sdcard/lifestage_output2.xml";
+	private static string OUTPUT_FILE_PATH3 = "/sdcard/lifestage_output3.xml";
 #else
-	private static string SCENARIO_FILE_PATH1 = "lifestage_testcases0.xml";
-	private static string SCENARIO_FILE_PATH0 = "lifestage_testcases1.xml";
+	private static string SCENARIO_FILE_PATH0 = "lifestage_testcases0.xml";
+	private static string SCENARIO_FILE_PATH1 = "lifestage_testcases1.xml";
 	private static string SCENARIO_FILE_PATH2 = "lifestage_testcases2.xml";
 	private static string SCENARIO_FILE_PATH3 = "lifestage_testcases3.xml";
-	private static string OUTPUT_FILE_PATH = "lifestage_output.xml";
+	private static string OUTPUT_FILE_PATH0 = "lifestage_output0.xml";
+	private static string OUTPUT_FILE_PATH1 = "lifestage_output1.xml";
+	private static string OUTPUT_FILE_PATH2 = "lifestage_output2.xml";
+	private static string OUTPUT_FILE_PATH3 = "lifestage_output3.xml";
 #endif
     private static string SOLVED_TESTCASES_KEY = "solvedCasesKey";
 
@@ -75,12 +81,13 @@ public class StorageManager : MonoBehaviour
         try
         {
             XmlDocument doc = new XmlDocument();
-			doc.Load(getCurrentFileName());
+			doc.Load(getCurrentInputFileName());
             XmlElement root = doc.DocumentElement;
             XmlNodeList list = root.GetElementsByTagName("TestCase");
             for (int i = 0; i < list.Count; i++)
             {
                 TestCase t = new TestCase();
+				t.id=Convert.ToInt32(list[i].Attributes["id"].Value);
                 t.numElements = Convert.ToInt32(list[i].Attributes["numElements"].Value);
 				t.targetElement = Convert.ToInt32(list[i].Attributes["targetElement"].Value);
 				t.phoneIntensity[0]=Convert.ToInt32(list[i].Attributes["phoneIntensityMin"].Value);
@@ -97,13 +104,13 @@ public class StorageManager : MonoBehaviour
             }
             if (list.Count == 0)
             {
-				UIController.Instance.ReportError(getCurrentFileName() + ": No TestCases found!");
+				UIController.Instance.ReportError(getCurrentInputFileName() + ": No TestCases found!");
             }
         }
         catch (Exception ex)
 		{
 			Debug.Log("Xml Loading: " + ex.ToString());
-			UIController.Instance.ReportError(getCurrentFileName() + " not found or is invalid! Please make sure that the corresponding file exists and is well formed!");
+			UIController.Instance.ReportError(getCurrentInputFileName() + " not found or is invalid! Please make sure that the corresponding file exists and is well formed!");
         }
 
         return scenario;
@@ -115,7 +122,7 @@ public class StorageManager : MonoBehaviour
 		return LoadScenario();
 	}
 
-	private string getCurrentFileName() {
+	private string getCurrentInputFileName() {
 		switch(getCurrentScenarioNumber()) {
 		case 1:
 			return SCENARIO_FILE_PATH1;
@@ -132,8 +139,29 @@ public class StorageManager : MonoBehaviour
 		}
 	}
 
+	private string getCurrentOutputFileName() {
+		switch(getCurrentScenarioNumber()) {
+		case 1:
+			return OUTPUT_FILE_PATH1;
+			break;
+		case 2:
+			return OUTPUT_FILE_PATH2;
+			break;
+		case 3:
+			return OUTPUT_FILE_PATH3;
+			break;
+		default:
+			return OUTPUT_FILE_PATH0;
+			break;
+		}
+	}
+
 	public int getCurrentScenarioNumber(){
 		return scenarioQueue.ElementAt(scenario);
+	}
+
+	public int getScen() {
+		return scenario;
 	}
 
     /// <summary>
@@ -189,8 +217,8 @@ public class StorageManager : MonoBehaviour
 	/// </summary>
 	private int getNumberOfTestCases() {
 		XmlDocument doc = new XmlDocument();
-		if (File.Exists(getCurrentFileName())) {  
-			doc.Load(getCurrentFileName());
+		if (File.Exists(getCurrentInputFileName())) {  
+			doc.Load(getCurrentInputFileName());
 			XmlElement root = doc.DocumentElement;
 			XmlNodeList list = root.GetElementsByTagName("TestCase");
 			return list.Count;
@@ -199,14 +227,13 @@ public class StorageManager : MonoBehaviour
 		return -1;
 	}
 
-
 	/// <summary>
 	/// This method gets the number of repetitions or -1 if xml file does not exist.
 	/// </summary>
 	public int getNumberOfRepetitions() {
 		XmlDocument doc = new XmlDocument();
-		if (File.Exists(getCurrentFileName())) {   
-			doc.Load(getCurrentFileName());
+		if (File.Exists(getCurrentInputFileName())) {   
+			doc.Load(getCurrentInputFileName());
 			XmlElement root = doc.DocumentElement;
 			return root.GetElementsByTagName("Repetition").Count;
 		}
@@ -220,9 +247,9 @@ public class StorageManager : MonoBehaviour
     public int getSeedValue(int repetition)
     {
         XmlDocument doc = new XmlDocument();
-		if (File.Exists(getCurrentFileName()))
+		if (File.Exists(getCurrentInputFileName()))
         {
-			doc.Load(getCurrentFileName());
+			doc.Load(getCurrentInputFileName());
             XmlElement root = doc.DocumentElement;
             return Convert.ToInt32(root.GetElementsByTagName("Repetition").Item(repetition).Attributes["seed"].Value);
         }
@@ -235,8 +262,8 @@ public class StorageManager : MonoBehaviour
 	/// </summary>
 	public int getLatestRepetition() {
 		XmlDocument doc = new XmlDocument();
-		if (File.Exists(OUTPUT_FILE_PATH)) {   
-			doc.Load(OUTPUT_FILE_PATH);
+		if (File.Exists(getCurrentOutputFileName())) {   
+			doc.Load(getCurrentOutputFileName());
 			XmlElement root = doc.DocumentElement;
 			int rep = 0;
 			if (root.LastChild != null) {
@@ -260,13 +287,13 @@ public class StorageManager : MonoBehaviour
 	/// </summary>
 	public int getLatestUserID() {
 		XmlDocument doc = new XmlDocument();
-		if (File.Exists(OUTPUT_FILE_PATH)) {            
-			doc.Load(OUTPUT_FILE_PATH);
+		if (File.Exists(getCurrentOutputFileName())) {
+			doc.Load(getCurrentOutputFileName());
 			XmlElement root = doc.DocumentElement;
 			
 			int user_id = 0;
 			if (root.LastChild != null) {
-				if(root.ChildNodes.Count % 5 == 0) {
+				if(root.ChildNodes.Count % getNumberOfRepetitions() == 0) {
 					user_id = Int32.Parse(root.LastChild.Attributes["userID"].Value)+1;
 				} else {
 					user_id = Int32.Parse(root.LastChild.Attributes["userID"].Value);
@@ -287,9 +314,9 @@ public class StorageManager : MonoBehaviour
 			return;
 
 		XmlDocument xmlDoc = new XmlDocument();
-		if (File.Exists (OUTPUT_FILE_PATH)) {
+		if (File.Exists (getCurrentOutputFileName())) {
 			bool newResult = true;
-			xmlDoc.Load (OUTPUT_FILE_PATH);
+			xmlDoc.Load (getCurrentOutputFileName());
 
 			if (xmlDoc.DocumentElement.LastChild != null)
 				if (xmlDoc.DocumentElement.LastChild.ChildNodes.Count < getNumberOfTestCases())
@@ -303,6 +330,9 @@ public class StorageManager : MonoBehaviour
 				XmlAttribute repetition = xmlDoc.CreateAttribute ("repetition");
 				repetition.Value = "" + getLatestRepetition();
 				elm.Attributes.Append(repetition);
+				XmlAttribute currentScenario = xmlDoc.CreateAttribute ("scenario");
+				currentScenario.Value = "" + getCurrentScenarioNumber();
+				elm.Attributes.Append(currentScenario);
 
 				XmlElement elmNew = xmlDoc.CreateElement ("TestCase");
 				XmlAttribute testcaseID = xmlDoc.CreateAttribute ("testcaseID");
@@ -371,7 +401,7 @@ public class StorageManager : MonoBehaviour
 					
 				elm.AppendChild (elmNew);
 			}
-			xmlDoc.Save (OUTPUT_FILE_PATH);
+			xmlDoc.Save (getCurrentOutputFileName());
 			Debug.Log ("Writing in output XML file.");
 		} else {
 			Debug.Log ("Output XML File does not exist, please make sure it does.");
