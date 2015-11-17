@@ -16,11 +16,11 @@ public class PluginManager : MonoBehaviour
 
     public static string MAIN_ACTIVITY_CLASS_NAME = "at.ac.tuwien.ims.lifestage.vibro.MainActivity";
 
-	#if !UNITY_EDITOR
+#if !UNITY_EDITOR
 	private static string SPARKAUTH_FILE_PATH = "/sdcard/spark_auth.txt";
-	#else
+#else
     private static string SPARKAUTH_FILE_PATH = "spark_auth.txt";
-	#endif
+#endif
 
     private AndroidJavaObject pluginActivity;
 
@@ -28,18 +28,18 @@ public class PluginManager : MonoBehaviour
     private float initRotationY;
 
     // Distance for Vibration Feedback
-	private float distance = -1, maxDistance=20, minDistance=0;
+    private float distance = -1, maxDistance = 20, minDistance = 0;
 
     // Intervall in which the vibrations of a certain pattern are triggered in seconds
-	private float vibrationIntervall = 0.201f, timeStamp = 0;
-	private int duration=150, pauseAfter=40;
-	private bool phoneVibration=false;
+    private float vibrationIntervall = 0.201f, timeStamp = 0;
+    private int duration = 150, pauseAfter = 40;
+    private bool phoneVibration = false;
 
     private List<long[]> intensityPattern = new List<long[]>();
     private float intensityVibrateTimeLeft = 0.0f;
 
-	private int[] phoneIntensity;
-	private int[] vibroIntensity;
+    private int[] phoneIntensity;
+    private int[] vibroIntensity;
 
     #region [Unity Callback Methods]
 
@@ -61,17 +61,17 @@ public class PluginManager : MonoBehaviour
         {
             intensityPattern.Add(new long[2] { 10 - i, i * 5 });
         }
-		ConnectToSparkCore();
-		phoneIntensity=new int[2];
-		vibroIntensity=new int[2];
+        ConnectToSparkCore();
+        phoneIntensity = new int[2];
+        vibroIntensity = new int[2];
     }
 
     // Update is called once per frame
     void Update()
     {
-		#if !UNITY_EDITOR
+#if !UNITY_EDITOR
 		UpdateCameraRotation();
-		#endif
+#endif
         UpdateVibration();
     }
 
@@ -83,32 +83,36 @@ public class PluginManager : MonoBehaviour
     /// Sets the distance that is used to calculate the vibration pattern.
     /// Setting its value to a negative value will disable the vibration
     /// </summary>
-    public float SetDistance {
+    public float SetDistance
+    {
         set { distance = value; }
     }
 
-	public float SetMaxDistance {
-		set { maxDistance = value; }
-	}
+    public float SetMaxDistance
+    {
+        set { maxDistance = value; }
+    }
 
-	public float SetMinDistance {
-		set { minDistance = value; }
-	}
+    public float SetMinDistance
+    {
+        set { minDistance = value; }
+    }
 
-	public void setIntensities(int[] intensity1, int[] intensity2) {
-		phoneIntensity=intensity1;
-		vibroIntensity=intensity2;
-	}
+    public void setIntensities(int[] intensity1, int[] intensity2)
+    {
+        phoneIntensity = intensity1;
+        vibroIntensity = intensity2;
+    }
 
     /// <summary>
     /// Returns the button state of the button attached tothe sparkcore
     /// </summary>
     /// <returns></returns>
     public bool GetButtonState()
-	{
-		if (pluginActivity != null)
-        	return pluginActivity.Call<bool>("getButtonState");
-		return false;
+    {
+        if (pluginActivity != null)
+            return pluginActivity.Call<bool>("getButtonState");
+        return false;
     }
 
     /// <summary>
@@ -129,33 +133,39 @@ public class PluginManager : MonoBehaviour
     /// </summary>
     private void ConnectToSparkCore()
     {
-		try {
-	        String text = System.IO.File.ReadAllText(SPARKAUTH_FILE_PATH);
-	        if (text != null && text != string.Empty) {
-	            string[] lines = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
-	            if (lines[0].Contains("spark_auth")) {
-	                string[] line = lines[1].Split(' ');
-	                if (line.Length == 2) {
-	                    pluginActivity.Call("connect", line);
-	                }
-	            }
-	        }
-		} catch (Exception ex) {
-			Debug.Log("Something went wrong with the spark authentication file... falling back to static id and token.");
-			string[] param = new string[2];
-			param [0] = pluginActivity.GetStatic<string> ("id");
-			param [1] = pluginActivity.GetStatic<string> ("token");
-			pluginActivity.Call("connect", param);
-		}
+        try
+        {
+            String text = System.IO.File.ReadAllText(SPARKAUTH_FILE_PATH);
+            if (text != null && text != string.Empty)
+            {
+                string[] lines = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+                if (lines[0].Contains("spark_auth"))
+                {
+                    string[] line = lines[1].Split(' ');
+                    if (line.Length == 2)
+                    {
+                        pluginActivity.Call("connect", line);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.Log("Something went wrong with the spark authentication file... falling back to static id and token.");
+            string[] param = new string[2];
+            param[0] = pluginActivity.GetStatic<string>("id");
+            param[1] = pluginActivity.GetStatic<string>("token");
+            pluginActivity.Call("connect", param);
+        }
     }
 
     /// <summary>
     /// Disconnects the phone from the SparkCore.
     /// </summary>
     private void DisconnectFromSparkCore()
-	{
-		if (pluginActivity != null)
-        	pluginActivity.Call("disconnect");
+    {
+        if (pluginActivity != null)
+            pluginActivity.Call("disconnect");
     }
 
     /// <summary>
@@ -189,8 +199,8 @@ public class PluginManager : MonoBehaviour
            ConvertRotation(Quaternion.Inverse(Quaternion.Euler(90, 0, 0)) * Input.gyro.attitude), 0.8f);
 
         transform.rotation = gyroRotation;
-        
-        transform.Rotate(Vector3.up, initRotationY, Space.World);        
+
+        transform.Rotate(Vector3.up, initRotationY, Space.World);
     }
 
     /// <summary>
@@ -199,87 +209,104 @@ public class PluginManager : MonoBehaviour
     private void UpdateVibration()
     {
         //intensity vibration on phone
-		if (phoneVibration && intensityVibrateTimeLeft < 0.0f)
-		{
-			Debug.Log("Cancel vibration");
-            CancelVibrationOnPhone();
-			phoneVibration=false;
-        }
-		if (intensityVibrateTimeLeft > 0.0f)
+        if (phoneVibration && intensityVibrateTimeLeft < 0.0f)
         {
-			intensityVibrateTimeLeft -= Time.deltaTime;
+            Debug.Log("Cancel vibration");
+            CancelVibrationOnPhone();
+            phoneVibration = false;
+        }
+        if (intensityVibrateTimeLeft > 0.0f)
+        {
+            intensityVibrateTimeLeft -= Time.deltaTime;
         }
 
-		timeStamp += Time.deltaTime;
-		if (distance>=0 && timeStamp >= vibrationIntervall) {
-			timeStamp = 0;
-			if (phoneIntensity[1]==0 && vibroIntensity[1]==0) { //NOTHING
-				//do nohing
-			} else if (phoneIntensity[1]>0 && vibroIntensity[1]>0) { //VIBRO AND PHONE
-				float halfdist=maxDistance/2f;
-				if(distance<halfdist) {
-					VibratePhone(
-						linearInterpolationPhone(phoneIntensity[0], phoneIntensity[1], minDistance, halfdist, distance),
-						duration);
-				} else {
-					SendVibrationToCore(0,
-					                    linearInterpolationVibro(vibroIntensity[0], vibroIntensity[1], halfdist, maxDistance, distance),
-					                    linearInterpolationVibro(vibroIntensity[0], vibroIntensity[1], halfdist, maxDistance, distance),
-					                    duration, pauseAfter);
-				}
-			} else if(phoneIntensity[1]>0 && vibroIntensity[1]==0) { //ONLY PHONE
-				VibratePhone(
-					linearInterpolationPhone(phoneIntensity[0], phoneIntensity[1], minDistance, maxDistance, distance),
-					duration);
-			} else if(phoneIntensity[1]==0 && vibroIntensity[1]>0) { //ONLY VIBRO
-				SendVibrationToCore(0,
-				                    linearInterpolationVibro(vibroIntensity[0], vibroIntensity[1], minDistance, maxDistance, distance),
-				                    linearInterpolationVibro(vibroIntensity[0], vibroIntensity[1], minDistance, maxDistance, distance),
-				                    duration, pauseAfter);
-			}
+        timeStamp += Time.deltaTime;
+        if (distance >= 0 && timeStamp >= vibrationIntervall)
+        {
+            timeStamp = 0;
+            if (phoneIntensity[1] == 0 && vibroIntensity[1] == 0)
+            { //NOTHING
+                //do nohing
+            }
+            else if (phoneIntensity[1] > 0 && vibroIntensity[1] > 0)
+            { //VIBRO AND PHONE
+                float halfdist = minDistance + ((maxDistance - minDistance) / 2f);
+                if (distance < halfdist)
+                {
+                    VibratePhone(
+                        linearInterpolationPhone(phoneIntensity[0], phoneIntensity[1], minDistance, halfdist, distance),
+                        duration);
+                }
+                else
+                {
+                    SendVibrationToCore(0,
+                                        linearInterpolationVibro(vibroIntensity[0], vibroIntensity[1], halfdist, maxDistance, distance),
+                                        linearInterpolationVibro(vibroIntensity[0], vibroIntensity[1], halfdist, maxDistance, distance),
+                                        duration, pauseAfter);
+                }
+            }
+            else if (phoneIntensity[1] > 0 && vibroIntensity[1] == 0)
+            { //ONLY PHONE
+                VibratePhone(
+                    linearInterpolationPhone(phoneIntensity[0], phoneIntensity[1], minDistance, maxDistance, distance),
+                    duration);
+            }
+            else if (phoneIntensity[1] == 0 && vibroIntensity[1] > 0)
+            { //ONLY VIBRO
+                SendVibrationToCore(0,
+                                    linearInterpolationVibro(vibroIntensity[0], vibroIntensity[1], minDistance, maxDistance, distance),
+                                    linearInterpolationVibro(vibroIntensity[0], vibroIntensity[1], minDistance, maxDistance, distance),
+                                    duration, pauseAfter);
+            }
         }
     }
 
-	/// <summary>
-	/// Computes the linear interpolation of the given parameters for phone vibration.
-	/// </summary>
-	private int linearInterpolationPhone(int intensityMin, int intensityMax, float distanceMin, float distanceMax, float currentDist) {
-		float result = (((float)intensityMin + (((float)intensityMax - (float)intensityMin) / (distanceMax - distanceMin)) * (currentDist - distanceMin)) - 10f) / 10f;
-		//Debug.Log("phone: distmin: " + distanceMin +", distmax: " + distanceMax +", currentdist: "+ currentDist +", result: " + (10-(int)Math.Round(result, 0)));
-		int intres=(int)Math.Round(result, 0);
-		if (result < 0 || (10-intres<0))
-			return 0;
-		return 10-intres;
-	}
+    /// <summary>
+    /// Computes the linear interpolation of the given parameters for phone vibration.
+    /// </summary>
+    private int linearInterpolationPhone(int intensityMin, int intensityMax, float distanceMin, float distanceMax, float currentDist)
+    {
+        float result = (((float)intensityMin + (((float)intensityMax - (float)intensityMin) / (distanceMax - distanceMin)) * (currentDist - distanceMin)) - 10f) / 10f;
+        //Debug.Log("phone: distmin: " + distanceMin +", distmax: " + distanceMax +", currentdist: "+ currentDist +", result: " + (10-(int)Math.Round(result, 0)));
+        int intres = (int)Math.Round(result, 0);
+        if (result < 0 || (10 - intres < 0))
+            return 0;
+        return 10 - intres;
+    }
 
-	/// <summary>
-	/// Computes the linear interpolation of the given parameters for vibro external vibration.
-	/// </summary>
-	private int linearInterpolationVibro(int intensityMin, int intensityMax, float distanceMin, float distanceMax, float currentDist) {
-		float result = (float)intensityMin + (((float)intensityMax - (float)intensityMin) / (distanceMax - distanceMin)) * (currentDist - distanceMin);
-		//Debug.Log("vibro: distmin: " + distanceMin +", distmax: " + distanceMax +", currentdist: "+ currentDist +", result: " + (100-(int)Math.Round(result, 0)));
-		int intres=(int)Math.Round(result, 0);
-		if (result<0 || (100 - intres) < 0)
-			return 0;
-		return 100-intres;
-	}
+    /// <summary>
+    /// Computes the linear interpolation of the given parameters for vibro external vibration.
+    /// </summary>
+    private int linearInterpolationVibro(int intensityMin, int intensityMax, float distanceMin, float distanceMax, float currentDist)
+    {
+        float result = (float)intensityMax - (((float)intensityMax - (float)intensityMin) / (distanceMax - distanceMin)) * (currentDist - distanceMin);
+        Debug.Log("vibro: distmin: " + distanceMin + ", distmax: " + distanceMax + ", currentdist: " + currentDist + " intensityMin: " + intensityMin + " intensityMax: " + intensityMax + " result new: " + ((int)Math.Round(result, 0)));
+        int intres = (int)Math.Round(result, 0);
+        if (intres < 0)
+            return 0;
+        else if (intres > 100)
+            return 100;
+        return intres;
+    }
 
     /// <summary>
     /// Sends a vibrationPattern to the SparkCore
-	/// <param name="actuatorId">id of the actuator to use (if vibros shows north, 0 is left, 1 is right)</param>
-	/// <param name="intensity">intesity of vibration</param>
-	/// <param name="endingIntensity">ending intesity (interpolaton), set 0 for normal vibration</param>
-	/// <param name="duration">duration of vibration</param>
-	/// <param name="pauseAfter">pause after vibbration</param>
+    /// <param name="actuatorId">id of the actuator to use (if vibros shows north, 0 is left, 1 is right)</param>
+    /// <param name="intensity">intesity of vibration</param>
+    /// <param name="endingIntensity">ending intesity (interpolaton), set 0 for normal vibration</param>
+    /// <param name="duration">duration of vibration</param>
+    /// <param name="pauseAfter">pause after vibbration</param>
     /// </summary>
-	private void SendVibrationToCore(int actuatorId, int intensity, int endingIntensity, int duration, int pauseAfter)
+    private void SendVibrationToCore(int actuatorId, int intensity, int endingIntensity, int duration, int pauseAfter)
     {
-        if (GetConnectionStateFromCore () == 1) {
-			bool a=pluginActivity.Call<bool>("sendEvent", actuatorId, intensity, endingIntensity, duration, pauseAfter);
-			if(!a) {
-				Debug.Log("Error while vibrating actuators.");
-			}
-		}
+        if (GetConnectionStateFromCore() == 1)
+        {
+            bool a = pluginActivity.Call<bool>("sendEvent", actuatorId, intensity, endingIntensity, duration, pauseAfter);
+            if (!a)
+            {
+                Debug.Log("Error while vibrating actuators.");
+            }
+        }
     }
 
     /// <summary>
@@ -328,13 +355,13 @@ public class PluginManager : MonoBehaviour
     /// </summary>
     /// <param name="milliseconds">time in ms to vibrate</param>
     /// <param name="intensity">intensity of the vibration (0..9)</param>
-	private void VibratePhone(int intensity, long milliseconds)
+    private void VibratePhone(int intensity, long milliseconds)
     {
         if (HasVibrator())
         {
             if (intensity >= 0 && intensity < 10)
-			{
-				phoneVibration=true;
+            {
+                phoneVibration = true;
                 VibratePhone(intensityPattern[intensity], 0);
                 intensityVibrateTimeLeft = milliseconds / 1000.0f;
                 return;
