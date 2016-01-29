@@ -1,2 +1,5 @@
 <TestCaseOutput>
+  <Result userID="0" repetition="0" scenario="0">
+    <TestCase testcaseID="4" numElements="5" targetElementIndex="5" correct="True" time="18.02466" interactionTime="1.829096" attempts="6" seed="1" />
+  </Result>
 </TestCaseOutput>

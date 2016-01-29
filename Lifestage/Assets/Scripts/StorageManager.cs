@@ -164,6 +164,7 @@ public class StorageManager : MonoBehaviour
 		return scenario;
 	}
 
+
     /// <summary>
     /// Removes all stored information about previously solved TestCases
     /// </summary>
@@ -172,23 +173,6 @@ public class StorageManager : MonoBehaviour
         PlayerPrefs.DeleteKey(SOLVED_TESTCASES_KEY);
     }
 
-    /// <summary>
-    /// Saves the IDs of the TestCases to the internal storage. 
-    /// This method overwrites previously stored information.
-    /// </summary>
-    /// <param name="testCases"></param>
-    public void SaveTestCaseProgress(List<TestCase> testCases)
-    {
-        string solved = "";
-        for (int i = 0; i < testCases.Count; i++)
-            solved += testCases[i].id + " ";
-
-        if (testCases.Count > 0)
-        {
-            PlayerPrefs.SetString(SOLVED_TESTCASES_KEY, solved);
-            PlayerPrefs.Save();
-        }
-    }
 
     /// <summary>
     /// Retrieves a list of IDs of TestCases that where written to the internal storage.
@@ -227,6 +211,7 @@ public class StorageManager : MonoBehaviour
 		return -1;
 	}
 
+
 	/// <summary>
 	/// This method gets the number of repetitions or -1 if xml file does not exist.
 	/// </summary>
@@ -240,6 +225,7 @@ public class StorageManager : MonoBehaviour
 		Debug.Log ("Output XML File does not exist, please make sure it does.");
 		return -1;
 	}
+
 
     /// <summary>
     /// Returns the seed value for random generation for the given repetition
@@ -256,6 +242,7 @@ public class StorageManager : MonoBehaviour
         Debug.Log("Output XML File does not exist, please make sure it does.");
         return 0;
     }
+
 
 	/// <summary>
 	/// This method gets the latest repetition number from the xml file or 0 if xml file does not exist.
@@ -281,6 +268,7 @@ public class StorageManager : MonoBehaviour
 		Debug.Log ("Output XML File does not exist, please make sure it does.");
 		return 0;
 	}
+
 
 	/// <summary>
 	/// This method gets the latest userID from the xml file or -1 if xml file does not exist.
