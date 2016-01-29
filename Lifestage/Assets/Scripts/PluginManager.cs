@@ -257,7 +257,7 @@ public class PluginManager : MonoBehaviour
 	/// </summary>
 	private int linearInterpolationVibro(int intensityMin, int intensityMax, float distanceMin, float distanceMax, float currentDist) {
 		float result = (float)intensityMin + (((float)intensityMax - (float)intensityMin) / (distanceMax - distanceMin)) * (currentDist - distanceMin);
-		//Debug.Log("vibro: distmin: " + distanceMin +", distmax: " + distanceMax +", currentdist: "+ currentDist +", result: " + (100-(int)Math.Round(result, 0)));
+		Debug.Log("vibro interpolation: distmin: " + distanceMin +", distmax: " + distanceMax +", currentdist: "+ currentDist +", result: " + (100-(int)Math.Round(result, 0)));
 		int intres=(int)Math.Round(result, 0);
 		if (result<0 || (100 - intres) < 0)
 			return 0;

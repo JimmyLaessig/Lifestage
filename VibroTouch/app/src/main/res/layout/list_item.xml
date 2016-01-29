@@ -8,4 +8,5 @@
     android:paddingTop="20dp"
     android:textColor="#747474"
     android:text="test"
-    android:paddingLeft="5dp" />
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp" />

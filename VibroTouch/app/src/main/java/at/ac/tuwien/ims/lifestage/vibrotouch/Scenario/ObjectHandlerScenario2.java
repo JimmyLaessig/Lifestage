@@ -1,13 +1,12 @@
 package at.ac.tuwien.ims.lifestage.vibrotouch.Scenario;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Toast;
-
-import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
-import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 
 import java.io.File;
 import java.util.Random;
@@ -17,6 +16,7 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Object;
 import at.ac.tuwien.ims.lifestage.vibrotouch.R;
 import at.ac.tuwien.ims.lifestage.vibrotouch.ScenarioActivity;
 import at.ac.tuwien.ims.lifestage.vibrotouch.SelectionActivity;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Util.UserPreferences;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
 
 /**
@@ -26,7 +26,7 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
 public class ObjectHandlerScenario2 extends ObjectHandler {
-    private NiftyDialogBuilder dialogBuilder;
+    private AlertDialog.Builder builder;
     private boolean pickedUp;
 
     public ObjectHandlerScenario2(final ScenarioActivity context, Testcase testcase){
@@ -34,25 +34,18 @@ public class ObjectHandlerScenario2 extends ObjectHandler {
         pickedUp=false;
         placeObjects();
 
-        dialogBuilder=NiftyDialogBuilder.getInstance(context);
-        dialogBuilder.setCancelable(false);
-        dialogBuilder
-                .withEffect(Effectstype.Fadein)
-                .isCancelableOnTouchOutside(false)
-                .withTitle(context.getResources().getString(R.string.scenario2))
-                .withMessage(context.getResources().getString(R.string.scenario2welcome))
-                .withTitleColor("#000000")
-                .withMessageColor("#000000")
-                .withDialogColor("#f9f9f9")
-                .withButton1Text(context.getResources().getString(R.string.ok))
-                .setButton1Click(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+        builder = new AlertDialog.Builder(context);
+        builder.setMessage(context.getResources().getString(R.string.scenario2welcome))
+                .setTitle(context.getResources().getString(R.string.scenario2))
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
                         startTestCase();
-                        dialogBuilder.dismiss();
                     }
                 })
+                .setCancelable(false)
+                .create()
                 .show();
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,7 +82,12 @@ public class ObjectHandlerScenario2 extends ObjectHandler {
             Toast.makeText(context, context.getResources().getString(R.string.saveFailed), Toast.LENGTH_SHORT).show();
         }
         Toast.makeText(context, context.getResources().getString(R.string.saved), Toast.LENGTH_SHORT).show();
-        context.startActivity(new Intent(context, SelectionActivity.class));
+
+        UserPreferences.setCurrentTestcaseID(context, testcase.getId());
+        UserPreferences.setJustFinishedTestcase(context, true);
+
+        Intent myIntent=new Intent(context, SelectionActivity.class);
+        context.startActivity(myIntent);
         context.finish();
     }
 

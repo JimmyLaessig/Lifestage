@@ -7,6 +7,7 @@ x,y: center of object
 time: secs
 errors: how often a user has tried to put object on wrong target space
 screenPlacements: how often objects were put on white screen again
+deviation: deviation of correctly placed object in mm
 
 ##testcase 2:
 size: mm

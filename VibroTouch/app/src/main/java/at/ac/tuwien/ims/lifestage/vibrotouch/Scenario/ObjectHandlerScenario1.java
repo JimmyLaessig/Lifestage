@@ -1,16 +1,15 @@
 package at.ac.tuwien.ims.lifestage.vibrotouch.Scenario;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Environment;
-import android.view.View;
+import android.util.Log;
 import android.widget.Toast;
-
-import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
-import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 
 import java.io.File;
 import java.util.HashMap;
@@ -23,6 +22,8 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Testcase;
 import at.ac.tuwien.ims.lifestage.vibrotouch.R;
 import at.ac.tuwien.ims.lifestage.vibrotouch.ScenarioActivity;
 import at.ac.tuwien.ims.lifestage.vibrotouch.SelectionActivity;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Util.RectanglePacker;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Util.UserPreferences;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
 
 /**
@@ -32,7 +33,7 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
 public class ObjectHandlerScenario1 extends ObjectHandler { //pickup mit skalierung
-    private NiftyDialogBuilder dialogBuilder;
+    private AlertDialog.Builder builder;
     private int errors=0;
     private int screenPlacements=0;
 
@@ -47,24 +48,16 @@ public class ObjectHandlerScenario1 extends ObjectHandler { //pickup mit skalier
         super(context, testcase);
         placeObjects();
 
-        dialogBuilder= NiftyDialogBuilder.getInstance(context);
-        dialogBuilder.setCancelable(false);
-        dialogBuilder
-                .withEffect(Effectstype.Fadein)
-                .isCancelableOnTouchOutside(false)
-                .withTitle(context.getResources().getString(R.string.scenario1))
-                .withMessage(context.getResources().getString(R.string.scenario1welcome))
-                .withTitleColor("#000000")
-                .withMessageColor("#000000")
-                .withDialogColor("#f9f9f9")
-                .withButton1Text(context.getResources().getString(R.string.ok))
-                .setButton1Click(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+        builder = new AlertDialog.Builder(context);
+        builder.setMessage(context.getResources().getString(R.string.scenario1welcome))
+                .setTitle(context.getResources().getString(R.string.scenario1))
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
                         startTestCase();
-                        dialogBuilder.dismiss();
                     }
                 })
+                .setCancelable(false)
+                .create()
                 .show();
     }
 
@@ -83,6 +76,7 @@ public class ObjectHandlerScenario1 extends ObjectHandler { //pickup mit skalier
 
         Random rnd = new Random();
         targets=new HashMap<>();
+
         for(Object object : testcase.getObjects()) {
             if((object.getY()+(object.getSize()/2))>screenHeightInMM/2) {
                 Toast.makeText(context, context.getResources().getString(R.string.scenario1_half), Toast.LENGTH_SHORT).show();
@@ -95,26 +89,96 @@ public class ObjectHandlerScenario1 extends ObjectHandler { //pickup mit skalier
             object.setMinSize(mmToPixels(object.getMinSize()));
             object.setMaxSize(mmToPixels(object.getMaxSize()));
             object.setPaint(Color.rgb(rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255)));
-
-            float x=0, y = rnd.nextFloat() * ((screenHeightInPX - object.getSize()) - (screenHeightInPX / 2)) + (screenHeightInPX / 2);
-            if(targets.isEmpty()) {
-                x=rnd.nextFloat() * (screenWidthInPX - object.getSize()-1);
-            } else {
-                boolean collision=true;
-                while(collision) {
-                    x=rnd.nextFloat() * (screenWidthInPX - object.getSize());
-                    int i=0;
-                    for (Map.Entry<Integer, RectF> entry : targets.entrySet()) {
-                        RectF rect=entry.getValue();
-                        if((x+object.getSize()+1)<rect.left || x+1>rect.right)
-                            i++;
-                    }
-                    if(i==targets.size())
-                        collision=false;
-                }
-            }
-            targets.put(object.getId(), new RectF(x, y, x + object.getSize(), y + object.getSize()));
         }
+        Log.d(getClass().getName(), "Done placing top Rectangles.");
+
+        RectanglePacker r= new RectanglePacker((int)screenWidthInPX, (int)(screenHeightInPX/2), 10);
+        boolean running=true;
+        while(running) {
+            int i=0;
+            for (Object object : testcase.getObjects()) {
+                RectanglePacker.Rectangle rec = r.insert((int) object.getSize(), (int) object.getSize(), object);
+                if (rec == null) {
+                    r.clear();
+                    break;
+                }
+                i++;
+            }
+            if(i>=testcase.getObjects().size())
+                running=false;
+        }
+        float minX=0, minY=0, maxX=0, maxY=0;
+        for (Object object : testcase.getObjects()) {
+            RectanglePacker.Rectangle rec=r.findRectangle(object);
+            RectF rect=new RectF(rec.x, rec.y+r.getHeight(), rec.x + object.getSize(), rec.y + object.getSize()+r.getHeight());
+            targets.put(object.getId(), rect);
+
+            if(rect.top<minY)
+                minY=rect.top;
+            if(rect.bottom>maxY)
+                maxY=rect.bottom;
+            if(rect.left<minX)
+                minX=rect.left;
+            if(rect.right>maxX)
+                maxX=rect.right;
+        }
+
+        float distTop=minY;
+        float distBot=screenHeightInPX-maxY;
+        float distL=minX;
+        float distR=screenWidthInPX-maxX;
+        float hDiff=(distL+distR)/2, vDiff=(distTop+distBot)/2;
+        if (distTop-distBot>=0)
+            vDiff*=(-1);
+        if (distR-distL<0)
+            hDiff*=(-1);
+
+        for (Map.Entry<Integer, RectF> entry : targets.entrySet()) {
+            entry.getValue().bottom+=vDiff;
+            entry.getValue().top+=vDiff;
+            entry.getValue().left+=hDiff;
+            entry.getValue().right+=hDiff;
+        }
+
+        /*
+        boolean running=true;
+        long startTime=System.currentTimeMillis();
+        while (running) {
+            for (Object object : testcase.getObjects()) {
+                float x = 0, y = rnd.nextFloat() * ((screenHeightInPX - object.getSize()) - (screenHeightInPX / 2)) + (screenHeightInPX / 2);
+                if (targets.isEmpty()) {
+                    x = rnd.nextFloat() * (screenWidthInPX - object.getSize() - 1);
+                } else {
+                    boolean collision = true;
+                    while (collision) {
+                        x = rnd.nextFloat() * (screenWidthInPX - object.getSize());
+                        int i = 0;
+                        for (Map.Entry<Integer, RectF> entry : targets.entrySet()) {
+                            RectF rect = entry.getValue();
+                            if ((x + object.getSize() + 1) < rect.left || x + 1 > rect.right)
+                                i++;
+                        }
+                        if (i == targets.size())
+                            collision = false;
+                    }
+                }
+                if(System.currentTimeMillis()-startTime>1000) {
+                    startTime=System.currentTimeMillis();
+                    targets.clear();
+                    break;
+                }
+
+                targets.put(object.getId(), new RectF(x, y, x + object.getSize(), y + object.getSize()));
+
+                if(targets.size()==testcase.getObjects().size())
+                    running=false;
+                Log.d(getClass().getName(), "One loop.");
+            }
+            Log.d(getClass().getName(), "Another Round.");
+        }*/
+
+        Log.d(getClass().getName(), "Done placing bottom Rectangles.");
+
         whitePaint=new Paint();
         whitePaint.setColor(Color.WHITE);
         whitePaint.setStyle(Paint.Style.STROKE);
@@ -146,7 +210,12 @@ public class ObjectHandlerScenario1 extends ObjectHandler { //pickup mit skalier
             Toast.makeText(context, context.getResources().getString(R.string.saveFailed), Toast.LENGTH_SHORT).show();
         }
         Toast.makeText(context, context.getResources().getString(R.string.saved), Toast.LENGTH_SHORT).show();
-        context.startActivity(new Intent(context, SelectionActivity.class));
+
+        UserPreferences.setCurrentTestcaseID(context, testcase.getId());
+        UserPreferences.setJustFinishedTestcase(context, true);
+
+        Intent myIntent=new Intent(context, SelectionActivity.class);
+        context.startActivity(myIntent);
         context.finish();
     }
 

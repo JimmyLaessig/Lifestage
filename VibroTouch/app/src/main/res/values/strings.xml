@@ -16,6 +16,7 @@
     <string name="scenario1">Precision Test</string>
     <string name="scenario2">Recreate Size</string>
     <string name="finish">Finish</string>
+    <string name="reloadList">Reload Testcases</string>
     <string name="placeOnRightTarget">Please place the Object on the correct target space.</string>
     <string name="connectionLost">Connection lost. Please return to menu.</string>
     <string name="saved">Saved result to XML.</string>
@@ -24,4 +25,16 @@
     <string name="scenario1welcome">Pick up all the objects. Afterwards try to put them down on the corresponding target spaces. Try to be exact.</string>
     <string name="scenario2welcome">Pick up the object. After that another object will appear. Try to scale the second object to the same size as the first object!</string>
     <string name="xml_correct">Please make sure your XML Files are correct.</string>
+    <string name="end_testcases">Thank you for participating.</string>
+    <string name="end_testcases_title">Finished Testcases</string>
+    <string name="next">Next</string>
+    <string name="next_testcase_title">Next Testcase</string>
+    <string name="next_testcase">Ready to continue with Testcase</string>
+    <string name="continue_tests">Continue with Testcases</string>
+    <string name="reloadWifi">Reconnect to SparkCore</string>
+    <string name="curr">Current User:</string>
+    <string name="connecting">Connecting</string>
+    <string name="wait">Please wait a bit...</string>
+    <string name="playground_first">Please try the "Playground" first (Testcase 0).</string>
+    <string name="scenario">Scenario</string>
 </resources>

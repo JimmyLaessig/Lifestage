@@ -18,6 +18,8 @@ import java.util.List;
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
 public class WifiUtil {
+    public static String localIPAdress="";
+
     //returns local ip address
     public static String getIPAddress() {
         try {
@@ -28,8 +30,10 @@ public class WifiUtil {
                     if (!addr.isLoopbackAddress()) {
                         String sAddr = addr.getHostAddress().toUpperCase();
                         boolean isIPv4 = InetAddressValidator.getInstance().isValidInet4Address(sAddr);
-                        if (isIPv4)
+                        if (isIPv4) {
+                            localIPAdress=sAddr;
                             return sAddr;
+                        }
                     }
                 }
             }

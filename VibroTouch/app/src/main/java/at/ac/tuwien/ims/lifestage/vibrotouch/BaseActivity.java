@@ -2,7 +2,10 @@ package at.ac.tuwien.ims.lifestage.vibrotouch;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
@@ -15,6 +18,7 @@ import java.util.ArrayList;
 
 import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Testcase;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.SparkManager;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Util.UserPreferences;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.WifiUtil;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
 
@@ -27,13 +31,33 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
 public class BaseActivity extends AppCompatActivity {
     protected SparkManager connectionManager;
     protected ArrayList<Testcase> testcases;
+    private ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        verifyStoragePermissions(this);
 
+        progress = new ProgressDialog(this);
+        progress.setTitle(getString(R.string.connecting));
+        progress.setMessage(getString(R.string.wait));
+
+        testcases=new ArrayList<>();
         connectionManager=SparkManager.getInstance();
+
+        if(verifyStoragePermissions(this)) {
+            updateTestcases(false);
+            if(connectionManager.getStatus()!=SparkManager.CONNECTED) {
+                try {
+                    connectionManager.setIDandToken(XmlHelper.getIDandToken(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.inputXMLPath));
+                    connect();
+                } catch (Exception e) {
+                    Toast.makeText(BaseActivity.this, getString(R.string.xml_correct), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    protected void updateTestcases(boolean reset) {
         try {
             testcases=XmlHelper.getTestcases(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.inputXMLPath);
         } catch (Exception e) {
@@ -42,6 +66,48 @@ public class BaseActivity extends AppCompatActivity {
         if(testcases==null || testcases.isEmpty()) {
             Toast.makeText(BaseActivity.this, "Please add Testcases in the XML file.", Toast.LENGTH_SHORT).show();
             return;
+        }
+        if(reset)
+            UserPreferences.setCurrentTestcaseID(this, -1);
+    }
+
+    private class ConnectTask extends AsyncTask<String, Void, Boolean> {
+        private boolean running=false;
+        private long time=0;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress.show();
+            running=true;
+            time = System.currentTimeMillis();
+        }
+
+        protected Boolean doInBackground(String... params) {
+            connectionManager.connectToCore(params[0]);
+            boolean result=false;
+            while (running) {
+                if (System.currentTimeMillis() - time >= 100) {
+                    final int status=connectionManager.getStatus();
+                    if(status == SparkManager.CONNECTED) {
+                        result=true;
+                        running=false;
+                    } else if (status == SparkManager.NOT_CONNECTED) {
+                        result=false;
+                        running=false;
+                    }
+                    time = System.currentTimeMillis();
+                }
+            }
+            return result;
+        }
+
+        protected void onPostExecute(Boolean result) {
+            progress.hide();
+            if(!result)
+                Toast.makeText(BaseActivity.this, "Couldn't connect to core...", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(BaseActivity.this, "Successfully connected to Core.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -60,13 +126,20 @@ public class BaseActivity extends AppCompatActivity {
             Log.d(getClass().getName(), "no Internet connection.. ");
             return;
         }
-        String ip = WifiUtil.getIPAddress();
+        String ip;
+        if(!WifiUtil.localIPAdress.isEmpty()) {
+            ip = WifiUtil.localIPAdress;
+            Log.d(getClass().getName(), "using saved IP.");
+        } else {
+            ip = WifiUtil.getIPAddress();
+            Log.d(getClass().getName(), "getting new IP.");
+        }
         if (ip.equals("")) {
             Log.d(getClass().getName(), "invalid IP");
             return;
         }
         if (connectionManager.getStatus() == SparkManager.NOT_CONNECTED) {
-            connectionManager.connectToCore(ip);
+            new ConnectTask().execute(ip);
             Log.d(getClass().getName(), "connecting");
         }
     }
@@ -77,8 +150,10 @@ public class BaseActivity extends AppCompatActivity {
      */
     public void disconnect() {
         Log.d(getClass().getName(), "disconnect called");
-        if(connectionManager!=null)
+        if(connectionManager!=null) {
             connectionManager.disconnect();
+            Toast.makeText(BaseActivity.this, "Disconnected Core.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     //============================================================================================//
@@ -98,17 +173,19 @@ public class BaseActivity extends AppCompatActivity {
      *
      * @param activity
      */
-    public static void verifyStoragePermissions(Activity activity) {
-        // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    public static boolean verifyStoragePermissions(Activity activity) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+            return true;
 
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        final boolean granted = permission == PackageManager.PERMISSION_GRANTED;
+        if (!granted) {
             ActivityCompat.requestPermissions(
                     activity,
                     PERMISSIONS_STORAGE,
                     REQUEST_EXTERNAL_STORAGE
             );
         }
+        return granted;
     }
 }
