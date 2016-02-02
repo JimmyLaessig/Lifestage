@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Environment;
 import android.view.View;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.Random;
@@ -79,9 +78,11 @@ public class ObjectHandlerScenario2 extends ObjectHandler {
                     pixelsToMM(deviation)
             );
         } catch (Exception e) {
-            Toast.makeText(context, context.getResources().getString(R.string.saveFailed), Toast.LENGTH_SHORT).show();
+            toast.setText(context.getResources().getString(R.string.saveFailed));
+            toast.show();
         }
-        Toast.makeText(context, context.getResources().getString(R.string.saved), Toast.LENGTH_SHORT).show();
+        toast.setText(context.getResources().getString(R.string.saved));
+        toast.show();
 
         UserPreferences.setCurrentTestcaseID(context, testcase.getId());
         UserPreferences.setJustFinishedTestcase(context, true);

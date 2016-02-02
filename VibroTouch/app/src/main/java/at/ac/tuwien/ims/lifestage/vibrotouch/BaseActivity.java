@@ -45,7 +45,7 @@ public class BaseActivity extends AppCompatActivity {
         connectionManager=SparkManager.getInstance();
 
         if(verifyStoragePermissions(this)) {
-            updateTestcases(false);
+            updateTestcases();
             if(connectionManager.getStatus()!=SparkManager.CONNECTED) {
                 try {
                     connectionManager.setIDandToken(XmlHelper.getIDandToken(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.inputXMLPath));
@@ -57,7 +57,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void updateTestcases(boolean reset) {
+    protected void updateTestcases() {
         try {
             testcases=XmlHelper.getTestcases(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.inputXMLPath);
         } catch (Exception e) {
@@ -67,8 +67,6 @@ public class BaseActivity extends AppCompatActivity {
             Toast.makeText(BaseActivity.this, "Please add Testcases in the XML file.", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(reset)
-            UserPreferences.setCurrentTestcaseID(this, -1);
     }
 
     private class ConnectTask extends AsyncTask<String, Void, Boolean> {

@@ -79,7 +79,8 @@ public class ObjectHandlerScenario1 extends ObjectHandler { //pickup mit skalier
 
         for(Object object : testcase.getObjects()) {
             if((object.getY()+(object.getSize()/2))>screenHeightInMM/2) {
-                Toast.makeText(context, context.getResources().getString(R.string.scenario1_half), Toast.LENGTH_SHORT).show();
+                toast.setText(context.getResources().getString(R.string.scenario1_half));
+                toast.show();
                 context.startActivity(new Intent(context, SelectionActivity.class));
                 context.finish();
             }
@@ -207,9 +208,11 @@ public class ObjectHandlerScenario1 extends ObjectHandler { //pickup mit skalier
                     accuracyDeviation
             );
         } catch (Exception e) {
-            Toast.makeText(context, context.getResources().getString(R.string.saveFailed), Toast.LENGTH_SHORT).show();
+            toast.setText(context.getResources().getString(R.string.saveFailed));
+            toast.show();
         }
-        Toast.makeText(context, context.getResources().getString(R.string.saved), Toast.LENGTH_SHORT).show();
+        toast.setText(context.getResources().getString(R.string.saved));
+        toast.show();
 
         UserPreferences.setCurrentTestcaseID(context, testcase.getId());
         UserPreferences.setJustFinishedTestcase(context, true);
@@ -301,7 +304,8 @@ public class ObjectHandlerScenario1 extends ObjectHandler { //pickup mit skalier
                             float dist=(float)Math.sqrt(Math.pow(devX, 2) + Math.pow(devY, 2));
                             if(dist > obj.getMinSize()) {
                                 errors++;
-                                Toast.makeText(context, context.getResources().getString(R.string.placeOnRightTarget), Toast.LENGTH_SHORT).show();
+                                toast.setText(context.getResources().getString(R.string.placeOnRightTarget));
+                                toast.show();
                                 return;
                             }
                             layDownObject(xFocus, yFocus);

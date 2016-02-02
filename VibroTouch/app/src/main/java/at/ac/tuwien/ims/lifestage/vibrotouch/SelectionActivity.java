@@ -118,10 +118,8 @@ public class SelectionActivity extends BaseActivity {
         }
 
         if (item.getItemId() == R.id.action_reload) {
-            updateTestcases(true);
+            updateTestcases();
             mAdapter.update(testcases);
-
-            mAdapter.setSelection(-1);
             return true;
         }
 
@@ -193,6 +191,7 @@ public class SelectionActivity extends BaseActivity {
                             subtitle.setText(getString(R.string.curr) + " " + user_id);
                         }
                         mAdapter.setSelection(-1);
+                        mAdapter.notifyDataSetChanged();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

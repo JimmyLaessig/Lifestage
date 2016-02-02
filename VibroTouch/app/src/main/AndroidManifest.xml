@@ -16,10 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ScenarioActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"></activity>
-        <activity
             android:name=".SelectionActivity"
             android:label="@string/title_activity_selection"
             android:screenOrientation="portrait"
@@ -30,7 +26,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".OutputActivity"></activity>
+        <activity
+            android:name=".ScenarioActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
+        <activity
+            android:name=".OutputActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

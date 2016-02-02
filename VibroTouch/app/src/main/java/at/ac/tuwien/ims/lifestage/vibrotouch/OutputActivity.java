@@ -11,18 +11,26 @@ import java.io.File;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
 
 public class OutputActivity extends AppCompatActivity {
+    private TextView text;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_output);
-        TextView t=(TextView)findViewById(R.id.header);
-        t.setText(getString(R.string.output_header) + " (" + XmlHelper.outputtXMLPath + ")");
+        ((TextView)findViewById(R.id.header)).setText(getString(R.string.output_header) + " (" + XmlHelper.outputtXMLPath + ")");
+        text=(TextView)findViewById(R.id.xml_text);
+    }
 
-        TextView t2=(TextView)findViewById(R.id.xml_text);
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        String txt;
         try {
-            t2.setText(XmlHelper.getOutputString(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.outputtXMLPath));
+            txt=XmlHelper.getOutputString(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.outputtXMLPath);
+            txt=txt.replaceAll(">", ">\r\n \r\n");
         } catch (Exception e) {
-            Toast.makeText(OutputActivity.this, getString(R.string.xml_correct), Toast.LENGTH_SHORT).show();
+            txt=getString(R.string.xml_correct);
         }
+        text.setText(txt);
     }
 }

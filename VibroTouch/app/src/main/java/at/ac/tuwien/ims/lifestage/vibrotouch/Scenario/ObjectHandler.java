@@ -62,6 +62,8 @@ public abstract class ObjectHandler {
 
     protected String userID;
 
+    protected Toast toast;
+
     public ObjectHandler(ScenarioActivity context, Testcase testcase) {
         this.context=context;
         pickedUpObjects=new Stack<>();
@@ -88,6 +90,8 @@ public abstract class ObjectHandler {
         screenHeightInPX = mdispSize.y;
 
         userID=UserPreferences.getCurrentUserID(context);
+
+        toast=Toast.makeText(context, "", Toast.LENGTH_SHORT);
 
         Log.d(getClass().getName(), "begin handling objects");
     }
@@ -224,6 +228,7 @@ public abstract class ObjectHandler {
         Log.d(getClass().getName(), "stopping object handling threads");
         buttonThreadRunning=false;
         vibroThreadRunning=false;
+        toast.cancel();
     }
 
     private void sendEvent(Event e) {
