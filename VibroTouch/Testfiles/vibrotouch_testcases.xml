@@ -1,0 +1,613 @@
+<SparkCore id="48ff71065067555011472387" token="20e1ee31e3f0b0ecace2820c73ab71f5966acbf6"/>
+<Testcases screenWidth="65" screenHeight="115" minObjectSize="10" maxObjectSize="25">
+  <Testcase id="0" scenario="0" button="on" minIntensity="50" maxIntensity="100">
+		<Object size="10" posX="35" posY="25"/>
+		<Object size="20" posX="15" posY="25"/>
+		<Object size="25" posX="35" posY="55"/>
+	</Testcase>
+	<!-- ^ Playground Testcase -->
+	<!-- v Other Testcases -->
+  <Testcase id="1" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="17" posX="28" posY="23" />
+    <Object size="18" posX="18" posY="35" />
+  </Testcase>
+  <Testcase id="2" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="18" posX="26" posY="30" />
+    <Object size="23" posX="32" posY="25" />
+  </Testcase>
+  <Testcase id="3" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="24" posX="41" posY="28" />
+    <Object size="10" posX="32" posY="17" />
+  </Testcase>
+  <Testcase id="4" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="25" posX="49" posY="38" />
+    <Object size="21" posX="20" posY="42" />
+  </Testcase>
+  <Testcase id="5" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="19" posX="45" posY="15" />
+    <Object size="21" posX="30" posY="39" />
+  </Testcase>
+  <Testcase id="6" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="23" posX="13" posY="13" />
+    <Object size="10" posX="43" posY="44" />
+  </Testcase>
+  <Testcase id="7" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="19" posX="40" posY="33" />
+    <Object size="16" posX="41" posY="29" />
+  </Testcase>
+  <Testcase id="8" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="13" posX="17" posY="24" />
+    <Object size="13" posX="44" posY="27" />
+  </Testcase>
+  <Testcase id="9" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="23" posX="23" posY="25" />
+    <Object size="11" posX="37" posY="30" />
+  </Testcase>
+  <Testcase id="10" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="20" posX="41" posY="18" />
+    <Object size="16" posX="53" posY="24" />
+  </Testcase>
+  <Testcase id="11" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="19" posX="45" posY="42" />
+    <Object size="21" posX="13" posY="27" />
+  </Testcase>
+  <Testcase id="12" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="15" posX="48" posY="44" />
+    <Object size="18" posX="30" posY="38" />
+  </Testcase>
+  <Testcase id="13" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="18" posX="37" posY="18" />
+    <Object size="14" posX="35" posY="14" />
+  </Testcase>
+  <Testcase id="14" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="18" posX="26" posY="12" />
+    <Object size="20" posX="50" posY="18" />
+  </Testcase>
+  <Testcase id="15" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="16" posX="42" posY="27" />
+    <Object size="18" posX="27" posY="13" />
+  </Testcase>
+  <Testcase id="16" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="22" posX="18" posY="36" />
+    <Object size="14" posX="45" posY="42" />
+  </Testcase>
+  <Testcase id="17" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="19" posX="30" posY="15" />
+    <Object size="24" posX="48" posY="42" />
+  </Testcase>
+  <Testcase id="18" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="18" posX="23" posY="39" />
+    <Object size="19" posX="36" posY="45" />
+  </Testcase>
+  <Testcase id="19" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="15" posX="28" posY="16" />
+    <Object size="11" posX="49" posY="33" />
+  </Testcase>
+  <Testcase id="20" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="15" posX="50" posY="42" />
+    <Object size="21" posX="25" posY="22" />
+  </Testcase>
+  <Testcase id="21" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="10" posX="47" posY="28" />
+    <Object size="24" posX="43" posY="21" />
+    <Object size="11" posX="21" posY="39" />
+  </Testcase>
+  <Testcase id="22" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="14" posX="39" posY="15" />
+    <Object size="25" posX="37" posY="28" />
+    <Object size="11" posX="18" posY="33" />
+  </Testcase>
+  <Testcase id="23" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="15" posX="46" posY="16" />
+    <Object size="17" posX="18" posY="45" />
+    <Object size="24" posX="39" posY="20" />
+  </Testcase>
+  <Testcase id="24" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="11" posX="51" posY="41" />
+    <Object size="25" posX="49" posY="16" />
+    <Object size="23" posX="49" posY="12" />
+  </Testcase>
+  <Testcase id="25" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="16" posX="37" posY="29" />
+    <Object size="18" posX="34" posY="24" />
+    <Object size="12" posX="13" posY="36" />
+  </Testcase>
+  <Testcase id="26" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="10" posX="19" posY="21" />
+    <Object size="12" posX="21" posY="37" />
+    <Object size="14" posX="27" posY="29" />
+  </Testcase>
+  <Testcase id="27" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="12" posX="35" posY="35" />
+    <Object size="18" posX="53" posY="15" />
+    <Object size="10" posX="53" posY="22" />
+  </Testcase>
+  <Testcase id="28" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="24" posX="25" posY="38" />
+    <Object size="25" posX="17" posY="35" />
+    <Object size="17" posX="41" posY="30" />
+  </Testcase>
+  <Testcase id="29" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="11" posX="46" posY="21" />
+    <Object size="22" posX="23" posY="16" />
+    <Object size="14" posX="48" posY="28" />
+  </Testcase>
+  <Testcase id="30" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="25" posX="50" posY="36" />
+    <Object size="11" posX="42" posY="29" />
+    <Object size="19" posX="39" posY="23" />
+  </Testcase>
+  <Testcase id="31" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="15" posX="50" posY="33" />
+    <Object size="16" posX="32" posY="30" />
+    <Object size="11" posX="22" posY="36" />
+  </Testcase>
+  <Testcase id="32" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="25" posX="14" posY="13" />
+    <Object size="19" posX="41" posY="29" />
+    <Object size="13" posX="19" posY="30" />
+  </Testcase>
+  <Testcase id="33" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="13" posX="28" posY="21" />
+    <Object size="18" posX="22" posY="15" />
+    <Object size="20" posX="14" posY="14" />
+  </Testcase>
+  <Testcase id="34" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="19" posX="45" posY="32" />
+    <Object size="13" posX="26" posY="28" />
+    <Object size="15" posX="17" posY="38" />
+  </Testcase>
+  <Testcase id="35" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="24" posX="41" posY="23" />
+    <Object size="22" posX="41" posY="12" />
+    <Object size="16" posX="24" posY="39" />
+  </Testcase>
+  <Testcase id="36" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="16" posX="27" posY="19" />
+    <Object size="12" posX="50" posY="30" />
+    <Object size="25" posX="29" posY="20" />
+  </Testcase>
+  <Testcase id="37" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="10" posX="44" posY="34" />
+    <Object size="18" posX="44" posY="26" />
+    <Object size="17" posX="31" posY="27" />
+  </Testcase>
+  <Testcase id="38" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="12" posX="41" posY="36" />
+    <Object size="19" posX="21" posY="31" />
+    <Object size="21" posX="23" posY="28" />
+  </Testcase>
+  <Testcase id="39" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="13" posX="31" posY="35" />
+    <Object size="14" posX="18" posY="44" />
+    <Object size="14" posX="21" posY="35" />
+  </Testcase>
+  <Testcase id="40" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="23" posX="29" posY="42" />
+    <Object size="10" posX="22" posY="43" />
+    <Object size="13" posX="24" posY="23" />
+  </Testcase>
+  <Testcase id="41" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="11" posX="29" posY="43" />
+    <Object size="24" posX="24" posY="20" />
+    <Object size="18" posX="22" posY="31" />
+    <Object size="11" posX="47" posY="16" />
+  </Testcase>
+  <Testcase id="42" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="20" posX="30" posY="33" />
+    <Object size="11" posX="45" posY="44" />
+    <Object size="19" posX="44" posY="32" />
+    <Object size="21" posX="20" posY="30" />
+  </Testcase>
+  <Testcase id="43" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="21" posX="36" posY="14" />
+    <Object size="19" posX="16" posY="27" />
+    <Object size="22" posX="27" posY="43" />
+    <Object size="13" posX="37" posY="41" />
+  </Testcase>
+  <Testcase id="44" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="18" posX="24" posY="16" />
+    <Object size="17" posX="42" posY="42" />
+    <Object size="16" posX="21" posY="24" />
+    <Object size="18" posX="20" posY="44" />
+  </Testcase>
+  <Testcase id="45" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="13" posX="52" posY="27" />
+    <Object size="25" posX="38" posY="30" />
+    <Object size="21" posX="29" posY="18" />
+    <Object size="15" posX="19" posY="36" />
+  </Testcase>
+  <Testcase id="46" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="12" posX="53" posY="17" />
+    <Object size="11" posX="24" posY="28" />
+    <Object size="13" posX="29" posY="40" />
+    <Object size="22" posX="33" posY="29" />
+  </Testcase>
+  <Testcase id="47" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="22" posX="18" posY="13" />
+    <Object size="21" posX="25" posY="45" />
+    <Object size="13" posX="19" posY="24" />
+    <Object size="11" posX="26" posY="16" />
+  </Testcase>
+  <Testcase id="48" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="10" posX="45" posY="36" />
+    <Object size="16" posX="32" posY="18" />
+    <Object size="20" posX="20" posY="16" />
+    <Object size="16" posX="23" posY="37" />
+  </Testcase>
+  <Testcase id="49" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="22" posX="23" posY="43" />
+    <Object size="23" posX="26" posY="38" />
+    <Object size="12" posX="30" posY="27" />
+    <Object size="25" posX="19" posY="28" />
+  </Testcase>
+  <Testcase id="50" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="17" posX="13" posY="15" />
+    <Object size="13" posX="19" posY="45" />
+    <Object size="15" posX="15" posY="33" />
+    <Object size="10" posX="16" posY="28" />
+  </Testcase>
+  <Testcase id="51" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="22" posX="46" posY="43" />
+    <Object size="20" posX="17" posY="23" />
+    <Object size="16" posX="28" posY="41" />
+    <Object size="15" posX="52" posY="13" />
+  </Testcase>
+  <Testcase id="52" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="11" posX="25" posY="40" />
+    <Object size="19" posX="52" posY="42" />
+    <Object size="21" posX="14" posY="33" />
+    <Object size="13" posX="50" posY="27" />
+  </Testcase>
+  <Testcase id="53" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="11" posX="30" posY="12" />
+    <Object size="12" posX="15" posY="18" />
+    <Object size="11" posX="43" posY="17" />
+    <Object size="16" posX="16" posY="29" />
+  </Testcase>
+  <Testcase id="54" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="23" posX="33" posY="22" />
+    <Object size="11" posX="35" posY="38" />
+    <Object size="19" posX="18" posY="14" />
+    <Object size="10" posX="17" posY="41" />
+  </Testcase>
+  <Testcase id="55" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="12" posX="43" posY="16" />
+    <Object size="22" posX="25" posY="13" />
+    <Object size="23" posX="33" posY="43" />
+    <Object size="17" posX="34" posY="35" />
+  </Testcase>
+  <Testcase id="56" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="15" posX="22" posY="22" />
+    <Object size="20" posX="21" posY="18" />
+    <Object size="24" posX="39" posY="19" />
+    <Object size="15" posX="42" posY="26" />
+  </Testcase>
+  <Testcase id="57" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="19" posX="36" posY="28" />
+    <Object size="23" posX="38" posY="37" />
+    <Object size="16" posX="13" posY="22" />
+    <Object size="12" posX="12" posY="23" />
+  </Testcase>
+  <Testcase id="58" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="11" posX="25" posY="26" />
+    <Object size="11" posX="35" posY="32" />
+    <Object size="19" posX="28" posY="45" />
+    <Object size="20" posX="45" posY="23" />
+  </Testcase>
+  <Testcase id="59" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="17" posX="51" posY="43" />
+    <Object size="23" posX="18" posY="28" />
+    <Object size="20" posX="45" posY="12" />
+    <Object size="20" posX="20" posY="36" />
+  </Testcase>
+  <Testcase id="60" scenario="1" button="on" minIntensity="0" maxIntensity="0">
+    <Object size="19" posX="12" posY="41" />
+    <Object size="12" posX="15" posY="28" />
+    <Object size="16" posX="18" posY="20" />
+    <Object size="25" posX="37" posY="42" />
+  </Testcase>
+  <Testcase id="61" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="22" posX="45" posY="14" />
+    <Object size="19" posX="44" posY="23" />
+  </Testcase>
+  <Testcase id="62" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="17" posX="51" posY="38" />
+    <Object size="12" posX="27" posY="36" />
+  </Testcase>
+  <Testcase id="63" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="22" posX="34" posY="42" />
+    <Object size="22" posX="32" posY="19" />
+  </Testcase>
+  <Testcase id="64" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="14" posX="28" posY="16" />
+    <Object size="21" posX="33" posY="31" />
+  </Testcase>
+  <Testcase id="65" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="21" posX="29" posY="22" />
+    <Object size="17" posX="21" posY="33" />
+  </Testcase>
+  <Testcase id="66" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="11" posX="33" posY="22" />
+    <Object size="10" posX="16" posY="23" />
+  </Testcase>
+  <Testcase id="67" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="16" posX="13" posY="12" />
+    <Object size="20" posX="21" posY="20" />
+  </Testcase>
+  <Testcase id="68" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="25" posX="29" posY="33" />
+    <Object size="12" posX="27" posY="30" />
+  </Testcase>
+  <Testcase id="69" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="19" posX="36" posY="34" />
+    <Object size="10" posX="40" posY="19" />
+  </Testcase>
+  <Testcase id="70" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="22" posX="14" posY="21" />
+    <Object size="18" posX="49" posY="24" />
+  </Testcase>
+  <Testcase id="71" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="10" posX="52" posY="35" />
+    <Object size="12" posX="15" posY="40" />
+  </Testcase>
+  <Testcase id="72" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="16" posX="44" posY="26" />
+    <Object size="19" posX="27" posY="27" />
+  </Testcase>
+  <Testcase id="73" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="12" posX="37" posY="17" />
+    <Object size="24" posX="43" posY="15" />
+  </Testcase>
+  <Testcase id="74" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="24" posX="34" posY="13" />
+    <Object size="22" posX="50" posY="33" />
+  </Testcase>
+  <Testcase id="75" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="25" posX="13" posY="40" />
+    <Object size="11" posX="23" posY="13" />
+  </Testcase>
+  <Testcase id="76" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="10" posX="50" posY="16" />
+    <Object size="20" posX="39" posY="21" />
+  </Testcase>
+  <Testcase id="77" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="18" posX="46" posY="23" />
+    <Object size="22" posX="45" posY="32" />
+  </Testcase>
+  <Testcase id="78" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="11" posX="12" posY="19" />
+    <Object size="13" posX="47" posY="14" />
+  </Testcase>
+  <Testcase id="79" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="10" posX="48" posY="22" />
+    <Object size="12" posX="37" posY="24" />
+  </Testcase>
+  <Testcase id="80" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="15" posX="23" posY="13" />
+    <Object size="10" posX="18" posY="13" />
+  </Testcase>
+  <Testcase id="81" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="10" posX="23" posY="28" />
+    <Object size="16" posX="33" posY="27" />
+    <Object size="15" posX="33" posY="44" />
+  </Testcase>
+  <Testcase id="82" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="24" posX="25" posY="43" />
+    <Object size="22" posX="17" posY="37" />
+    <Object size="17" posX="38" posY="42" />
+  </Testcase>
+  <Testcase id="83" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="16" posX="44" posY="18" />
+    <Object size="22" posX="14" posY="25" />
+    <Object size="21" posX="48" posY="22" />
+  </Testcase>
+  <Testcase id="84" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="22" posX="26" posY="25" />
+    <Object size="13" posX="32" posY="34" />
+    <Object size="14" posX="44" posY="29" />
+  </Testcase>
+  <Testcase id="85" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="11" posX="42" posY="29" />
+    <Object size="21" posX="49" posY="23" />
+    <Object size="11" posX="18" posY="30" />
+  </Testcase>
+  <Testcase id="86" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="15" posX="28" posY="28" />
+    <Object size="19" posX="48" posY="33" />
+    <Object size="12" posX="38" posY="25" />
+  </Testcase>
+  <Testcase id="87" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="23" posX="22" posY="19" />
+    <Object size="11" posX="39" posY="33" />
+    <Object size="12" posX="34" posY="17" />
+  </Testcase>
+  <Testcase id="88" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="19" posX="40" posY="40" />
+    <Object size="14" posX="32" posY="23" />
+    <Object size="13" posX="26" posY="42" />
+  </Testcase>
+  <Testcase id="89" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="16" posX="41" posY="41" />
+    <Object size="23" posX="40" posY="42" />
+    <Object size="23" posX="27" posY="28" />
+  </Testcase>
+  <Testcase id="90" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="23" posX="19" posY="28" />
+    <Object size="22" posX="14" posY="41" />
+    <Object size="14" posX="31" posY="30" />
+  </Testcase>
+  <Testcase id="91" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="14" posX="12" posY="15" />
+    <Object size="23" posX="36" posY="24" />
+    <Object size="12" posX="33" posY="28" />
+  </Testcase>
+  <Testcase id="92" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="21" posX="15" posY="43" />
+    <Object size="12" posX="27" posY="29" />
+    <Object size="21" posX="44" posY="43" />
+  </Testcase>
+  <Testcase id="93" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="18" posX="52" posY="30" />
+    <Object size="15" posX="21" posY="21" />
+    <Object size="12" posX="26" posY="24" />
+  </Testcase>
+  <Testcase id="94" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="20" posX="46" posY="33" />
+    <Object size="25" posX="12" posY="12" />
+    <Object size="22" posX="51" posY="23" />
+  </Testcase>
+  <Testcase id="95" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="23" posX="33" posY="15" />
+    <Object size="18" posX="41" posY="17" />
+    <Object size="16" posX="18" posY="21" />
+  </Testcase>
+  <Testcase id="96" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="18" posX="40" posY="39" />
+    <Object size="25" posX="13" posY="21" />
+    <Object size="25" posX="43" posY="28" />
+  </Testcase>
+  <Testcase id="97" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="25" posX="52" posY="38" />
+    <Object size="23" posX="41" posY="20" />
+    <Object size="25" posX="31" posY="35" />
+  </Testcase>
+  <Testcase id="98" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="23" posX="42" posY="14" />
+    <Object size="24" posX="26" posY="26" />
+    <Object size="12" posX="50" posY="20" />
+  </Testcase>
+  <Testcase id="99" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="23" posX="12" posY="20" />
+    <Object size="16" posX="50" posY="14" />
+    <Object size="25" posX="37" posY="34" />
+  </Testcase>
+  <Testcase id="100" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="18" posX="41" posY="39" />
+    <Object size="15" posX="13" posY="20" />
+    <Object size="18" posX="46" posY="45" />
+  </Testcase>
+  <Testcase id="101" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="18" posX="53" posY="40" />
+    <Object size="23" posX="33" posY="20" />
+    <Object size="17" posX="36" posY="26" />
+    <Object size="13" posX="39" posY="23" />
+  </Testcase>
+  <Testcase id="102" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="16" posX="46" posY="15" />
+    <Object size="10" posX="17" posY="36" />
+    <Object size="13" posX="36" posY="13" />
+    <Object size="21" posX="46" posY="15" />
+  </Testcase>
+  <Testcase id="103" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="19" posX="30" posY="37" />
+    <Object size="24" posX="32" posY="36" />
+    <Object size="23" posX="27" posY="29" />
+    <Object size="16" posX="37" posY="43" />
+  </Testcase>
+  <Testcase id="104" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="16" posX="52" posY="28" />
+    <Object size="10" posX="51" posY="23" />
+    <Object size="20" posX="45" posY="43" />
+    <Object size="14" posX="19" posY="42" />
+  </Testcase>
+  <Testcase id="105" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="20" posX="25" posY="42" />
+    <Object size="18" posX="24" posY="19" />
+    <Object size="25" posX="46" posY="18" />
+    <Object size="21" posX="23" posY="14" />
+  </Testcase>
+  <Testcase id="106" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="17" posX="35" posY="14" />
+    <Object size="21" posX="27" posY="22" />
+    <Object size="23" posX="52" posY="19" />
+    <Object size="13" posX="37" posY="17" />
+  </Testcase>
+  <Testcase id="107" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="13" posX="20" posY="34" />
+    <Object size="21" posX="15" posY="12" />
+    <Object size="12" posX="24" posY="20" />
+    <Object size="23" posX="21" posY="18" />
+  </Testcase>
+  <Testcase id="108" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="22" posX="24" posY="14" />
+    <Object size="14" posX="31" posY="38" />
+    <Object size="21" posX="41" posY="35" />
+    <Object size="16" posX="34" posY="24" />
+  </Testcase>
+  <Testcase id="109" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="14" posX="50" posY="26" />
+    <Object size="20" posX="31" posY="19" />
+    <Object size="21" posX="31" posY="35" />
+    <Object size="21" posX="24" posY="14" />
+  </Testcase>
+  <Testcase id="110" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="19" posX="23" posY="37" />
+    <Object size="12" posX="36" posY="44" />
+    <Object size="23" posX="37" posY="23" />
+    <Object size="24" posX="49" posY="14" />
+  </Testcase>
+  <Testcase id="111" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="13" posX="35" posY="28" />
+    <Object size="16" posX="31" posY="43" />
+    <Object size="17" posX="46" posY="35" />
+    <Object size="14" posX="29" posY="17" />
+  </Testcase>
+  <Testcase id="112" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="19" posX="33" posY="40" />
+    <Object size="10" posX="19" posY="37" />
+    <Object size="17" posX="15" posY="45" />
+    <Object size="25" posX="41" posY="18" />
+  </Testcase>
+  <Testcase id="113" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="10" posX="36" posY="16" />
+    <Object size="21" posX="36" posY="43" />
+    <Object size="10" posX="28" posY="12" />
+    <Object size="15" posX="28" posY="42" />
+  </Testcase>
+  <Testcase id="114" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="21" posX="23" posY="12" />
+    <Object size="22" posX="22" posY="28" />
+    <Object size="16" posX="23" posY="40" />
+    <Object size="19" posX="36" posY="13" />
+  </Testcase>
+  <Testcase id="115" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="12" posX="45" posY="27" />
+    <Object size="19" posX="28" posY="39" />
+    <Object size="11" posX="23" posY="40" />
+    <Object size="14" posX="28" posY="42" />
+  </Testcase>
+  <Testcase id="116" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="22" posX="44" posY="19" />
+    <Object size="22" posX="23" posY="13" />
+    <Object size="12" posX="20" posY="16" />
+    <Object size="24" posX="23" posY="42" />
+  </Testcase>
+  <Testcase id="117" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="21" posX="41" posY="40" />
+    <Object size="18" posX="35" posY="26" />
+    <Object size="15" posX="31" posY="45" />
+    <Object size="11" posX="36" posY="38" />
+  </Testcase>
+  <Testcase id="118" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="17" posX="29" posY="45" />
+    <Object size="13" posX="24" posY="15" />
+    <Object size="10" posX="30" posY="41" />
+    <Object size="11" posX="53" posY="27" />
+  </Testcase>
+  <Testcase id="119" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="13" posX="39" posY="12" />
+    <Object size="23" posX="30" posY="25" />
+    <Object size="24" posX="21" posY="29" />
+    <Object size="18" posX="48" posY="36" />
+  </Testcase>
+  <Testcase id="120" scenario="1" button="on" minIntensity="30" maxIntensity="85">
+    <Object size="25" posX="35" posY="36" />
+    <Object size="16" posX="52" posY="43" />
+    <Object size="24" posX="42" posY="18" />
+    <Object size="17" posX="24" posY="41" />
+  </Testcase>
+  <Testcase id="121" scenario="2" button="on" minIntensity="30" maxIntensity="85">
+		<Object size="30"/>
+  </Testcase>  
+</Testcases>

@@ -49,7 +49,6 @@ public class SelectionActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //TODO ordering of testcases
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selection);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -139,6 +138,12 @@ public class SelectionActivity extends BaseActivity {
                 else
                     disconnect();
             }
+            return true;
+        }
+
+        if (item.getItemId() == R.id.action_output) {
+            Intent myIntent = new Intent(SelectionActivity.this, OutputActivity.class);
+            startActivity(myIntent);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -288,7 +293,11 @@ public class SelectionActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, final int position) {
-            holder.mTextView.setText(getString(R.string.testcase) + " " + mDataset.get(position).getId() + " (" + getString(R.string.scenario) + " " + mDataset.get(position).getScenario() + ")");
+            if (mDataset.get(position).getScenario()==0)
+                holder.mTextView.setText(getString(R.string.testcase) + " " + mDataset.get(position).getId() + " (" + getString(R.string.scenario0) + ")");
+            else
+                holder.mTextView.setText(getString(R.string.testcase) + " " + mDataset.get(position).getId() + " (" + getString(R.string.scenario) + " " + mDataset.get(position).getScenario() + ")");
+
             holder.mTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

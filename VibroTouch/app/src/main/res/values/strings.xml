@@ -37,4 +37,6 @@
     <string name="wait">Please wait a bit...</string>
     <string name="playground_first">Please try the "Playground" first (Testcase 0).</string>
     <string name="scenario">Scenario</string>
+    <string name="output_header">Output XML</string>
+    <string name="openoutput">View Output XML</string>
 </resources>
