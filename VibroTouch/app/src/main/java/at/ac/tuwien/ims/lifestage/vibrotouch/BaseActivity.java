@@ -102,10 +102,12 @@ public class BaseActivity extends AppCompatActivity {
 
         protected void onPostExecute(Boolean result) {
             progress.hide();
-            if(!result)
+            if(!result) {
                 Toast.makeText(BaseActivity.this, "Couldn't connect to core...", Toast.LENGTH_SHORT).show();
-            else
+                WifiUtil.localIPAdress="";
+            } else {
                 Toast.makeText(BaseActivity.this, "Successfully connected to Core.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
