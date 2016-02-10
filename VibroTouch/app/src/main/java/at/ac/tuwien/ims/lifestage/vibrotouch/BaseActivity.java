@@ -49,7 +49,7 @@ public class BaseActivity extends AppCompatActivity {
             if(connectionManager.getStatus()!=SparkManager.CONNECTED) {
                 try {
                     connectionManager.setIDandToken(XmlHelper.getIDandToken(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.inputXMLPath));
-                    connect();
+                    connect(false);
                 } catch (Exception e) {
                     Toast.makeText(BaseActivity.this, getString(R.string.xml_correct), Toast.LENGTH_SHORT).show();
                 }
@@ -118,10 +118,13 @@ public class BaseActivity extends AppCompatActivity {
     /**
      * Connects the device with the SparkCore over Wifi.
      *
+     * @param reconnect if true sparkcore first disconnects and then connects
      */
-    public void connect() {
+    public void connect(boolean reconnect) {
+        if(reconnect) {
+            disconnect();
+        }
         Log.d(getClass().getName(), "connect called");
-
         if (!WifiUtil.isOnline(this)) {
             Log.d(getClass().getName(), "no Internet connection.. ");
             return;
@@ -152,7 +155,6 @@ public class BaseActivity extends AppCompatActivity {
         Log.d(getClass().getName(), "disconnect called");
         if(connectionManager!=null) {
             connectionManager.disconnect();
-            Toast.makeText(BaseActivity.this, "Disconnected Core.", Toast.LENGTH_SHORT).show();
         }
     }
 

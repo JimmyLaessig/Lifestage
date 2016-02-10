@@ -132,9 +132,10 @@ public class SelectionActivity extends BaseActivity {
                 }
 
                 if(connectionManager.getStatus()!=SparkManager.CONNECTED)
-                    connect();
-                else
-                    disconnect();
+                    connect(false);
+                else {
+                    connect(true);
+                }
             }
             return true;
         }
