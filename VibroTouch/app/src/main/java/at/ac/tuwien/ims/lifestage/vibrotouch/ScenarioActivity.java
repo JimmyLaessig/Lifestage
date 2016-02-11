@@ -24,10 +24,9 @@ public class ScenarioActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scenario);
-        int position=UserPreferences.getCurrentTestcasePositionInList(this);
-        Testcase testcase=testcases.get(position);
-
-        if(testcase!=null) {
+        int position=getIntent().getIntExtra("testcasePosition", -1);
+        if(position>=0 && position<testcases.size()) {
+            Testcase testcase = testcases.get(position);
             Log.d(getClass().getName(), "Scenario with Testcase " + testcase.getId());
             switch (testcase.getScenario()) {
                 case 1:

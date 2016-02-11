@@ -147,7 +147,7 @@ public class DrawView extends View {
                 if(objectHandler instanceof ObjectHandlerScenario2) {
                     objectHandler.handleScale(scale, x, y);
                 } else {
-                    if ((System.currentTimeMillis() - lastScale) >= 25) {
+                    if ((System.currentTimeMillis() - lastScale) >= 50) {
                         objectHandler.handleScale(scale, x, y);
                         lastScale = System.currentTimeMillis();
                     }

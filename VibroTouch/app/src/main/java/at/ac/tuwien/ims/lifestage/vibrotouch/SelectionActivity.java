@@ -246,7 +246,9 @@ public class SelectionActivity extends BaseActivity {
                             dialog.dismiss();
                             return;
                         }
-                        startActivity(new Intent(SelectionActivity.this, ScenarioActivity.class));
+                        Intent myIntent=new Intent(SelectionActivity.this, ScenarioActivity.class);
+                        myIntent.putExtra("testcasePosition", UserPreferences.getCurrentTestcasePositionInList(SelectionActivity.this));
+                        startActivity(myIntent);
                         dialog.dismiss();
                     }
                 })
@@ -322,7 +324,7 @@ public class SelectionActivity extends BaseActivity {
                         return;
                     }
                     Intent myIntent = new Intent(SelectionActivity.this, ScenarioActivity.class);
-                    myIntent.putExtra("testcase", id);
+                    myIntent.putExtra("testcasePosition", position);
                     startActivity(myIntent);
                 }
             });

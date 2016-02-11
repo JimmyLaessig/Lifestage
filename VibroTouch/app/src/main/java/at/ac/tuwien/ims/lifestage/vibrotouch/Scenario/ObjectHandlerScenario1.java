@@ -271,11 +271,15 @@ public class ObjectHandlerScenario1 extends ObjectHandler {
 
     public void handleScale(float scale, float xFocus, float yFocus) {
         if (scale<=1.0) {
+            float size=Float.MAX_VALUE;
+            Object temp=null;
             for (Object object : testcase.getObjects())
                 if (object.getObjectState()==ObjectState.OnScreen && object.contains(xFocus, yFocus)) {
-                    pickUpObject(object);
-                    return;
+                    if(object.getSize()<size)
+                        temp=object;
                 }
+            if(temp!=null)
+                pickUpObject(temp);
         } else {
             if(!pickedUpObjects.isEmpty()) {
                 int i=0;
