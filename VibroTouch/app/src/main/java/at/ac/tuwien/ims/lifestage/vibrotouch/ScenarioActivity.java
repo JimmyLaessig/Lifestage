@@ -9,6 +9,7 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Scenario.ObjectHandler;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Scenario.ObjectHandlerPlayground;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Scenario.ObjectHandlerScenario1;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Scenario.ObjectHandlerScenario2;
+import at.ac.tuwien.ims.lifestage.vibrotouch.Util.UserPreferences;
 
 /**
  * Activity where the different scenarios are drawn.
@@ -23,23 +24,17 @@ public class ScenarioActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scenario);
-        Testcase testcase=null;
-        try {
-            int id=getIntent().getIntExtra("testcase", 0);
-            for(Testcase t : testcases)
-                if(t.getId()==id)
-                    testcase = t;
-        } catch(Exception e){
-            e.printStackTrace();
-        }
+        int position=UserPreferences.getCurrentTestcasePositionInList(this);
+        Testcase testcase=testcases.get(position);
+
         if(testcase!=null) {
             Log.d(getClass().getName(), "Scenario with Testcase " + testcase.getId());
             switch (testcase.getScenario()) {
                 case 1:
-                    objectHandler = new ObjectHandlerScenario1(this, testcase);
+                    objectHandler = new ObjectHandlerScenario1(this, testcase, position);
                     break;
                 case 2:
-                    objectHandler = new ObjectHandlerScenario2(this, testcase);
+                    objectHandler = new ObjectHandlerScenario2(this, testcase, position);
                     break;
                 default:
                     objectHandler = new ObjectHandlerPlayground(this, testcase);

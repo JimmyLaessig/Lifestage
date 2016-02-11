@@ -55,12 +55,7 @@ public class SelectionActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         subtitle=(TextView)toolbar.findViewById(R.id.toolbar_subtitle);
-        String id=UserPreferences.getCurrentUserID(this);
-        if(id==null) {
-            id=0+"";
-            UserPreferences.setUserID(this, id);
-        }
-        subtitle.setText(getString(R.string.curr) + " " + id);
+        subtitle.setText(getString(R.string.curr) + " " + UserPreferences.getCurrentUserID(this));
 
         createIDDialog();
         createEndDialog();
@@ -69,6 +64,12 @@ public class SelectionActivity extends BaseActivity {
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(btnListener);
         initializeList();
+
+        if(UserPreferences.getCurrentTestcasePositionInList(SelectionActivity.this)<0) {
+            UserPreferences.setCurrentTestcasePositionInList(SelectionActivity.this, 0);
+        }
+        UserPreferences.setShowTestcaseInfo(this, 1, true);
+        UserPreferences.setShowTestcaseInfo(this, 2, true);
     }
 
     @Override
@@ -76,25 +77,25 @@ public class SelectionActivity extends BaseActivity {
         super.onResume();
         startIconThread();
 
-        int nextID = UserPreferences.getCurrentTestcaseID(this);
+        int nextID = UserPreferences.getCurrentTestcasePositionInList(this);
         if (nextID >= 0) {
-            boolean testcaseDone = UserPreferences.getJustFinishedTestcase(this);
-            if (testcaseDone) {
+            if (UserPreferences.getJustFinishedTestcase(this)) {
                 if (nextID < testcases.size() - 1) {
                     nextID++;
-                    nextBuilder.setMessage(getString(R.string.next_testcase) + " " + nextID + ".");
+                    nextBuilder.setMessage(getString(R.string.next_testcase) + " " + testcases.get(nextID).getId() + ".");
                     nextBuilder.show();
                 } else {
                     nextID=-3;
                     endBuilder.show();
                 }
-                UserPreferences.setCurrentTestcaseID(this, nextID);
+                UserPreferences.setCurrentTestcasePositionInList(this, nextID);
                 UserPreferences.setJustFinishedTestcase(this, false);
             }
-            mAdapter.setSelection(nextID);
+            mAdapter.notifyDataSetChanged();
             mLayoutManager.scrollToPosition(nextID);
         }
-        Log.d(getClass().getName(), "Next ID: " + nextID);
+        if(testcases!=null && !testcases.isEmpty())
+            Log.d(getClass().getName(), "Next testcase ID: " + testcases.get(nextID).getId() + " (on list position " + nextID + ")");
     }
 
     @Override
@@ -113,13 +114,8 @@ public class SelectionActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_user) {
+            createIDDialog();
             idBuilder.show();
-            return true;
-        }
-
-        if (item.getItemId() == R.id.action_reload) {
-            updateTestcases();
-            mAdapter.update(testcases);
             return true;
         }
 
@@ -175,70 +171,6 @@ public class SelectionActivity extends BaseActivity {
         thread.start();
     }
 
-    private void createIDDialog() {
-        View nameView = getLayoutInflater().inflate(R.layout.dialog_userid, null, false);
-        userID=(EditText)(nameView.findViewById(R.id.dialog_edittext_field));
-        String curr= UserPreferences.getCurrentUserID(this)==null ? "not set yet" : UserPreferences.getCurrentUserID(this);
-        userID.setHint("Current: "+curr);
-
-        idBuilder = new AlertDialog.Builder(SelectionActivity.this);
-        idBuilder.setView(nameView)
-                .setMessage(getString(R.string.setUserid))
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        if (userID.getText().length() != 0) {
-                            String user_id = userID.getText().toString();
-                            UserPreferences.setUserID(SelectionActivity.this, user_id);
-                            subtitle.setText(getString(R.string.curr) + " " + user_id);
-                        }
-                        mAdapter.setSelection(-1);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                })
-                .setCancelable(false)
-                .create();
-    }
-
-    private void createNextDialog() {
-        nextBuilder = new AlertDialog.Builder(SelectionActivity.this);
-        nextBuilder.setMessage(getString(R.string.next_testcase))
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        if (connectionManager.getStatus() != SparkManager.CONNECTED) {
-                            Toast.makeText(SelectionActivity.this, getString(R.string.connectToCore), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        Intent myIntent = new Intent(SelectionActivity.this, ScenarioActivity.class);
-                        myIntent.putExtra("testcase", UserPreferences.getCurrentTestcaseID(SelectionActivity.this));
-                        startActivity(myIntent);
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                })
-                .setCancelable(false)
-                .create();
-    }
-
-    private void createEndDialog() {
-        endBuilder = new AlertDialog.Builder(SelectionActivity.this);
-        endBuilder.setMessage(getString(R.string.end_testcases))
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                    }
-                })
-                .setCancelable(false)
-                .create();
-    }
-
     private View.OnClickListener btnListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -247,17 +179,101 @@ public class SelectionActivity extends BaseActivity {
                     Toast.makeText(SelectionActivity.this, getString(R.string.connectToCore), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(UserPreferences.getCurrentTestcaseID(SelectionActivity.this)>=0) {
-                    nextBuilder.setMessage(getString(R.string.next_testcase) + " " + UserPreferences.getCurrentTestcaseID(SelectionActivity.this) + ".");
+                if(UserPreferences.getCurrentTestcasePositionInList(SelectionActivity.this)>=0) {
+                    nextBuilder.setMessage(getString(R.string.next_testcase) + " " + testcases.get(UserPreferences.getCurrentTestcasePositionInList(SelectionActivity.this)).getId() + ".");
                     nextBuilder.show();
                 } else {
-                    UserPreferences.setCurrentTestcaseID(SelectionActivity.this, 0);
-                    nextBuilder.setMessage(getString(R.string.next_testcase) + " " + UserPreferences.getCurrentTestcaseID(SelectionActivity.this) + ".");
+                    UserPreferences.setCurrentTestcasePositionInList(SelectionActivity.this, 0);
+
+                    UserPreferences.setShowTestcaseInfo(SelectionActivity.this, 1, true);
+                    UserPreferences.setShowTestcaseInfo(SelectionActivity.this, 2, true);
+                    nextBuilder.setMessage(getString(R.string.next_testcase) + " " + testcases.get(UserPreferences.getCurrentTestcasePositionInList(SelectionActivity.this)).getId() + ".");
                     nextBuilder.show();
                 }
             }
         }
     };
+
+    //============================================================================================//
+    // Dialogs
+    //============================================================================================//
+
+    private void createIDDialog() {
+        View nameView = getLayoutInflater().inflate(R.layout.dialog_userid, null, false);
+        userID=(EditText)nameView.findViewById(R.id.dialog_edittext_field);
+
+        String curr= UserPreferences.getCurrentUserID(this)==null ? "not set yet" : UserPreferences.getCurrentUserID(this);
+        userID.setHint("Current: "+curr);
+
+        idBuilder = new AlertDialog.Builder(this);
+        idBuilder.setView(nameView)
+                .setMessage(getString(R.string.setUserid))
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (userID.getText().length() != 0) {
+                            String user_id = userID.getText().toString();
+                            UserPreferences.setUserID(SelectionActivity.this, user_id);
+                            subtitle.setText(getString(R.string.curr) + " " + user_id);
+
+                            getTestcasesForCurrentUser();
+
+                            mAdapter.update(testcases);
+                            UserPreferences.setCurrentTestcasePositionInList(SelectionActivity.this, 0);
+                            mLayoutManager.scrollToPosition(0);
+
+                            UserPreferences.setShowTestcaseInfo(SelectionActivity.this, 1, true);
+                            UserPreferences.setShowTestcaseInfo(SelectionActivity.this, 2, true);
+                        }
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                })
+                .setCancelable(false)
+                .create();
+    }
+
+    private void createNextDialog() {
+        nextBuilder = new AlertDialog.Builder(this);
+        nextBuilder.setMessage(getString(R.string.next_testcase))
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (connectionManager.getStatus() != SparkManager.CONNECTED) {
+                            Toast.makeText(SelectionActivity.this, getString(R.string.connectToCore), Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                            return;
+                        }
+                        startActivity(new Intent(SelectionActivity.this, ScenarioActivity.class));
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                })
+                .setCancelable(false)
+                .create();
+    }
+
+    private void createEndDialog() {
+        endBuilder = new AlertDialog.Builder(this);
+        endBuilder.setMessage(getString(R.string.end_testcases))
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                })
+                .setCancelable(false)
+                .create();
+    }
+
+    //============================================================================================//
+    // List
+    //============================================================================================//
 
     private void initializeList() {
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.list);
@@ -270,7 +286,6 @@ public class SelectionActivity extends BaseActivity {
 
     private class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         private ArrayList<Testcase> mDataset;
-        private int selection =-1;
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public TextView mTextView;
@@ -296,7 +311,7 @@ public class SelectionActivity extends BaseActivity {
             if (mDataset.get(position).getScenario()==0)
                 holder.mTextView.setText(getString(R.string.testcase) + " " + mDataset.get(position).getId() + " (" + getString(R.string.scenario0) + ")");
             else
-                holder.mTextView.setText(getString(R.string.testcase) + " " + mDataset.get(position).getId() + " (" + getString(R.string.scenario) + " " + mDataset.get(position).getScenario() + ")");
+                holder.mTextView.setText(getString(R.string.testcase) + " " + mDataset.get(position).getId()/* + " (" + getString(R.string.scenario) + " " + mDataset.get(position).getScenario() + ")"*/);
 
             holder.mTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -312,8 +327,10 @@ public class SelectionActivity extends BaseActivity {
                 }
             });
 
+            int selection=UserPreferences.getCurrentTestcasePositionInList(SelectionActivity.this);
+
             if(selection!= -1 && position == selection) {
-                holder.mTextView.setBackgroundColor(getColor(R.color.colorAccent));
+                holder.mTextView.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                 holder.mTextView.setTextColor(Color.WHITE);
             } else {
                 holder.mTextView.setTextColor(Color.BLACK);
@@ -324,10 +341,6 @@ public class SelectionActivity extends BaseActivity {
         @Override
         public int getItemCount() {
             return mDataset.size();
-        }
-
-        public void setSelection(int selection) {
-            this.selection=selection;
         }
 
         public void update(ArrayList<Testcase> mDataset) {

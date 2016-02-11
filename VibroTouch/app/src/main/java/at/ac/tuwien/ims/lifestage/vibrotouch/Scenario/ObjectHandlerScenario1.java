@@ -9,9 +9,9 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -32,8 +32,7 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
  * Application: VibroTouch
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
-public class ObjectHandlerScenario1 extends ObjectHandler { //pickup mit skalierung
-    private AlertDialog.Builder builder;
+public class ObjectHandlerScenario1 extends ObjectHandler {
     private int errors=0;
     private int screenPlacements=0;
 
@@ -44,21 +43,27 @@ public class ObjectHandlerScenario1 extends ObjectHandler { //pickup mit skalier
     private Paint blackPaint;
     private Paint whitePaint;
 
-    public ObjectHandlerScenario1(ScenarioActivity context, Testcase testcase){
+    private int testCasePosition;
+
+    public ObjectHandlerScenario1(ScenarioActivity context, Testcase testcase, int testCasePosition) {
         super(context, testcase);
+        this.testCasePosition=testCasePosition;
         placeObjects();
 
-        builder = new AlertDialog.Builder(context);
-        builder.setMessage(context.getResources().getString(R.string.scenario1welcome))
-                .setTitle(context.getResources().getString(R.string.scenario1))
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        startTestCase();
-                    }
-                })
-                .setCancelable(false)
-                .create()
-                .show();
+        if(UserPreferences.getShowTestcaseInfo(context, 1)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage(context.getResources().getString(R.string.scenario1welcome))
+                    .setTitle(context.getResources().getString(R.string.scenario1))
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            startTestCase();
+                        }
+                    })
+                    .setCancelable(false)
+                    .create()
+                    .show();
+            UserPreferences.setShowTestcaseInfo(context, 1, false);
+        }
     }
 
     public void draw(Canvas canvas) {
@@ -214,8 +219,8 @@ public class ObjectHandlerScenario1 extends ObjectHandler { //pickup mit skalier
         toast.setText(context.getResources().getString(R.string.saved));
         toast.show();
 
-        UserPreferences.setCurrentTestcaseID(context, testcase.getId());
         UserPreferences.setJustFinishedTestcase(context, true);
+        UserPreferences.setCurrentTestcasePositionInList(context, testCasePosition);
 
         Intent myIntent=new Intent(context, SelectionActivity.class);
         context.startActivity(myIntent);

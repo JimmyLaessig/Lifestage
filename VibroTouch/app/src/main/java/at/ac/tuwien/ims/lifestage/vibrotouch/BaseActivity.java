@@ -15,6 +15,9 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.Testcase;
 import at.ac.tuwien.ims.lifestage.vibrotouch.Util.SparkManager;
@@ -45,7 +48,8 @@ public class BaseActivity extends AppCompatActivity {
         connectionManager=SparkManager.getInstance();
 
         if(verifyStoragePermissions(this)) {
-            updateTestcases();
+            getTestcasesForCurrentUser();
+
             if(connectionManager.getStatus()!=SparkManager.CONNECTED) {
                 try {
                     connectionManager.setIDandToken(XmlHelper.getIDandToken(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.inputXMLPath));
@@ -57,16 +61,32 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void updateTestcases() {
+    protected void getTestcasesForCurrentUser() {
         try {
             testcases=XmlHelper.getTestcases(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + XmlHelper.inputXMLPath);
         } catch (Exception e) {
             Toast.makeText(BaseActivity.this, "Please make sure your XML Files are correct.", Toast.LENGTH_SHORT).show();
+            return;
         }
-        if(testcases==null || testcases.isEmpty()) {
+
+        if(testcases.isEmpty()) {
             Toast.makeText(BaseActivity.this, "Please add Testcases in the XML file.", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        int seed = Integer.parseInt(UserPreferences.getCurrentUserID(this));
+
+        int chunkSize = testcases.size() % 2 == 0 ? testcases.size() / 2 : (testcases.size() / 2) + 1;
+        List<Testcase> temp1=testcases.subList(0, chunkSize);
+        List<Testcase> temp2=testcases.subList(chunkSize, testcases.size());
+
+        Collections.shuffle(temp1, new Random(seed));
+        Collections.shuffle(temp2, new Random(seed));
+
+        testcases=new ArrayList<>();
+        testcases.addAll(temp1);
+        testcases.addAll(temp2);
+        Log.d(getClass().getName(), "Shuffled list for user " + UserPreferences.getCurrentUserID(this) + " with seed " + seed + ".");
     }
 
     private class ConnectTask extends AsyncTask<String, Void, Boolean> {

@@ -10,6 +10,10 @@ output:
 	-errors: how often a user has tried to put an object on a wrong target space
 	-screenPlacements: how often objects were put on white screen again
 	-deviation: deviation of placed object center and target space center in mm
+	
+n Testcases:
+0 to (n/2 - 1) get shuffled with user id as seed value
+n/2 to n get shuffled with user id as seed value
 
 
 ##testcase 2:

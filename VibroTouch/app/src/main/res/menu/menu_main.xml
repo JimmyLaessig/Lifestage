@@ -12,8 +12,6 @@
         android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_user" android:title="@string/setUserid"
         android:orderInCategory="100" app:showAsAction="never" />
-    <item android:id="@+id/action_reload" android:title="@string/reloadList"
-        android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_output" android:title="@string/openoutput"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>

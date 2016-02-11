@@ -1,5 +1,6 @@
 package at.ac.tuwien.ims.lifestage.vibrotouch.Util;
 
+import android.content.Context;
 import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -156,7 +158,7 @@ public class XmlHelper {
             }
             eventType=xpp.next();
         }
-        Collections.sort(testcases, new Comparator<Testcase>() {
+        /*Collections.sort(testcases, new Comparator<Testcase>() {
             @Override
             public int compare(Testcase t1, Testcase t2) {
                 return t1.getId()-t2.getId();
@@ -167,7 +169,7 @@ public class XmlHelper {
             public int compare(Testcase t1, Testcase t2) {
                 return t1.getScenario()-t2.getScenario();
             }
-        });
+        });*/
         return testcases;
     }
 
@@ -247,7 +249,6 @@ public class XmlHelper {
         Attr attr_deviation = doc.createAttribute("deviation");
         attr_deviation.setValue(deviation+"");
         testcase.setAttributeNode(attr_deviation);
-
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();

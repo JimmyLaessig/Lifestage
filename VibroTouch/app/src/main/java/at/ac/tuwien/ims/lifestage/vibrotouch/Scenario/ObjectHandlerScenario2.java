@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Environment;
 import android.view.View;
+import android.widget.Button;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Random;
 
 import at.ac.tuwien.ims.lifestage.vibrotouch.Entities.*;
@@ -25,30 +27,38 @@ import at.ac.tuwien.ims.lifestage.vibrotouch.Util.XmlHelper;
  * Created by Florian Schuster (e1025700@student.tuwien.ac.at).
  */
 public class ObjectHandlerScenario2 extends ObjectHandler {
-    private AlertDialog.Builder builder;
     private boolean pickedUp;
+    private Button button;
 
-    public ObjectHandlerScenario2(final ScenarioActivity context, Testcase testcase){
+    private int testCasePosition;
+
+    public ObjectHandlerScenario2(final ScenarioActivity context, Testcase testcase, int testCasePosition){
         super(context, testcase);
+        this.testCasePosition=testCasePosition;
         pickedUp=false;
         placeObjects();
 
-        builder = new AlertDialog.Builder(context);
-        builder.setMessage(context.getResources().getString(R.string.scenario2welcome))
-                .setTitle(context.getResources().getString(R.string.scenario2))
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        startTestCase();
-                    }
-                })
-                .setCancelable(false)
-                .create()
-                .show();
 
+        if (UserPreferences.getShowTestcaseInfo(context, 2)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage(context.getResources().getString(R.string.scenario2welcome))
+                    .setTitle(context.getResources().getString(R.string.scenario2))
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            startTestCase();
+                        }
+                    })
+                    .setCancelable(false)
+                    .create()
+                    .show();
+            UserPreferences.setShowTestcaseInfo(context, 2, false);
+        }
+
+        button=(Button)context.findViewById(R.id.button_finish);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(pickedUp)
+                if (pickedUp)
                     finishTestcase();
             }
         });
@@ -84,8 +94,8 @@ public class ObjectHandlerScenario2 extends ObjectHandler {
         toast.setText(context.getResources().getString(R.string.saved));
         toast.show();
 
-        UserPreferences.setCurrentTestcaseID(context, testcase.getId());
         UserPreferences.setJustFinishedTestcase(context, true);
+        UserPreferences.setCurrentTestcasePositionInList(context, testCasePosition);
 
         Intent myIntent=new Intent(context, SelectionActivity.class);
         context.startActivity(myIntent);

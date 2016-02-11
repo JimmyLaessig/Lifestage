@@ -42,7 +42,6 @@ public abstract class ObjectHandler {
     }
 
     protected ScenarioActivity context;
-    protected Button button;
 
     protected Stack<Object> pickedUpObjects;
     private SparkManager connectionManager;
@@ -56,6 +55,7 @@ public abstract class ObjectHandler {
     private volatile boolean buttonThreadRunning = true;
 
     protected Testcase testcase;
+
     protected float screenWidthInPX, screenHeightInPX, screenWidthInMM, screenHeightInMM;
 
     protected long time;
@@ -69,8 +69,6 @@ public abstract class ObjectHandler {
         pickedUpObjects=new Stack<>();
         connectionManager=SparkManager.getInstance();
         usedVibro=UsedVibro.Vibro0;
-
-        button=(Button)context.findViewById(R.id.button_finish);
 
         this.testcase=testcase;
 
