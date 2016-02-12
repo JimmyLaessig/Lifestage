@@ -84,6 +84,7 @@ public class SelectionActivity extends BaseActivity {
                     nextID++;
                     nextBuilder.setMessage(getString(R.string.next_testcase) + " " + testcases.get(nextID).getId() + ".");
                     nextBuilder.show();
+                    Log.d(getClass().getName(), "Next testcase ID: " + testcases.get(nextID).getId() + " (on list position " + nextID + ")");
                 } else {
                     nextID=-3;
                     endBuilder.show();
@@ -94,8 +95,6 @@ public class SelectionActivity extends BaseActivity {
             mAdapter.notifyDataSetChanged();
             mLayoutManager.scrollToPosition(nextID);
         }
-        if(testcases!=null && !testcases.isEmpty())
-            Log.d(getClass().getName(), "Next testcase ID: " + testcases.get(nextID).getId() + " (on list position " + nextID + ")");
     }
 
     @Override
