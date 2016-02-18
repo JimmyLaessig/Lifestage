@@ -10,21 +10,14 @@ output:
 	-errors: how often a user has tried to put an object on a wrong target space
 	-screenPlacements: how often objects were put on white screen again
 	-deviation: deviation of placed object center and target space center in mm
-	
-n Testcases:
-0 to (n/2 - 1) get shuffled with user id as seed value
-n/2 to n get shuffled with user id as seed value
-
-
-##testcase 2:
-size: mm
-output:
-	-time: measured in seconds after popup is closed
-	-deviation: deviation of original and new object area size
-
 
 #IMPORTANT!!!! FILL IN screenWidth AND screenHeight IN MM FOR CORRECT MEASUREMENT
 
+In general:
+With n Testcases:
+	- 0 to (n/2 - 1) get shuffled with user id as seed value
+	- n/2 to n get shuffled with user id as seed value
+	
 ____________________________________________
 INPUT EXAMPLE:
 
@@ -53,3 +46,13 @@ OUTPUT EXAMPLE:
 	<Textcase userId="1" id="6" scenario="1" time="6.125" errors="2" screenPlacements="0" deviationObject0="3.2165" deviationObject1="2.654"/>
 	<Textcase userId="2" id="22" scenario="2" time="2.302" devation="4.201"/>
 </Output>
+
+____________________________________________
+
+/**
+##testcase 2:
+size: mm
+output:
+	-time: measured in seconds after popup is closed
+	-deviation: deviation of original and new object area size
+**/
